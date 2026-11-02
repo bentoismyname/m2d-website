@@ -1,0 +1,25 @@
+# M2D website on Netlify.
+# Every build pulls the latest content from the CMS (Supabase), rebuilds the static pages and
+# publishes the dist/ folder. The admin's "Publish to website" button starts a build.
+[build]
+  command = "python3 build/pull_cms.py && python3 build/build.py && python3 build/package.py"
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

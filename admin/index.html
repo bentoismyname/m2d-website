@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>M2D Website Admin</title>
+  <link rel="icon" href="../assets/img/logo-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <!-- Sign in -->
+  <section class="login" id="login" hidden>
+    <div class="login__box">
+      <p class="brand"><img src="../assets/img/logo.png" alt="M2D"><span>Website admin</span></p>
+      <form id="loginForm" class="login__form">
+        <label>Email<input type="email" name="email" autocomplete="username" required placeholder="you@m2decor.com.sg"></label>
+        <label>Password<input type="password" name="password" autocomplete="current-password" required placeholder="Your password"></label>
+        <p class="login__err" id="loginErr" hidden></p>
+        <button class="btn btn--primary" type="submit">Sign in</button>
+        <button class="btn btn--ghost" type="button" id="magicBtn">Email me a sign-in link instead</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- App -->
+  <div class="app" id="app" hidden>
+    <aside class="side">
+      <p class="brand"><img src="../assets/img/logo.png" alt="M2D"><span>Admin</span></p>
+      <nav class="side__nav" id="sideNav">
+        <a href="#/" data-route="dash"><i></i>Dashboard</a>
+        <a href="#/pages" data-route="pages" data-role="owner editor"><i></i>Pages</a>
+        <a href="#/portfolio" data-route="portfolio" data-role="owner editor"><i></i>Portfolio</a>
+        <a href="#/blog" data-route="blog"><i></i>Blog</a>
+        <a href="#/photos" data-route="photos"><i></i>Photo library</a>
+        <a href="#/settings" data-route="settings"><i></i>Settings</a>
+      </nav>
+      <div class="side__foot">
+        <a class="side__site" id="siteLink" href="../index.html" target="_blank" rel="noopener">View website &#8599;</a>
+        <p class="side__user" id="sideUser"></p>
+        <button class="linkbtn" id="signOut" type="button" style="text-align:left">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="top">
+        <button class="top__menu" id="menuBtn" type="button" aria-label="Menu">&#9776;</button>
+        <p class="top__mode" id="modeBadge"></p>
+        <div class="top__actions">
+          <span class="top__status" id="saveStatus"></span>
+          <button class="btn btn--primary" id="publishBtn" type="button">Publish<span class="hide-s">&nbsp;to website</span></button>
+        </div>
+      </header>
+      <div class="banner" id="localBanner" hidden>
+        <strong>Local draft mode.</strong> Supabase is not connected yet, so changes are saved in this browser only and nothing goes live. Everything works the same once it is connected.
+      </div>
+      <main class="content" id="content"></main>
+    </div>
+  </div>
+
+  <div class="modal" id="modal" hidden><div class="modal__box" id="modalBox"></div></div>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

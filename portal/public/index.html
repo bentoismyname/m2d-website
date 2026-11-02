@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/assets/favicon.png">
+<title>M2D Handover Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wdth,wght@75..100,400..700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: customer list on the left, one click-to-type handover form on the right; stacks on phones. */
+:root{
+  --bg:#FAF8F5; --surface:#FFFFFF; --ink:#262422; --muted:#675F58; --line:#E5DED6; --field:#F6F2EE;
+  --accent:#D9731F; --accent-ink:#A4500E; --accent-soft:#FBEBDC; --on-accent:#FFFFFF;
+  --ok:#2E7A4E; --ok-soft:#E3F2E8; --warn:#B4441C; --warn-soft:#FBE5DC;
+  --f-display:'Open Sans','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#181614; --surface:#211E1B; --ink:#F0EBE5; --muted:#ABA299; --line:#3A3430; --field:#2A2622;
+  --accent:#E8893A; --accent-ink:#F2A866; --accent-soft:#3A2A1C; --on-accent:#1A1410;
+  --ok:#74C495; --ok-soft:#1E3326; --warn:#F09A78; --warn-soft:#3A241B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#181614; --surface:#211E1B; --ink:#F0EBE5; --muted:#ABA299; --line:#3A3430; --field:#2A2622;
+  --accent:#E8893A; --accent-ink:#F2A866; --accent-soft:#3A2A1C; --on-accent:#1A1410;
+  --ok:#74C495; --ok-soft:#1E3326; --warn:#F09A78; --warn-soft:#3A241B; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,textarea,select{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-stretch:75%;font-weight:600;margin:0;text-wrap:balance}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{height:22px;width:auto;display:block}
+.top h1{font-size:22px;font-weight:500;color:var(--muted);letter-spacing:.01em}
+.top .sp{flex:1}
+.btn{text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 14px;min-height:40px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(.95)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--warn)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex-shrink:0}
+.wrap{display:flex;align-items:flex-start;min-height:calc(100% - 66px)}
+.side{width:300px;flex-shrink:0;border-right:1px solid var(--line);align-self:stretch;padding:16px;padding-left:max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;background:var(--surface)}
+.search{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:9px 12px}
+.list{display:flex;flex-direction:column;gap:4px}
+.item{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid transparent;background:transparent;border-radius:8px;padding:10px 12px;cursor:pointer;width:100%}
+.item:hover{background:var(--field)}
+.item[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.item .nm{font-weight:600;overflow-wrap:anywhere}
+.item .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;letter-spacing:.02em}
+.pill.prog{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.done{background:var(--ok-soft);color:var(--ok)}
+.pill.def{background:var(--warn-soft);color:var(--warn)}
+.side .empty{color:var(--muted);font-size:13px;padding:8px 4px}
+main{flex:1;min-width:0;padding-block:20px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.inner{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.hello{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.hello h2{font-size:34px;color:var(--accent-ink)}
+.hello p{margin:0;color:var(--muted);max-width:60ch}
+.hello ol{margin:0;padding-left:20px;color:var(--ink);display:flex;flex-direction:column;gap:6px;max-width:60ch}
+.head{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.head .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.head h2{font-size:36px;line-height:1.05;overflow-wrap:anywhere}
+.head .sub{color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px}
+.save{font-size:12px;color:var(--muted)}
+.save.err{color:var(--warn);font-weight:600}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 65px);z-index:4;background:var(--bg);padding-block:8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.nav a{white-space:nowrap;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500}
+.nav a:hover{border-color:var(--accent)}
+.nav a span{color:var(--muted);font-weight:400;margin-left:4px;font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:130px}
+.card > .ch{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.card h3{font-size:26px;color:var(--accent-ink)}
+.card .hint{color:var(--muted);font-size:13px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f label,.lab{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.f input,.f textarea,.f select{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:9px 11px;min-height:40px}
+.f textarea{resize:vertical;min-height:72px}
+.f input:hover,.f textarea:hover{border-color:var(--muted)}
+.f input:focus,.f textarea:focus{background:var(--surface);border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.f input::placeholder,.f textarea::placeholder{color:var(--muted);opacity:.7}
+.grp{display:flex;flex-direction:column;gap:2px}
+.grp + .grp{border-top:1px solid var(--line);padding-top:14px}
+.grph{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.grph h4{margin:0;font-size:15px;font-weight:600}
+.grph .cnt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.grph .btn{margin-left:auto;min-height:32px;padding:4px 10px;font-size:12px}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:7px 8px;border-radius:8px;cursor:pointer}
+.chk:hover{background:var(--field)}
+.chk input{appearance:none;flex-shrink:0;width:20px;height:20px;border:1.5px solid var(--muted);border-radius:5px;margin:1px 0 0;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.chk input:checked{background:var(--ok);border-color:var(--ok)}
+.chk input:checked::after{content:"";width:10px;height:6px;border:2px solid var(--surface);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.chk input:checked + span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.bar{height:6px;border-radius:999px;background:var(--field);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .3s}
+.defs{display:flex;flex-direction:column;gap:8px}
+.def{display:grid;grid-template-columns:28px minmax(0,1fr) 170px 40px;gap:10px;align-items:center}
+.def .n{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
+.def input[type=text]{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:8px 10px;min-height:40px}
+.def input[type=text]:focus{background:var(--surface);border-color:var(--accent);outline:none}
+.def.done input[type=text]{color:var(--muted);text-decoration:line-through}
+.def .x{min-height:36px;padding:6px;justify-content:center}
+.def .dchk{padding:0;justify-content:center}
+.dhead{display:grid;grid-template-columns:28px minmax(0,1fr) 170px 40px;gap:10px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.contact{border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.contact h4{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.contact .grid{gap:10px}
+.areas{display:flex;flex-direction:column;gap:10px}
+.area{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.area summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;min-height:48px}
+.area summary::-webkit-details-marker{display:none}
+.area summary .chev{width:16px;height:16px;flex-shrink:0;transition:transform .2s;color:var(--muted)}
+.area[open] summary .chev{transform:rotate(90deg)}
+.area summary .an{font-weight:600;font-size:15px}
+.area summary .ac{font-size:12px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.area .abody{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
+.frow,.fhead{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1.2fr) 36px;gap:8px;align-items:center}
+.fhead{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding-top:4px}
+.frow input{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:8px 10px;min-height:38px}
+.frow input.it{font-weight:500}
+.frow input:focus{background:var(--surface);border-color:var(--accent);outline:none}
+.frow .x{min-height:36px;padding:6px;justify-content:center}
+.afoot{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;padding-top:4px}
+.afoot .btn{min-height:34px;padding:5px 10px;font-size:13px}
+.addarea{display:flex;gap:8px;flex-wrap:wrap}
+.addarea input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:8px 11px;min-height:40px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:transparent;padding:10px 14px 12px;min-height:44px;font-weight:600;font-size:15px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left}
+.tabs button small{font-weight:400;font-size:12px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{display:flex;flex-direction:column;gap:22px}
+.sched{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.sched .w{font-family:var(--f-display);font-stretch:75%;font-weight:600;font-size:19px;color:var(--accent-ink)}
+.sched ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.sub2{font-size:16px;font-weight:600;margin:4px 0 -4px}
+.stat{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--field)}
+.stat button{border:0;background:transparent;border-radius:999px;padding:6px 12px;min-height:34px;cursor:pointer;font-weight:500;font-size:13px;color:var(--muted)}
+.stat button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--warn-soft);border-radius:8px;padding:8px 12px;font-size:13px}
+.prevbox{border:1px solid var(--line);border-radius:12px;background:var(--field);padding:16px;overflow:hidden}
+.prevhost{transform-origin:top left}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:13px;z-index:20;max-width:calc(100% - 32px)}
+.modal-bg{position:fixed;inset:0;background:rgba(20,16,12,.45);z-index:30;display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);border-radius:14px;padding:24px;width:min(520px,100%);display:flex;flex-direction:column;gap:16px;max-height:90vh;overflow:auto}
+.modal h3{font-size:26px;color:var(--accent-ink)}
+.back{display:none}
+.loading{color:var(--muted);padding:12px 4px;font-size:13px}
+@media (max-width:820px){
+  .wrap{display:block}
+  .side{width:auto;border-right:0;border-bottom:1px solid var(--line);padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .wrap.open .side{display:none}
+  .wrap:not(.open) main.has-hello{display:none}
+  .back{display:inline-flex}
+  .grid,.grid.three{grid-template-columns:minmax(0,1fr)}
+  .def,.dhead{grid-template-columns:22px minmax(0,1fr) 40px 36px}
+  .def .by{grid-column:2 / 3}
+  .dhead .hby{display:none}
+  .fhead{display:none}
+  .frow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px;padding:8px 0;border-top:1px solid var(--line)}
+  .frow input.it{grid-column:1 / 3}
+  .frow .x{grid-column:3;grid-row:1}
+  .sched{grid-template-columns:minmax(0,1fr);gap:6px}
+  .tabs button{font-size:14px;padding:10px 10px 12px}
+  .head h2{font-size:30px}
+  .nav{top:calc(env(safe-area-inset-top,0px) + 62px)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.login-bg{position:fixed;inset:0;z-index:40;background:var(--bg);display:grid;place-items:center;padding:16px}
+.login{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:32px;width:min(400px,100%);display:flex;flex-direction:column;gap:16px}
+.login img{width:150px;height:auto}
+.login h2{font-size:30px;color:var(--accent-ink)}
+.login .er{color:var(--warn);font-size:13px;min-height:20px;margin:0}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:13px}
+.linkbox input{flex:1;min-width:200px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 8px}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <img class="logo" alt="M2D" src="/assets/m2d-logo.png">
+  <h1>Handover Desk</h1>
+  <span class="sp"></span>
+  <button class="btn" id="packBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg>Company details</button>
+  <button class="btn ghost" id="outBtn" type="button">Sign out</button>
+</header>
+
+<div class="wrap" id="wrap">
+  <aside class="side" aria-label="Customers">
+    <button class="btn primary" id="newBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>New handover</button>
+    <input class="search" id="search" type="search" placeholder="Search customers" aria-label="Search customers">
+    <div class="list" id="list"><div class="loading">Loading customers…</div></div>
+  </aside>
+  <main id="main" class="has-hello">
+    <div class="inner" id="inner">
+      <section class="hello">
+        <h2>Fill in a handover pack</h2>
+        <p>Every customer gets their own pack. Click into any box and type; everything saves on its own as you go.</p>
+        <ol>
+          <li>Press <strong>New handover</strong> and enter the customer’s name.</li>
+          <li>Tick the checklist during the walkthrough and list any defects.</li>
+          <li>Switch to <strong>Home care pack</strong> for contacts, where things are and the finishes in each room.</li>
+          <li>Press <strong>Copy homeowner link</strong> and send it to the customer. Their page always shows the latest version.</li>
+        </ol>
+      </section>
+    </div>
+  </main>
+</div>
+<div id="layer"></div>
+
+<script src="/assets/pack.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------- State ---------- */
+var db=null, dl=null, all=[], cur=null, curId=null, settings={}, q="";
+var pending={}, timer=null, saveEl=null;
+
+function setSave(text,err){if(!saveEl)saveEl=$("#saveState");if(saveEl){saveEl.textContent=text;saveEl.classList.toggle("err",!!err)}}
+function deepMerge(a,b){Object.keys(b).forEach(function(k){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){if(!a[k]||typeof a[k]!=="object"||Array.isArray(a[k]))a[k]={};deepMerge(a[k],b[k])}else a[k]=b[k]})}
+function queue(path,val){
+  if(!cur)return;
+  setp(cur,path,val);
+  var patch={};setp(patch,path,val);deepMerge(pending,patch);
+  setSave("Saving…");
+  clearTimeout(timer);timer=setTimeout(flush,500);
+  refreshMeta();
+}
+var inflight=false;
+function flush(keep){
+  if(!curId||!Object.keys(pending).length)return Promise.resolve();
+  var p=pending,id=curId;pending={};inflight=true;
+  return api("PATCH","/handovers/"+id,p,{keepalive:keep===true}).then(function(rec){
+    inflight=false;var i=all.findIndex(function(x){return x.id===id});if(i>-1)all[i]=rec;
+    if(!Object.keys(pending).length)setSave("All changes saved");
+  },function(e){
+    inflight=false;
+    if(curId===id){deepMerge(p,pending);pending=p}
+    if(e&&e.code==="auth")return;
+    if(e&&e.status===404){toast("This pack was deleted by someone else.");pending={};closeH();return}
+    setSave("Not saved yet. Retrying…",true);clearTimeout(timer);timer=setTimeout(flush,4000);
+  });
+}
+window.addEventListener("pagehide",function(){flush(true)});
+
+/* ---------- List ---------- */
+function renderList(){
+  var el=$("#list");
+  var rows=all.filter(function(h){var s=((h.customer&&h.customer.name)||"")+" "+((h.customer&&h.customer.address)||"");return !q||s.toLowerCase().indexOf(q)>-1});
+  if(!all.length){el.innerHTML='<div class="empty">No handovers yet. Press <strong>New handover</strong> to start the first one.</div>';return}
+  if(!rows.length){el.innerHTML='<div class="empty">No customers match “'+esc(q)+'”.</div>';return}
+  el.innerHTML=rows.map(function(h){
+    var d=doneCount(h),o=openDefects(h),st=h.status==="done";
+    return '<button class="item" type="button" data-id="'+esc(h.id)+'" aria-current="'+(h.id===curId)+'"><span class="nm">'+esc((h.customer&&h.customer.name)||"Untitled customer")+'</span><span class="meta">'+
+      (st?'<span class="pill done">Handed over</span>':'<span class="pill prog">'+d+'/'+TOTAL+' checked</span>')+
+      (o?'<span class="pill def">'+o+' defect'+(o>1?"s":"")+'</span>':"")+
+      (h.handoverDate?'<span>'+esc(fmtDate(h.handoverDate))+'</span>':"")+'</span></button>';
+  }).join("");
+}
+$("#list").addEventListener("click",function(e){var b=e.target.closest(".item");if(b)openH(b.getAttribute("data-id"))});
+$("#search").addEventListener("input",function(e){q=e.target.value.trim().toLowerCase();renderList()});
+
+/* ---------- Editor ---------- */
+function inp(path,label,opts){opts=opts||{};var id="f_"+path.replace(/\./g,"_");var v=get(cur,path)||"";
+  var tag=opts.area?'<textarea id="'+id+'" data-p="'+path+'" placeholder="'+esc(opts.ph||"")+'">'+esc(v)+'</textarea>':'<input id="'+id+'" data-p="'+path+'" type="'+(opts.type||"text")+'" value="'+esc(v)+'" placeholder="'+esc(opts.ph||"")+'"'+(opts.auto?' autocomplete="'+opts.auto+'"':' autocomplete="off"')+'>';
+  return '<div class="f'+(opts.cls?" "+opts.cls:"")+'"><label for="'+id+'">'+esc(label)+'</label>'+tag+'</div>'}
+
+var tab="handover", openAreas={};
+var TABS={handover:{label:"Handover",sub:"Checklist, defects, sign-off",dl:"Handover record"},care:{label:"Home care pack",sub:"Contacts, reference, finishes, schedule",dl:"Home care pack"}};
+function ensureAreas(){if(!Array.isArray(cur.finishAreas)){cur.finishAreas=makeAreas()}}
+
+function renderEditor(){
+  var h=cur, d=doneCount(h), o=openDefects(h);
+  ensureAreas();
+  var html='';
+  html+='<div class="head"><button class="btn back" type="button" id="backBtn">← All customers</button></div>';
+  html+='<div class="head"><div class="t"><h2 id="hName">'+esc((h.customer&&h.customer.name)||"Untitled customer")+'</h2><div class="sub"><span class="stat" role="group" aria-label="Status"><button type="button" data-st="progress" aria-pressed="'+(h.status!=="done")+'">In progress</button><button type="button" data-st="done" aria-pressed="'+(h.status==="done")+'">Handed over</button></span><span class="save" id="saveState" aria-live="polite">All changes saved</span></div></div>';
+  html+='<div class="acts"><button class="btn primary" type="button" id="copyLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg>Copy homeowner link</button><a class="btn" id="openLink" href="/h/'+esc(h.token||'')+'" target="_blank" rel="noopener">Open homeowner view</a><button class="btn ghost" type="button" id="resetLink">New link</button><button class="btn danger ghost" type="button" id="delBtn">Delete</button></div></div>';
+  html+='<div id="confirmSlot"></div>';
+  html+='<div class="tabs" role="tablist">'+Object.keys(TABS).map(function(k){return '<button type="button" role="tab" id="tab-'+k+'" aria-controls="panel-'+k+'" aria-selected="'+(tab===k)+'" data-tab="'+k+'">'+TABS[k].label+'<small>'+TABS[k].sub+'</small></button>'}).join("")+'</div>';
+
+  /* ---- Handover panel ---- */
+  var A='<div class="panel" role="tabpanel" id="panel-handover" aria-labelledby="tab-handover"'+(tab!=="handover"?" hidden":"")+'>';
+  A+='<nav class="nav" aria-label="Handover sections"><a href="#s-details">Details</a><a href="#s-check">Checklist<span id="navChk">'+d+'/'+TOTAL+'</span></a><a href="#s-def">Defects<span id="navDef">'+o+'</span></a><a href="#s-sign">Sign-off</a><a href="#s-prev-handover">Preview</a></nav>';
+  A+='<section class="card" id="s-details"><div class="ch"><h3>Customer details</h3><span class="hint">Shared by both parts of the pack.</span></div><div class="grid">'+
+    inp("customer.name","Customer name",{ph:"e.g. Tan family"})+inp("customer.address","Property address",{ph:"Block, street, unit"})+
+    inp("handoverDate","Handover date",{type:"date"})+inp("designer","M2D designer",{ph:"Who is handing over"})+
+    inp("customer.mobile","Customer mobile",{type:"tel"})+inp("customer.email","Customer email",{type:"email"})+
+    '</div>'+inp("notes","Internal notes (not shown to the customer)",{area:true,ph:"Anything the team should know"})+'</section>';
+  A+='<section class="card" id="s-check"><div class="ch"><h3>Handover checklist</h3><span class="hint" id="chkSum">'+d+' of '+TOTAL+' checked</span></div><div class="bar"><i id="chkBar" style="width:'+(d/TOTAL*100)+'%"></i></div>';
+  CHECKLIST.forEach(function(g){
+    var gd=g.items.filter(function(_,i){return (h.checks||{})[ckey(g,i)]}).length;
+    A+='<div class="grp" data-g="'+g.id+'"><div class="grph"><h4>'+esc(g.title)+'</h4><span class="cnt">'+gd+'/'+g.items.length+'</span><button type="button" class="btn ghost" data-all="'+g.id+'">Tick all</button></div>';
+    g.items.forEach(function(it,i){var k=ckey(g,i);A+='<label class="chk"><input type="checkbox" data-c="'+k+'"'+((h.checks||{})[k]?" checked":"")+'><span>'+esc(it)+'</span></label>'});
+    A+='</div>';
+  });
+  A+='</section>';
+  A+='<section class="card" id="s-def"><div class="ch"><h3>Defects &amp; follow-ups</h3><span class="hint">Anything to fix after handover. Tick when it’s done.</span></div><div class="dhead"><span>#</span><span>Item &amp; location</span><span class="hby">Action by</span><span>Done</span></div><div class="defs" id="defs"></div><div><button class="btn" type="button" id="addDef"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Add defect</button></div></section>';
+  A+='<section class="card" id="s-sign"><div class="ch"><h3>Sign-off</h3><span class="hint">Who walked through the home together.</span></div><div class="grid three">'+inp("signoff.homeowner","Homeowner")+inp("signoff.rep","M2D representative")+inp("signoff.date","Date",{type:"date"})+'</div></section>';
+  A+='<section class="card" id="s-prev-handover"><div class="ch"><h3>Handover record preview</h3><span class="hint">What the homeowner sees on their link.</span></div><div class="prevbox" data-prev="handover"><div class="prevhost"></div></div></section>';
+  A+='</div>';
+
+  /* ---- Care panel ---- */
+  var B='<div class="panel" role="tabpanel" id="panel-care" aria-labelledby="tab-care"'+(tab!=="care"?" hidden":"")+'>';
+  B+='<nav class="nav" aria-label="Care pack sections"><a href="#s-contacts">Contacts</a><a href="#s-ref">Home reference</a><a href="#s-fin">Finishes<span id="navFin">'+finCount()+'</span></a><a href="#s-sched">Maintenance</a><a href="#s-prev-care">Preview</a></nav>';
+  B+='<section class="card" id="s-contacts"><div class="ch"><h3>Project contacts</h3><span class="hint">Leave a trade blank if it wasn’t used; it won’t appear on the customer copy.</span></div><div class="grid">';
+  ROLES.forEach(function(r){B+='<div class="contact"><h4>'+esc(r[1])+'</h4><div class="grid">'+CFIELDS.map(function(f){return inp("contacts."+r[0]+"."+f[0],f[1],{type:f[0]==="email"?"email":f[0]==="mobile"?"tel":"text"})}).join("")+'</div></div>'});
+  B+='</div></section>';
+  B+='<section class="card" id="s-ref"><div class="ch"><h3>Home quick reference</h3><span class="hint">Where things are in this home.</span></div><div class="grid">'+PLACES.map(function(p){return inp("places."+p[0],p[1],{ph:"e.g. Kitchen, above the fridge"})}).join("")+'</div></section>';
+  B+='<section class="card" id="s-fin"><div class="ch"><h3>Material finishes</h3><span class="hint">By area, so the customer can match finishes for touch-ups and repairs. Rename items, add rows or add rooms to fit this home.</span></div><div class="areas" id="areas"></div><div class="addarea"><label class="lab" for="newArea" style="width:100%">Add an area</label><input id="newArea" placeholder="e.g. Study, Balcony, Walk-in wardrobe" autocomplete="off"><button class="btn" type="button" id="addArea">Add area</button></div></section>';
+  B+='<section class="card" id="s-sched"><div class="ch"><h3>Maintenance schedule</h3><span class="hint">The same for every home. It goes into the care pack as a tick-off list.</span></div><div>'+SCHEDULE.map(function(g){return '<div class="sched"><div class="w">'+esc(g[0])+'</div><ul>'+g[1].map(function(t){return '<li><strong>'+esc(t[0])+'</strong>: '+esc(t[1])+'</li>'}).join("")+'</ul></div>'}).join("")+'</div></section>';
+  B+='<section class="card" id="s-prev-care"><div class="ch"><h3>Home care pack preview</h3><span class="hint">What the homeowner sees on their link. Blank boxes are left out.</span></div><div class="prevbox" data-prev="care"><div class="prevhost"></div></div></section>';
+  B+='</div>';
+
+  $("#inner").innerHTML=html+A+B;
+  saveEl=null;
+  renderDefects();
+  renderAreas();
+  renderPreview();
+}
+
+function finCount(){var n=0;(cur.finishAreas||[]).forEach(function(a){a.rows.forEach(function(r){if(rowFilled(r))n++})});return n}
+
+function renderAreas(){
+  var el=$("#areas");if(!el)return;
+  var as=cur.finishAreas||[];
+  if(!as.length){el.innerHTML='<p class="hint">No areas yet. Add the first one below.</p>';return}
+  el.innerHTML=as.map(function(a,ai){
+    var n=a.rows.filter(rowFilled).length;
+    return '<details class="area" data-a="'+ai+'"'+(openAreas[a.id]?" open":"")+'><summary><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg><span class="an">'+esc(a.name)+'</span><span class="ac">'+n+' of '+a.rows.length+' filled</span></summary><div class="abody">'+
+      '<div class="fhead"><span>Item</span><span>Brand / supplier</span><span>Colour / model code</span><span></span></div>'+
+      a.rows.map(function(r,ri){var b="fa_"+esc(r.id);return '<div class="frow" data-r="'+ri+'"><input class="it" id="'+b+'_i" data-f="item" value="'+esc(r.item)+'" placeholder="Item" aria-label="Item"><input id="'+b+'_b" data-f="brand" value="'+esc(r.brand)+'" placeholder="Brand / supplier" aria-label="'+esc(a.name+" "+r.item)+' brand"><input id="'+b+'_c" data-f="code" value="'+esc(r.code)+'" placeholder="Colour / model code" aria-label="'+esc(a.name+" "+r.item)+' code"><button type="button" class="btn ghost x" data-rmrow="'+ri+'" aria-label="Remove '+esc(r.item||"row")+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>'}).join("")+
+      '<div class="afoot"><button type="button" class="btn" data-addrow><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Add item</button><button type="button" class="btn ghost danger" data-rmarea>Remove area</button></div></div></details>';
+  }).join("");
+}
+function saveAreas(){queue("finishAreas",clone(cur.finishAreas));var nf=$("#navFin");if(nf)nf.textContent=finCount()}
+function updateAreaCount(ai){var a=cur.finishAreas[ai],d=$('.area[data-a="'+ai+'"] .ac');if(d)d.textContent=a.rows.filter(rowFilled).length+" of "+a.rows.length+" filled"}
+
+function renderDefects(){
+  var el=$("#defs");if(!el)return;var ds=cur.defects||[];
+  if(!ds.length){el.innerHTML='<p class="hint">No defects listed. Add one if anything needs fixing.</p>';return}
+  el.innerHTML=ds.map(function(d,i){return '<div class="def'+(d.done?" done":"")+'" data-i="'+i+'"><span class="n">'+(i+1)+'</span><input type="text" id="def_t_'+esc(d.id)+'" data-d="text" value="'+esc(d.text||"")+'" placeholder="e.g. Master wardrobe door misaligned" aria-label="Defect '+(i+1)+'"><input type="text" class="by" id="def_b_'+esc(d.id)+'" data-d="by" value="'+esc(d.by||"")+'" placeholder="Action by" aria-label="Action by"><label class="chk dchk" title="Done"><input type="checkbox" data-d="done"'+(d.done?" checked":"")+' aria-label="Defect '+(i+1)+' done"></label><button type="button" class="btn ghost x" data-rm="'+i+'" aria-label="Remove defect '+(i+1)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>'}).join("");
+}
+
+function refreshMeta(){
+  if(!cur)return;var d=doneCount(cur),o=openDefects(cur);
+  var a=$("#chkSum");if(a)a.textContent=d+" of "+TOTAL+" checked";
+  var b=$("#chkBar");if(b)b.style.width=(d/TOTAL*100)+"%";
+  var c=$("#navChk");if(c)c.textContent=d+"/"+TOTAL;
+  var e=$("#navDef");if(e)e.textContent=o;
+  $$(".grp").forEach(function(gEl){var g=CHECKLIST.filter(function(x){return x.id===gEl.getAttribute("data-g")})[0];var n=g.items.filter(function(_,i){return (cur.checks||{})[ckey(g,i)]}).length;$(".cnt",gEl).textContent=n+"/"+g.items.length});
+  var hn=$("#hName");if(hn)hn.textContent=(cur.customer&&cur.customer.name)||"Untitled customer";
+  var i=all.findIndex(function(x){return x.id===curId});if(i>-1){all[i]=Object.assign(clone(cur),{id:curId})}
+  renderList();
+  clearTimeout(refreshMeta.t);refreshMeta.t=setTimeout(renderPreview,400);
+}
+
+/* Editor events */
+var inner=$("#inner");
+inner.addEventListener("input",function(e){
+  var t=e.target;
+  if(t.hasAttribute("data-p")){queue(t.getAttribute("data-p"),t.value);return}
+  if(t.getAttribute("data-d")==="text"||t.getAttribute("data-d")==="by"){var i=+t.closest(".def").getAttribute("data-i");cur.defects[i][t.getAttribute("data-d")]=t.value;queue("defects",clone(cur.defects));return}
+  if(t.hasAttribute("data-f")){var ai=+t.closest(".area").getAttribute("data-a"),ri=+t.closest(".frow").getAttribute("data-r");cur.finishAreas[ai].rows[ri][t.getAttribute("data-f")]=t.value;saveAreas();updateAreaCount(ai)}
+});
+inner.addEventListener("toggle",function(e){var d=e.target;if(d.classList&&d.classList.contains("area")){var a=cur&&cur.finishAreas[+d.getAttribute("data-a")];if(a)openAreas[a.id]=d.open}},true);
+inner.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id==="newArea"){e.preventDefault();var b=$("#addArea");if(b)b.click()}});
+inner.addEventListener("change",function(e){
+  var t=e.target;
+  if(t.hasAttribute("data-c")){queue("checks."+t.getAttribute("data-c"),t.checked);return}
+  if(t.getAttribute("data-d")==="done"){var row=t.closest(".def"),i=+row.getAttribute("data-i");cur.defects[i].done=t.checked;row.classList.toggle("done",t.checked);queue("defects",clone(cur.defects))}
+});
+inner.addEventListener("click",function(e){
+  var t=e.target.closest("button");if(!t)return;
+  if(t.id==="backBtn"){closeH();return}
+  if(t.hasAttribute("data-st")){var v=t.getAttribute("data-st");$$("[data-st]").forEach(function(b){b.setAttribute("aria-pressed",String(b===t))});queue("status",v);return}
+  if(t.hasAttribute("data-all")){var g=CHECKLIST.filter(function(x){return x.id===t.getAttribute("data-all")})[0];g.items.forEach(function(_,i){var k=ckey(g,i);var cb=inner.querySelector('[data-c="'+k+'"]');if(cb)cb.checked=true;setp(cur,"checks."+k,true)});var p={};g.items.forEach(function(_,i){p[ckey(g,i)]=true});deepMerge(pending,{checks:p});setSave("Saving…");clearTimeout(timer);timer=setTimeout(flush,300);refreshMeta();return}
+  if(t.id==="addDef"){cur.defects=(cur.defects||[]).concat([{id:uid(),text:"",by:"",done:false}]);queue("defects",clone(cur.defects));renderDefects();var ins=$$("#defs [data-d=text]");if(ins.length)ins[ins.length-1].focus();return}
+  if(t.hasAttribute("data-rm")){var i=+t.getAttribute("data-rm");cur.defects.splice(i,1);queue("defects",clone(cur.defects));renderDefects();return}
+  if(t.hasAttribute("data-tab")){tab=t.getAttribute("data-tab");$$("[data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b===t))});$("#panel-handover").hidden=tab!=="handover";$("#panel-care").hidden=tab!=="care";renderPreview();return}
+  if(t.hasAttribute("data-addrow")){var ai=+t.closest(".area").getAttribute("data-a"),a=cur.finishAreas[ai];a.rows.push({id:uid(),item:"",brand:"",code:""});openAreas[a.id]=true;saveAreas();renderAreas();var rs=$$('.area[data-a="'+ai+'"] .frow input.it');if(rs.length)rs[rs.length-1].focus();return}
+  if(t.hasAttribute("data-rmrow")){var ai2=+t.closest(".area").getAttribute("data-a");cur.finishAreas[ai2].rows.splice(+t.getAttribute("data-rmrow"),1);saveAreas();renderAreas();return}
+  if(t.hasAttribute("data-rmarea")){var ai3=+t.closest(".area").getAttribute("data-a"),ar=cur.finishAreas[ai3];
+    if(ar.rows.some(rowFilled)&&!t.hasAttribute("data-sure")){t.setAttribute("data-sure","1");t.textContent="Has codes. Click again to remove";return}
+    cur.finishAreas.splice(ai3,1);saveAreas();renderAreas();return}
+  if(t.id==="addArea"){var ni=$("#newArea"),nm=ni.value.trim();if(!nm){ni.focus();return}var na={id:uid(),name:nm,rows:[{id:uid(),item:"Wall paint",brand:"",code:""},{id:uid(),item:"Flooring",brand:"",code:""}]};cur.finishAreas.push(na);openAreas[na.id]=true;ni.value="";saveAreas();renderAreas();return}
+  if(t.id==="copyLink"){var link=location.origin+"/h/"+cur.token;
+    var done=function(){toast("Link copied. Paste it into WhatsApp or email.")};
+    var show=function(){$("#confirmSlot").innerHTML='<div class="linkbox"><label for="linkTxt">Homeowner link</label><input id="linkTxt" readonly value="'+esc(link)+'"><button type="button" class="btn ghost" id="delNo">Done</button></div>';var li=$("#linkTxt");li.focus();li.select()};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(done,show)}else show();return}
+  if(t.id==="resetLink"){$("#confirmSlot").innerHTML='<div class="confirm" role="alert"><span>Make a new homeowner link? The old link will stop working.</span><button type="button" class="btn" id="resetYes">Make new link</button><button type="button" class="btn ghost" id="delNo">Cancel</button></div>';$("#delNo").focus();return}
+  if(t.id==="resetYes"){api("POST","/handovers/"+curId+"/reset-link").then(function(rec){cur.token=rec.token;var i=all.findIndex(function(x){return x.id===rec.id});if(i>-1)all[i]=rec;$("#openLink").href="/h/"+rec.token;$("#confirmSlot").innerHTML="";toast("New link made. Send it to the homeowner again.")},function(){toast("Couldn’t make a new link. Try again.")});return}
+  if(t.id==="delBtn"){$("#confirmSlot").innerHTML='<div class="confirm" role="alert"><span>Delete this customer’s handover pack for everyone? This can’t be undone.</span><button type="button" class="btn danger" id="delYes">Delete pack</button><button type="button" class="btn ghost" id="delNo">Keep it</button></div>';$("#delNo").focus();return}
+  if(t.id==="delNo"){$("#confirmSlot").innerHTML="";return}
+  if(t.id==="delYes"){var id=curId;pending={};clearTimeout(timer);api("DELETE","/handovers/"+id).then(function(){all=all.filter(function(x){return x.id!==id});toast("Pack deleted");closeH()},function(){toast("Couldn’t delete. Try again.")});return}
+});
+
+/* Apply remote changes without disturbing the field being typed in */
+function applyRemote(h){
+  if(inflight||Object.keys(pending).length)return; // our own edits are still on the way
+  var focused=document.activeElement;
+  var defsChanged=JSON.stringify(h.defects||[])!==JSON.stringify(cur.defects||[]);
+  var areasChanged=Array.isArray(h.finishAreas)&&JSON.stringify(h.finishAreas)!==JSON.stringify(cur.finishAreas);
+  var keepAreas=cur.finishAreas;
+  cur=clone(h);
+  if(!Array.isArray(cur.finishAreas))cur.finishAreas=keepAreas;
+  if(areasChanged&&!(focused&&focused.closest&&focused.closest("#areas")))renderAreas();
+  $$("[data-p]",inner).forEach(function(el){if(el!==focused){var v=get(cur,el.getAttribute("data-p"))||"";if(el.value!==v)el.value=v}});
+  $$("[data-c]",inner).forEach(function(el){if(el!==focused)el.checked=!!(cur.checks||{})[el.getAttribute("data-c")]});
+  $$("[data-st]",inner).forEach(function(b){b.setAttribute("aria-pressed",String((b.getAttribute("data-st")==="done")===(cur.status==="done")))});
+  if(defsChanged&&!(focused&&focused.closest&&focused.closest("#defs")))renderDefects();
+  refreshMeta();
+}
+
+function openH(id){
+  flush();
+  var h=all.filter(function(x){return x.id===id})[0];if(!h)return;
+  curId=id;cur=clone(h);pending={};
+  $("#wrap").classList.add("open");$("#main").classList.remove("has-hello");
+  renderEditor();renderList();
+  window.scrollTo(0,0);
+}
+function closeH(){
+  flush();curId=null;cur=null;
+  $("#wrap").classList.remove("open");$("#main").classList.add("has-hello");
+  $("#inner").innerHTML=helloHTML;renderList();
+}
+var helloHTML=$("#inner").innerHTML;
+
+/* ---------- New handover ---------- */
+$("#newBtn").addEventListener("click",function(){
+  modal('<h3>New handover</h3><form id="newForm" class="grid" style="grid-template-columns:minmax(0,1fr)">'+
+    '<div class="f"><label for="nName">Customer name</label><input id="nName" required placeholder="e.g. Tan family" autocomplete="off"></div>'+
+    '<div class="f"><label for="nAddr">Property address</label><input id="nAddr" placeholder="Block, street, unit" autocomplete="off"></div>'+
+    '<div class="f"><label for="nDate">Handover date</label><input id="nDate" type="date"></div>'+
+    '<div class="acts"><button class="btn primary" type="submit">Create pack</button><button class="btn ghost" type="button" data-close>Cancel</button></div></form>');
+  $("#nName").focus();
+  $("#newForm").addEventListener("submit",function(e){
+    e.preventDefault();var name=$("#nName").value.trim();if(!name){$("#nName").focus();return}
+    var btn=e.target.querySelector("[type=submit]");btn.disabled=true;
+    api("POST","/handovers",{customer:{name:name,address:$("#nAddr").value.trim()},handoverDate:$("#nDate").value,status:"progress",finishAreas:makeAreas()}).then(function(rec){
+      closeModal();all.unshift(rec);openH(rec.id);
+    },function(err){btn.disabled=false;if(!err||err.code!=="auth")toast("Couldn’t create the pack. Check your connection and try again.")});
+  });
+});
+
+/* ---------- Company details ---------- */
+$("#packBtn").addEventListener("click",function(){
+  var s=settings;
+  modal('<h3>Company details</h3><p class="hint">These appear on every customer’s pack. Change them once here.</p><form id="setForm" class="grid" style="grid-template-columns:minmax(0,1fr)">'+
+   '<div class="f"><label for="sW">Workmanship warranty period</label><input id="sW" value="'+esc(s.warranty||"")+'" placeholder="e.g. 12 months"></div>'+
+   '<div class="f"><label for="sP">Phone / WhatsApp</label><input id="sP" type="tel" value="'+esc(s.phone||"")+'" placeholder="e.g. +65 9123 4567"></div>'+
+   '<div class="f"><label for="sE">Email</label><input id="sE" type="email" value="'+esc(s.email||"")+'" placeholder="e.g. hello@m2decor.com.sg"></div>'+
+   '<div class="f"><label for="sS">Website</label><input id="sS" value="'+esc(s.website||"www.m2decor.com.sg")+'"></div>'+
+   '<div class="acts"><button class="btn primary" type="submit">Save details</button><button class="btn ghost" type="button" data-close>Cancel</button></div></form>');
+  $("#sW").focus();
+  $("#setForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    var v={warranty:$("#sW").value.trim(),phone:$("#sP").value.trim(),email:$("#sE").value.trim(),website:$("#sS").value.trim()};
+    api("PUT","/settings",v).then(function(){settings=v;closeModal();toast("Company details saved");renderPreview()},function(){toast("Couldn’t save. Try again.")});
+  });
+});
+
+function modal(html){$("#layer").innerHTML='<div class="modal-bg" id="mbg"><div class="modal" role="dialog" aria-modal="true">'+html+'</div></div>';
+  $("#mbg").addEventListener("click",function(e){if(e.target.id==="mbg"||e.target.hasAttribute("data-close"))closeModal()});
+  $("#mbg").addEventListener("keydown",function(e){if(e.key==="Escape")closeModal()})}
+function closeModal(){$("#layer").innerHTML=""}
+
+/* ---------- Customer copy (booklet) ---------- */
+function docFor(t){return t==="care"?careDoc(cur,settings):handoverDoc(cur,settings)}
+
+function renderPreview(){
+  if(!cur)return;
+  var box=$('.prevbox[data-prev="'+tab+'"]');if(!box||box.closest("[hidden]"))return;
+  var host=$(".prevhost",box);
+  var root=host.shadowRoot||host.attachShadow({mode:"open"});
+  root.innerHTML='<style>'+BK_CSS+'</style>'+docFor(tab);
+  var w=box.clientWidth-32,sc=Math.min(1,w/794);
+  host.style.transform="scale("+sc+")";host.style.width="794px";
+  requestAnimationFrame(function(){box.style.height=(host.scrollHeight*sc+32)+"px"});
+}
+window.addEventListener("resize",function(){clearTimeout(renderPreview.t);renderPreview.t=setTimeout(renderPreview,200)});
+
+/* ---------- Server ---------- */
+function api(method,path,body,opts){
+  return fetch("/api"+path,{method:method,headers:body?{"Content-Type":"application/json"}:{},body:body?JSON.stringify(body):undefined,credentials:"same-origin",keepalive:!!(opts&&opts.keepalive)})
+    .then(function(r){
+      if(r.status===401){showLogin();throw {code:"auth"}}
+      if(!r.ok)throw {code:"http",status:r.status};
+      return r.status===204?null:r.json();
+    },function(){throw {code:"network"}});
+}
+function showLogin(){
+  if($("#login"))return;
+  var d=document.createElement("div");d.className="login-bg";d.id="login";
+  d.innerHTML='<form class="login" id="loginForm"><img src="/assets/m2d-logo.png" alt="M2D"><h2>Handover Desk</h2><div class="f"><label for="pass">Team passcode</label><input id="pass" type="password" autocomplete="current-password" required></div><p class="er" id="loginErr" aria-live="polite"></p><button class="btn primary" type="submit">Open desk</button></form>';
+  document.body.appendChild(d);$("#pass").focus();
+  $("#loginForm").addEventListener("submit",function(e){
+    e.preventDefault();var b=e.target.querySelector("button");b.disabled=true;$("#loginErr").textContent="";
+    fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({passcode:$("#pass").value}),credentials:"same-origin"})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+      .then(function(x){b.disabled=false;if(x.ok){d.remove();load()}else{$("#loginErr").textContent=x.j.error||"That passcode didn’t work.";$("#pass").select()}},
+            function(){b.disabled=false;$("#loginErr").textContent="Can’t reach the server. Check your connection."});
+  });
+}
+function load(){
+  if($("#login"))return Promise.resolve();
+  return Promise.all([api("GET","/handovers"),api("GET","/settings")]).then(function(r){
+    all=r[0]||[];settings=r[1]||{};renderList();
+    if(curId){var h=all.filter(function(x){return x.id===curId})[0];if(!h){if(!Object.keys(pending).length&&!inflight){toast("This pack was deleted by someone else.");closeH()}}else applyRemote(h)}
+  },function(e){if(e&&e.code!=="auth"&&!all.length)$("#list").innerHTML='<div class="empty">Couldn’t load customers. Check your connection; the page will try again.</div>'});
+}
+$("#outBtn").addEventListener("click",function(){flush().then(function(){return fetch("/api/logout",{method:"POST",credentials:"same-origin"})}).then(function(){location.reload()},function(){location.reload()})});
+load();
+setInterval(function(){if(!document.hidden)load()},20000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)load()});
+})();
+</script>
+</body>
+</html>

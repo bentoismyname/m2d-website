@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Appliance Checklist 2 · M2D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Go room by room, tick the appliances you're buying and add model numbers and sizes for your designer.">
+<meta name="theme-color" content="#e37f32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: one column, step-by-step. Sticky step rail (rooms + review), one room per screen as a ticked list, sizes open under a row once ticked, review page at the end. */
+:root {
+  --bg: #f6f3ef; --card: #ffffff; --soft: #f1ebe4; --line: #e7ded4;
+  --ink: #1f1813; --ink-2: #5e5248; --ink-3: #94877b;
+  --orange: #e37f32; --orange-ink: #a3521a; --brown: #6b4a14; --tint: #fcebdc;
+  --ok: #2f7d4f; --ok-tint: #e1f1e7; --warn: #a8641a; --warn-tint: #fbefd9; --danger: #b3422d;
+  --shadow: 0 1px 2px rgba(60,40,20,.06), 0 4px 14px rgba(60,40,20,.05);
+  --f: "Montserrat", "Gotham", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15110e; --card: #1f1915; --soft: #2a221c; --line: #352b23;
+  --ink: #f4ede6; --ink-2: #c9bbad; --ink-3: #9a8b7d;
+  --orange: #ef9452; --orange-ink: #f2a66c; --brown: #d9b27a; --tint: #3a2516;
+  --ok: #72c895; --ok-tint: #173326; --warn: #f0b768; --warn-tint: #3a2b14; --danger: #e8735c;
+  --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15110e; --card: #1f1915; --soft: #2a221c; --line: #352b23;
+  --ink: #f4ede6; --ink-2: #c9bbad; --ink-3: #9a8b7d;
+  --orange: #ef9452; --orange-ink: #f2a66c; --brown: #d9b27a; --tint: #3a2516;
+  --ok: #72c895; --ok-tint: #173326; --warn: #f0b768; --warn-tint: #3a2b14; --danger: #e8735c;
+  --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.col { max-width: 720px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header { padding-block: 28px 8px; }
+.brand { font-size: 11.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--brown); }
+.brand b { color: var(--orange); }
+h1 { margin: 10px 0 0; font-size: clamp(28px, 6vw, 38px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.05; text-wrap: balance; }
+.sub { margin: 6px 0 0; color: var(--ink-2); max-width: 48ch; }
+
+/* step rail */
+.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; background: var(--bg); }
+.rail .col { padding-block: 12px 10px; }
+.steps { display: grid; gap: 6px; }
+.step { border: 0; background: none; padding: 0; cursor: pointer; display: grid; gap: 6px; text-align: left; min-width: 0; }
+.step .bar { height: 5px; border-radius: 3px; background: var(--line); transition: background .15s; }
+.step .lb { font-size: 11.5px; font-weight: 700; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 5px; align-items: center; }
+.step .lb .n { font-variant-numeric: tabular-nums; }
+.step.done .bar { background: var(--ok); }
+.step.done .lb { color: var(--ok); }
+.step.cur .bar { background: var(--orange); }
+.step.cur .lb { color: var(--ink); }
+.step.part .bar { background: linear-gradient(90deg, var(--orange) 50%, var(--line) 50%); }
+
+/* room page */
+main { padding-block: 10px 130px; }
+.ptitle { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 6px 0 12px; }
+.ptitle h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.015em; }
+.ptitle .meta { font-size: 13px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--orange-ink); }
+
+.list { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+.row { border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.row.on { background: linear-gradient(var(--tint), var(--tint)) left / 3px 100% no-repeat, var(--card); }
+.rhead { display: grid; grid-template-columns: 26px 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px 16px; cursor: pointer; }
+.tick { position: relative; width: 26px; height: 26px; }
+.tick input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.tick i { position: absolute; inset: 0; border-radius: 8px; border: 2px solid var(--line); background: var(--card); transition: background .15s, border-color .15s; }
+.tick input:checked + i { background: var(--orange); border-color: var(--orange); }
+.tick input:checked + i::after { content: ""; position: absolute; left: 7px; top: 2.5px; width: 7px; height: 13px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+.tick input:focus-visible + i { outline: 2px solid var(--orange); outline-offset: 2px; }
+.ico { width: 34px; height: 34px; border-radius: 10px; background: var(--soft); color: var(--ink-2); display: grid; place-items: center; }
+.ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.row.on .ico { color: var(--orange-ink); background: var(--card); }
+.nm { min-width: 0; display: grid; gap: 1px; }
+.nm strong { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+.nm span { font-size: 12.5px; font-weight: 600; color: var(--ink-3); overflow-wrap: anywhere; }
+.nm input { border: 0; border-bottom: 1.5px dashed var(--line); background: transparent; padding: 2px 0; font-weight: 700; font-size: 15px; width: 100%; min-width: 0; }
+.nm input:focus { outline: none; border-bottom-color: var(--orange); }
+.chip { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chip.ok { background: var(--ok-tint); color: var(--ok); }
+.chip.need { background: var(--warn-tint); color: var(--warn); }
+
+.rbody { padding: 0 16px 16px 88px; display: grid; gap: 10px; }
+@media (max-width: 520px) { .rbody { padding-left: 16px; } }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 700; color: var(--ink-2); cursor: pointer; }
+.seg button:hover { border-color: var(--ink-3); color: var(--ink); }
+.seg button[aria-checked="true"], .seg button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.seg.multi button[aria-pressed="true"]::before { content: "✓ "; }
+.hint { font-size: 12px; color: var(--ink-3); font-weight: 600; margin-top: -4px; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.fields label { display: grid; gap: 4px; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; min-width: 0; }
+.fields input { width: 100%; min-width: 0; border: 1.5px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px; font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
+.fields input::placeholder { color: var(--ink-3); font-weight: 500; opacity: .6; }
+.fields input:focus { outline: none; border-color: var(--orange); background: var(--card); }
+.fields .unit { font-weight: 600; letter-spacing: 0; text-transform: none; }
+.rm { justify-self: start; border: 0; background: none; color: var(--ink-3); font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 0; text-decoration: underline; text-underline-offset: 2px; }
+.rm:hover { color: var(--danger); }
+.add { width: 100%; border: 0; border-top: 1px dashed var(--line); background: transparent; padding: 14px 16px; color: var(--ink-2); font-weight: 700; cursor: pointer; text-align: left; display: flex; gap: 12px; align-items: center; }
+.add span.p { width: 26px; height: 26px; border-radius: 8px; border: 2px dashed var(--line); display: grid; place-items: center; color: var(--ink-3); }
+.add:hover { color: var(--orange-ink); }
+
+/* review */
+.sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.sum div { background: var(--card); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow); }
+.sum .n { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.sum .l { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.sum .ok .n { color: var(--ok); }
+.sum .need .n { color: var(--warn); }
+.group { margin-top: 18px; }
+.group-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.group-h h3 { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); }
+.link { border: 0; background: none; color: var(--orange-ink); font-weight: 700; font-size: 13px; cursor: pointer; padding: 4px 0; }
+.rv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); }
+.rv:first-child { border-top: 0; }
+.rv strong { font-weight: 700; overflow-wrap: anywhere; }
+.rv .dt { grid-column: 1; font-size: 12.5px; color: var(--ink-3); font-weight: 600; overflow-wrap: anywhere; }
+.rv .sz { grid-row: 1 / span 2; grid-column: 2; text-align: right; font-weight: 700; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.empty { padding: 14px 16px; color: var(--ink-3); font-size: 13.5px; font-weight: 600; }
+.note { margin-top: 16px; font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+
+/* bottom bar */
+.foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding-top: 14px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--bg) 72%, transparent); }
+.foot .col { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.foot .sp { flex: 1; }
+.btn { border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 700; font-size: 14.5px; cursor: pointer; background: var(--card); color: var(--ink); box-shadow: var(--shadow); white-space: nowrap; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-right: 8px; vertical-align: 1px; }
+.btn.ghost { background: transparent; box-shadow: none; color: var(--ink-2); padding-inline: 10px; }
+.confirm { display: flex; gap: 6px; align-items: center; font-size: 13.5px; font-weight: 600; color: var(--ink-2); background: var(--card); border-radius: 999px; padding: 4px 4px 4px 14px; box-shadow: var(--shadow); }
+.confirm .btn { padding: 8px 14px; box-shadow: none; }
+.confirm .btn.danger { background: var(--danger); color: #fff; }
+@media (max-width: 520px) { .foot .btn.primary { flex: 1; } .foot .sp { display: none; } }
+
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 6; max-width: calc(100vw - 32px); text-align: center; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+
+/* when-to-decide tags */
+.tag { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; padding: 2px 7px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
+.tag.tile { background: var(--brown); color: var(--bg); }
+.tag.carp { background: var(--tint); color: var(--orange-ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; font-weight: 600; color: var(--ink-3); margin: -4px 0 12px; }
+.legend .tag { margin-left: 0; margin-right: 4px; }
+.fhint { font-size: 12px; color: var(--ink-3); font-weight: 600; margin: -2px 0 -4px; }
+.roomact { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+.roomact .link.danger { color: var(--danger); }
+.who { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 14px; }
+.who h3 { margin: 0 0 10px; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); }
+.alert { background: var(--warn-tint); color: var(--warn); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; font-weight: 700; margin-bottom: 14px; }
+.who .fields { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+@media (max-width: 520px) { .step .lb { display: none; } .step { padding-block: 6px; } .step .bar { height: 6px; } }
+
+/* print: review list only */
+@media print {
+  body { background: #fff; color: #000; }
+  .rail, .foot, .toast, .sum, .link { display: none !important; }
+  .list { box-shadow: none; border: 1px solid #bbb; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+
+<header class="col">
+  <div class="brand"><b>M2D</b> Interior Design &amp; Consultancy</div>
+  <h1>Appliance Checklist</h1>
+  <p class="sub">Go room by room. Tick what you're buying and add the model number. Sizes help too, if you have them.</p>
+</header>
+
+<nav class="rail" aria-label="Steps"><div class="col"><div class="steps" id="steps"></div></div></nav>
+
+<main class="col" id="main"></main>
+
+<div class="foot"><div class="col" id="foot"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+const I = {
+  hob: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="2.2"/><circle cx="15.5" cy="9.5" r="2.2"/><circle cx="8.5" cy="15.5" r="1.6"/><circle cx="15.5" cy="15.5" r="1.6"/>',
+  hood: '<path d="M10 3h4v6H10z"/><path d="M10 9 4 15h16l-6-6"/><path d="M4 15v2h16v-2"/><path d="M9 20l-1 1M15 20l1 1M12 20v1.5"/>',
+  oven: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18"/><rect x="6.5" y="11" width="11" height="7" rx="1"/><circle cx="7" cy="5.5" r=".6"/><circle cx="10" cy="5.5" r=".6"/>',
+  microwave: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><rect x="5" y="8" width="10" height="8" rx="1"/><path d="M18 8.5v1M18 12v1M18 15.5v.5"/>',
+  fridge: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M5 10h14"/><path d="M8 5.5v2M8 12.5v3"/>',
+  dishwasher: '<rect x="3.5" y="3" width="17" height="18" rx="2"/><path d="M3.5 7.5h17"/><circle cx="7" cy="5.3" r=".6"/><path d="M8 12h8M8 15h8M8 18h8"/>',
+  sink: '<path d="M3 12h18l-1.5 5.5a2 2 0 0 1-2 1.5h-11a2 2 0 0 1-2-1.5z"/><path d="M12 12V6.5a2.5 2.5 0 0 1 5 0V8"/><path d="M10 9.5h4"/>',
+  tap: '<path d="M5 8h9a4 4 0 0 1 4 4v2"/><path d="M5 6v4"/><path d="M9 8V5M7.5 5h3"/><path d="M18 17v1M18 20.5v.5"/>',
+  washer: '<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 7h16"/><circle cx="12" cy="14" r="4.5"/><path d="M9.5 14.5c1 .8 2 .8 3 0s2-.8 3 0"/><circle cx="7" cy="4.8" r=".6"/>',
+  dryer: '<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 7h16"/><circle cx="12" cy="14" r="4.5"/><circle cx="12" cy="14" r="1.6"/><path d="M15 4.8h2"/>',
+  wc: '<path d="M7 3h5v7H7z"/><path d="M5 10h12a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9"/><path d="M5 10v2a5 5 0 0 0 4 4.9V21h5v-3"/>',
+  basin: '<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M12 11V5.5a2 2 0 0 1 4 0"/><path d="M11 20v1.5h2V20"/>',
+  shower: '<path d="M5 21V8a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4"/><path d="M11 8h8"/><path d="M12.5 11.5l-.5 1M15 11.5v1M17.5 11.5l.5 1M12 15l-.5 1M15 15v1M18 15l.5 1"/>',
+  mirror: '<rect x="4" y="3" width="16" height="15" rx="2"/><path d="M12 3v15"/><path d="M9.5 9.5v2M14.5 9.5v2"/><path d="M7 21h10"/>',
+  heater: '<rect x="6" y="2.5" width="12" height="16" rx="6"/><path d="M10 18.5V21M14 18.5V21"/><path d="M12 7.5c-1.4 1.6-2 2.7-2 3.7a2 2 0 0 0 4 0c0-1-.6-2.1-2-3.7z"/>',
+  aircon: '<rect x="2.5" y="5" width="19" height="8" rx="2"/><path d="M5 10.5h14"/><path d="M8 16c0 1.5-1 2-1 3.5M12 16v3.5M16 16c0 1.5 1 2 1 3.5"/>',
+  tv: '<rect x="2.5" y="4" width="19" height="12.5" rx="1.5"/><path d="M8 20.5h8M12 16.5v4"/>',
+  rack: '<path d="M3 4h18"/><path d="M7 4v3M17 4v3"/><path d="M4 7h16M4 10h16"/><path d="M7 10v3.5l-2 6.5h5l-1.5-6.5M15 10v2l-1.5 7h4L16 12"/>',
+  bidet: '<path d="M4 20c3 0 4-2 4-5V9"/><rect x="6" y="4" width="4" height="5" rx="1"/><path d="M10 5.5h3.5a1.5 1.5 0 0 1 0 3H10"/><path d="M17 5.5l2.5-1.5M17.5 7h3M17 8.5l2.5 1.5"/>',
+  wine: '<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 16h16"/><path d="M10.5 5h3v2.5c1.2.6 1.5 1.5 1.5 2.5v3.5h-6V10c0-1 .3-1.9 1.5-2.5z"/><path d="M8 18.5h8"/>',
+  soundbar: '<rect x="2" y="9" width="20" height="5.5" rx="2.5"/><path d="M6 11.75h.01M9 11.75h.01M15 11.75h.01M18 11.75h.01"/><path d="M12 18v2M9 20h6"/>',
+  robot: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><path d="M8.5 4.8a9 9 0 0 1 7 0"/><circle cx="12" cy="12" r="1"/>',
+  ptrack: '<rect x="2" y="9" width="20" height="6" rx="1.5"/><rect x="5" y="10.5" width="4" height="3" rx=".8"/><rect x="15" y="10.5" width="4" height="3" rx=".8"/><path d="M6.5 12h1M16.5 12h1"/>',
+  bathtub: '<path d="M3 11h18v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6z"/><path d="M6 11V5.5A2.5 2.5 0 0 1 10.5 4"/><path d="M7 19l-1 2M17 19l1 2"/>',
+  water: '<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 13h12"/><path d="M12 5.5c-1.3 1.5-2 2.6-2 3.5a2 2 0 0 0 4 0c0-.9-.7-2-2-3.5z"/><path d="M10 16h4M12 16v2"/><path d="M9 21.5h6"/>',
+  item: '<path d="M12 3 20.5 7.5v9L12 21l-8.5-4.5v-9z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/>'
+};
+
+// Item list, same as Checklist 1. Keep each k unchanged once the page is live.
+// when: "tile" = decide before tiling (plumbing points), "carp" = decide before carpentry (cabinet sizes, cut-outs).
+const BUILT = ["Built-in", "Freestanding"];
+const SHOWER = ["Rain shower", "Hand shower", "Spout", "All-in-1 set"];
+const ALL_IN_ONE = "All-in-1 set";
+const it = (k, name, icon, opts, o = {}) => ({ k, name, icon: icon || k, opts: opts || null, multi: !!o.multi, extras: o.extras || [], length: !!o.length, when: o.when || "", mount: o.mount || null });
+const KITCHEN = [
+  it("hob", "Hob", "hob", ["Induction", "Gas", "Ceramic"], { when: "carp" }),
+  it("hood", "Cooker hood", "hood", ["Chimney", "Slim", "Built-in"], { when: "carp" }),
+  it("oven", "Oven", "oven", BUILT, { when: "carp" }),
+  it("microwave", "Microwave", "microwave", BUILT, { when: "carp" }),
+  it("fridge", "Fridge", "fridge", BUILT, { when: "carp" }),
+  it("dishwasher", "Dishwasher", "dishwasher", BUILT, { when: "carp" }),
+  it("water", "Water dispenser", "water", ["Under-sink", "Countertop", "Built-in"], { when: "carp" }),
+  it("wine", "Wine chiller", "wine", BUILT, { when: "carp" }),
+  it("ptrack", "Power track", "ptrack", ["Built-in", "Surface"], { length: true, when: "carp" }),
+  it("sink", "Kitchen sink", "sink", ["Top mount", "Under mount"], { when: "carp" }),
+  it("ktap", "Kitchen tap", "tap", ["Hot & cold", "Cold only"])];
+const LAUNDRY = [
+  it("washer", "Washing machine", "washer", null, { when: "carp" }),
+  it("dryer", "Dryer", "dryer", null, { when: "carp" }),
+  it("rack", "Laundry rack", "rack", ["Manual ceiling", "Automated", "Wall-mounted"], { when: "carp" }),
+  it("basin", "Laundry basin", "sink", ["Hot & cold", "Cold only"], { when: "carp" })];
+const BATH = [
+  it("wc", "WC", "wc", ["Standard", "Built-in bidet", "Electronic"], { when: "tile", mount: ["Wall mounted", "Free standing"] }),
+  it("bidet", "Bidet spray"),
+  it("basin", "Basin", "basin", ["Top mount", "Under mount"], { when: "carp" }),
+  it("btap", "Basin tap", "tap", ["Hot & cold", "Cold only"]),
+  it("shower", "Shower set", "shower", SHOWER, { multi: true, when: "tile" }),
+  it("bathtub", "Bathtub", "bathtub", ["Freestanding", "Built-in"], { when: "tile" }),
+  it("mirror", "Mirror cabinet", "mirror", null, { when: "carp" })];
+const OTHERS = [
+  it("heater", "Water heater", "heater", ["Storage", "Gas", "Multi-point instant"], { when: "tile" }),
+  it("aircon", "Aircon fan coil", "aircon", null, { when: "carp", extras: [{ f: "btu", label: "Capacity (BTU)", unit: "BTU", ph: "e.g. 12000" }] }),
+  it("tv", "TV", "tv", ["Ports on TV", "Separate port box"], { when: "carp", extras: [{ f: "inch", label: "Screen size (inches)", unit: "-inch", ph: "e.g. 65" }] }),
+  it("soundbar", "Sound bar", "soundbar", ["With subwoofer", "No subwoofer"], { when: "carp" }),
+  it("robot", "Robot vacuum", "robot", ["Self-sufficient dock", "Manual top-up"], { when: "carp" }),
+  it("ptrack", "Power track", "ptrack", ["Built-in", "Surface"], { length: true, when: "carp" })];
+const WHEN = { tile: "Before tiling", carp: "Before carpentry" };
+const DEFAULT_BATHS = [{ id: "bath1", name: "Master bath" }, { id: "bath2", name: "Common bath" }];
+const MAX_BATHS = 5;
+const CAN_PRINT = (() => { try { return window.self === window.top; } catch (e) { return false; } })();
+
+const KEY = "m2d-appliance-checklist-2";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fresh = () => ({ items: {}, custom: {}, baths: DEFAULT_BATHS.map(b => ({ ...b })), who: { name: "", addr: "" }, step: 0 });
+let state = fresh();
+try {
+  const s = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (s && typeof s === "object") state = { items: s.items || {}, custom: s.custom || {}, baths: Array.isArray(s.baths) && s.baths.length ? s.baths : fresh().baths, who: s.who || { name: "", addr: "" }, step: Number.isInteger(s.step) ? s.step : 0 };
+} catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+const rooms = () => [{ id: "kitchen", name: "Kitchen", items: KITCHEN }, { id: "laundry", name: "Laundry", items: LAUNDRY }]
+  .concat(state.baths.map(b => ({ id: b.id, name: b.name, items: BATH, bath: true })))
+  .concat([{ id: "others", name: "Others", items: OTHERS }]);
+const reviewIdx = () => rooms().length;
+if (state.step < 0 || state.step > reviewIdx()) state.step = 0;
+
+const rowsFor = room => room.items.map(x => ({ ...x, id: room.id + "_" + x.k, custom: false }))
+  .concat((state.custom[room.id] || []).map(c => ({ id: c.id, name: c.name, icon: "item", opts: null, multi: false, extras: [], length: false, when: "", custom: true })));
+const d = id => state.items[id] || {};
+const isSized = (v, x) => x.length ? !!v.w : !!(v.w && v.d && v.h);
+const hasModel = v => !!(v.model && v.model.trim());
+const isDone = (v, x) => hasModel(v) || isSized(v, x);
+const partsOf = v => (v.type || "").split(" + ").filter(Boolean);
+const roomById = id => rooms().find(r => id.startsWith(r.id + "_"));
+const itemById = id => { const r = roomById(id); return r ? rowsFor(r).find(x => x.id === id) : null; };
+const product = v => [v.brand, v.model].map(s => (s || "").trim()).filter(Boolean).join(" ");
+const details = (x, v) => [x.mount ? v.mount : "", v.type, product(v)].filter(Boolean).concat(x.extras.map(e => v[e.f] ? (e.unit.startsWith("-") ? v[e.f] + e.unit : v[e.f] + " " + e.unit) : "")).filter(Boolean);
+const dims = (v, x) => x.length ? (v.w ? `${v.w} mm long` : "") : isSized(v, x) ? `${v.w} × ${v.d} × ${v.h}` : "";
+const buying = room => rowsFor(room).filter(x => d(x.id).buy);
+const tagHTML = x => x.when ? `<span class="tag ${x.when}">${WHEN[x.when]}</span>` : "";
+
+function chipHTML(x) {
+  const v = d(x.id);
+  if (!v.buy) return "";
+  const s = dims(v, x);
+  if (s) return `<span class="chip ok">${esc(s)}</span>`;
+  if (hasModel(v)) return `<span class="chip ok">Model added</span>`;
+  return `<span class="chip need">Details needed</span>`;
+}
+function subText(x) {
+  const v = d(x.id);
+  if (!v.buy) return x.opts ? x.opts.slice(0, 3).join(" / ") : "Tick if buying";
+  return details(x, v).join(" · ") || "Add the model number below";
+}
+
+function rowHTML(x) {
+  const v = d(x.id), on = !!v.buy;
+  const num = (k, l, ph = "mm") => `<label>${l}<input id="${x.id}_${k}" data-id="${x.id}" data-f="${k}" inputmode="numeric" placeholder="${ph}" value="${esc(v[k])}"></label>`;
+  const txt = (k, l, ph) => `<label>${l}<input id="${x.id}_${k}" data-id="${x.id}" data-f="${k}" data-text="1" autocomplete="off" placeholder="${ph}" value="${esc(v[k])}"></label>`;
+  let body = "";
+  if (on) {
+    let typ = "";
+    if (x.opts) typ = x.multi
+      ? `<div class="seg multi" role="group" aria-label="${esc(x.name)} parts">${x.opts.map(o => `<button type="button" aria-pressed="${partsOf(v).includes(o)}" data-type="${x.id}" data-val="${esc(o)}" data-multi="1">${esc(o)}</button>`).join("")}</div><div class="hint">Pick each part you're getting, or the all-in-1 set.</div>`
+      : `<div class="seg" role="radiogroup" aria-label="${esc(x.name)} type">${x.opts.map(o => `<button type="button" role="radio" aria-checked="${v.type === o}" data-type="${x.id}" data-val="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+    if (x.mount) typ = `<div class="seg" role="radiogroup" aria-label="${esc(x.name)} mounting">${x.mount.map(o => `<button type="button" role="radio" aria-checked="${v.mount === o}" data-type="${x.id}" data-field="mount" data-val="${esc(o)}">${esc(o)}</button>`).join("")}</div>` + typ;
+    const model = `<div class="fields">${txt("brand", "Brand", "e.g. Bosch")}${txt("model", "Model no.", "From the box or receipt")}</div>`;
+    const ex = x.extras.length ? `<div class="fields">${x.extras.map(e => num(e.f, esc(e.label), e.ph)).join("")}</div>` : "";
+    const size = x.length
+      ? `<div class="fields">${num("w", 'Track length <span class="unit">(mm)</span>', "e.g. 1200")}</div>`
+      : `<div class="fhint">Size, if you have it. The model number is enough.</div><div class="fields">${num("w", 'Width <span class="unit">mm</span>')}${num("d", 'Depth <span class="unit">mm</span>')}${num("h", 'Height <span class="unit">mm</span>')}</div>`;
+    body = `<div class="rbody">${typ}${model}${ex}${size}${x.custom ? `<button class="rm" type="button" data-del="${x.id}">Remove item</button>` : ""}</div>`;
+  }
+  return `<div class="row${on ? " on" : ""}">
+    <div class="rhead" data-toggle="${x.id}">
+      <span class="tick"><input type="checkbox" id="${x.id}_buy" data-id="${x.id}" data-f="buy" ${on ? "checked" : ""} aria-label="Buying ${esc(x.name || "this item")}"><i></i></span>
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">${I[x.icon] || I.item}</svg></span>
+      <span class="nm">${x.custom ? `<input id="${x.id}_name" data-id="${x.id}" data-f="name" value="${esc(x.name)}" placeholder="Item name" aria-label="Item name">` : `<strong>${esc(x.name)}${tagHTML(x)}</strong>`}<span id="${x.id}_sub">${esc(subText(x))}</span></span>
+      <span id="${x.id}_chip">${chipHTML(x)}</span>
+    </div>${body}</div>`;
+}
+
+function renderSteps() {
+  const R = rooms(), rv = R.length;
+  $("#steps").style.gridTemplateColumns = `repeat(${rv + 1}, minmax(0, 1fr))`;
+  $("#steps").innerHTML = R.map((r, i) => {
+    const b = buying(r), done = b.filter(x => isDone(d(x.id), x)).length;
+    const cls = i === state.step ? "cur" : (b.length && done === b.length ? "done" : b.length ? "part" : "");
+    return `<button class="step ${cls}" type="button" data-goto="${i}" title="${esc(r.name)}" aria-label="${esc(r.name)}" aria-current="${i === state.step ? "step" : "false"}"><span class="bar"></span><span class="lb">${esc(r.name)}${b.length ? ` <span class="n">${b.length}</span>` : ""}</span></button>`;
+  }).join("") + `<button class="step${state.step === rv ? " cur" : ""}" type="button" data-goto="${rv}" title="Review" aria-label="Review" aria-current="${state.step === rv ? "step" : "false"}"><span class="bar"></span><span class="lb">Review</span></button>`;
+}
+
+let removeArmed = null;
+function renderRoom() {
+  const R = rooms(), room = R[state.step], b = buying(room);
+  const lastBath = room.bath && state.baths[state.baths.length - 1].id === room.id;
+  const acts = room.bath ? `<div class="roomact">${lastBath && state.baths.length < MAX_BATHS ? `<button class="link" type="button" id="addBath">+ Add another bathroom</button>` : ""}${state.baths.length > 1 ? `<button class="link danger" type="button" data-rmbath="${room.id}">${removeArmed === room.id ? "Tap again to remove this bathroom" : "Remove this bathroom"}</button>` : ""}</div>` : "";
+  $("#main").innerHTML = `<div class="ptitle"><div><div class="eyebrow">Step ${state.step + 1} of ${R.length + 1}</div><h2>${esc(room.name)}</h2></div><span class="meta">${b.length ? `${b.length} ticked` : "Nothing ticked yet"}</span></div>
+  ${room.items.some(x => x.when) ? `<div class="legend">${[...new Set(room.items.map(x => x.when).filter(Boolean))].sort((a, z) => a === "tile" ? -1 : 1).map(w => `<span>${`<span class="tag ${w}">${WHEN[w]}</span>`}${w === "tile" ? "plumbing goes in first" : "cabinets are built to fit"}</span>`).join("")}</div>` : ""}
+  <div class="list">${rowsFor(room).map(rowHTML).join("")}<button class="add" type="button" data-add="${room.id}"><span class="p">+</span>Add something not listed</button></div>${acts}`;
+}
+
+function renderReview() {
+  const R = rooms(), all = R.flatMap(buying), done = all.filter(x => isDone(d(x.id), x)).length;
+  const early = all.filter(x => x.when && !isDone(d(x.id), x)).length;
+  $("#main").innerHTML = `<div class="ptitle"><div><div class="eyebrow">Step ${R.length + 1} of ${R.length + 1}</div><h2>Review your list</h2></div></div>
+  <div class="who"><h3>Your details</h3><div class="fields"><label>Name<input id="who_name" data-who="name" autocomplete="name" placeholder="e.g. Mr & Mrs Tan" value="${esc(state.who.name)}"></label><label>Address<input id="who_addr" data-who="addr" autocomplete="street-address" placeholder="Block, street, unit" value="${esc(state.who.addr)}"></label></div></div>
+  <div class="sum"><div><div class="n">${all.length}</div><div class="l">buying</div></div><div class="ok"><div class="n">${done}</div><div class="l">details done</div></div><div class="need"><div class="n">${all.length - done}</div><div class="l">still needed</div></div></div>
+  ${early ? `<div class="alert">${early} item${early > 1 ? "s" : ""} tagged before tiling or carpentry still need${early > 1 ? "" : "s"} a model number or size. Do these first.</div>` : ""}
+  ${R.map((r, i) => { const b = buying(r); return `<section class="group"><div class="group-h"><h3>${esc(r.name)}</h3><button class="link" type="button" data-goto="${i}">Edit</button></div><div class="list">${b.length ? b.map(x => { const v = d(x.id), dt = details(x, v); return `<div class="rv"><strong>${esc(x.name || "Item")}${tagHTML(x)}</strong>${dt.length ? `<span class="dt">${esc(dt.join(" · "))}</span>` : ""}<span class="sz">${chipHTML(x)}</span></div>`; }).join("") : `<div class="empty">Nothing ticked</div>`}</div></section>`; }).join("")}
+  <p class="note">Sizes are width × depth × height in mm. Your answers stay on this device until you copy them to your designer.</p>`;
+}
+
+function renderFoot() {
+  const s = state.step, rv = reviewIdx(), R = rooms();
+  const back = s > 0 ? `<button class="btn ghost" type="button" data-goto="${s - 1}">← Back</button>` : "";
+  if (s < rv) {
+    const next = s + 1 < rv ? `Next: ${esc(R[s + 1].name)}` : "Review list";
+    $("#foot").innerHTML = `${back}<span class="sp"></span><button class="btn primary" type="button" data-goto="${s + 1}"><span class="dot"></span>${next} →</button>`;
+  } else {
+    $("#foot").innerHTML = `${back}<span id="resetWrap"></span><span class="sp"></span>${CAN_PRINT ? '<button class="btn" type="button" id="printBtn">Print</button>' : ""}<button class="btn primary" type="button" id="copyBtn"><span class="dot"></span>Copy list for designer</button>`;
+    resetIdle();
+  }
+}
+function render() { renderSteps(); state.step === reviewIdx() ? renderReview() : renderRoom(); renderFoot(); }
+function go(i) { removeArmed = null; state.step = i; save(); render(); window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+
+let saveT;
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.who) { state.who[t.dataset.who] = t.value.slice(0, 120); clearTimeout(saveT); saveT = setTimeout(save, 250); return; }
+  const { id, f } = t.dataset || {};
+  if (!id || !f || f === "buy") return;
+  if (f === "name") {
+    for (const list of Object.values(state.custom)) { const c = list.find(x => x.id === id); if (c) c.name = t.value; }
+  } else {
+    const clean = t.dataset.text ? t.value.slice(0, 60) : t.value.replace(/[^\d.]/g, "");
+    if (clean !== t.value) t.value = clean;
+    state.items[id] = { ...d(id), [f]: clean };
+    const x = itemById(id);
+    if (x) { document.getElementById(id + "_chip").innerHTML = chipHTML(x); document.getElementById(id + "_sub").textContent = subText(x); }
+    renderSteps();
+  }
+  clearTimeout(saveT); saveT = setTimeout(save, 250);
+});
+document.addEventListener("change", e => {
+  const { id, f } = e.target.dataset || {};
+  if (f !== "buy") return;
+  state.items[id] = { ...d(id), buy: e.target.checked };
+  save(); renderSteps(); renderRoom();
+  document.getElementById(id + "_buy")?.focus({ preventScroll: true });
+});
+document.addEventListener("click", e => {
+  const ty = e.target.closest("[data-type]");
+  if (ty) {
+    const id = ty.dataset.type, val = ty.dataset.val, x = itemById(id);
+    if (ty.dataset.multi) {
+      let parts = partsOf(d(id));
+      if (parts.includes(val)) parts = parts.filter(p => p !== val);
+      else if (val === ALL_IN_ONE) parts = [ALL_IN_ONE];
+      else parts = parts.filter(p => p !== ALL_IN_ONE).concat(val);
+      state.items[id] = { ...d(id), type: x.opts.filter(o => parts.includes(o)).join(" + ") };
+    } else { const fl = ty.dataset.field || "type"; state.items[id] = { ...d(id), [fl]: d(id)[fl] === val ? "" : val }; }
+    save(); renderRoom();
+    document.querySelector(`[data-type="${id}"][data-val="${CSS.escape(val)}"]${ty.dataset.field ? `[data-field="${ty.dataset.field}"]` : ""}`)?.focus({ preventScroll: true });
+    return;
+  }
+  const g = e.target.closest("[data-goto]");
+  if (g) { go(+g.dataset.goto); return; }
+  const top = e.target.closest("[data-toggle]");
+  if (top && !e.target.closest(".tick") && !e.target.closest("input")) { document.getElementById(top.dataset.toggle + "_buy")?.click(); return; }
+  if (e.target.closest("#addBath")) {
+    const n = state.baths.length + 1;
+    state.baths.push({ id: "bath" + Date.now().toString(36), name: "Bathroom " + n });
+    go(state.step + 1); toast("Bathroom " + n + " added");
+    return;
+  }
+  const rb = e.target.closest("[data-rmbath]");
+  if (rb) {
+    const id = rb.dataset.rmbath;
+    if (removeArmed !== id) { removeArmed = id; renderRoom(); return; }
+    const name = state.baths.find(b => b.id === id)?.name || "Bathroom";
+    state.baths = state.baths.filter(b => b.id !== id);
+    for (const k of Object.keys(state.items)) if (k.startsWith(id + "_")) delete state.items[k];
+    delete state.custom[id];
+    go(Math.max(0, state.step - 1)); toast(name + " removed");
+    return;
+  }
+  const add = e.target.closest("[data-add]");
+  if (add) {
+    const room = add.dataset.add, id = room + "_c" + Date.now().toString(36);
+    (state.custom[room] = state.custom[room] || []).push({ id, name: "" });
+    state.items[id] = { buy: true };
+    save(); render(); document.getElementById(id + "_name")?.focus();
+    return;
+  }
+  const del = e.target.closest("[data-del]");
+  if (del) {
+    const id = del.dataset.del;
+    for (const k of Object.keys(state.custom)) state.custom[k] = state.custom[k].filter(c => c.id !== id);
+    delete state.items[id]; save(); render(); toast("Item removed");
+    return;
+  }
+  if (e.target.closest("#copyBtn")) copyList();
+  if (e.target.closest("#printBtn")) { if (!rooms().some(r => buying(r).length)) toast("Tick at least one item first"); else window.print(); }
+});
+
+function listText() {
+  const groups = rooms().map(r => ({ room: r.name, rows: buying(r) })).filter(g => g.rows.length);
+  if (!groups.length) return "";
+  const lines = ["Appliance checklist"];
+  if (state.who.name.trim()) lines.push(state.who.name.trim());
+  if (state.who.addr.trim()) lines.push(state.who.addr.trim());
+  lines.push("Sizes: W × D × H in mm");
+  groups.forEach(g => {
+    lines.push("", g.room.toUpperCase());
+    g.rows.forEach(x => {
+      const v = d(x.id), dt = details(x, v).map((s, i) => i === 0 && (v.type || v.mount) ? s.toLowerCase() : s);
+      const size = dims(v, x) || (hasModel(v) ? "size from model" : "details needed");
+      lines.push(`• ${x.name || "Item"}${dt.length ? " (" + dt.join(", ") + ")" : ""}: ${size}`);
+    });
+  });
+  return lines.join("\n");
+}
+async function copyList() {
+  save();
+  const text = listText();
+  if (!text) { toast("Tick at least one item first"); return; }
+  const missing = rooms().flatMap(buying).filter(x => !isDone(d(x.id), x)).length;
+  const ok = missing ? `Copied. ${missing} item${missing > 1 ? "s" : ""} still marked "details needed".` : "Copied. Paste into WhatsApp or email.";
+  try { await navigator.clipboard.writeText(text); toast(ok); }
+  catch (e) {
+    const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast(ok); } catch (er) { toast("Couldn't copy on this browser"); }
+    ta.remove();
+  }
+}
+
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2400); }
+
+function resetIdle() {
+  const w = $("#resetWrap"); if (!w) return;
+  w.innerHTML = '<button class="btn ghost" type="button" id="resetBtn">Clear</button>';
+  $("#resetBtn").onclick = () => {
+    w.innerHTML = '<span class="confirm">Clear all? <button class="btn danger" type="button" id="resetYes">Clear</button><button class="btn" type="button" id="resetNo">Keep</button></span>';
+    $("#resetYes").onclick = () => { state = fresh(); save(); toast("Cleared"); go(0); };
+    $("#resetNo").onclick = resetIdle;
+  };
+}
+render();
+})();
+</script>
+
+</body>
+</html>

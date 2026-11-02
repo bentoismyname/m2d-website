@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "m2d-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8871",
+        "--bind",
+        "127.0.0.1"
+      ],
+      "port": 8871
+    },
+    {
+      "name": "m2d-portal",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "portal/dev/server.mjs"
+      ],
+      "port": 8890
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[build]
+  publish = "public"
+  command = "echo 'No build step'"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Homeowner links: /h/<private-token> shows that customer's pack
+[[redirects]]
+  from = "/h/*"
+  to = "/view.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+
+# Keep homeowner pages out of search engines
+[[headers]]
+  for = "/view.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

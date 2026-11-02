@@ -1,0 +1,16 @@
+.DS_Store
+dist/
+# written at build time from the CMS
+build/cms.json
+assets/img/cms/
+__pycache__/
+# handover portal: local data and installed packages
+portal/node_modules/
+portal/dev/.data.json
+# unused source videos
+assets/video/hero-previous.mp4
+assets/video/hero-source.mp4
+assets/video/hero2-source.mp4
+# secrets
+.env
+.env.*
