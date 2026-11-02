@@ -18,15 +18,22 @@
   function rnd(seed){ let t=seed+0x6D2B79F5; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }
 
   /* ---------- layouts (all in world coords, screen = world + pan) ---------- */
+  // two even rows: every photo the same height, same gaps, captions underneath; each photo joins the shorter row so both rows stay level
   function layoutStrip(){
     vw=innerWidth; vh=innerHeight;
-    const base=Math.min(vh*.32, vw*.26), gap=vw*.03, rhythm=[1,.72,1.18,.8,1,.66,1.1,.86];
-    let x=vw*.5; strip=[];
-    items.forEach((el,i)=>{
-      const r=+el.dataset.r, h=base*rhythm[i%rhythm.length], w=h*r;
-      strip.push({x:x-w/2, y:vh*.47-h/2, w, h, rot:0}); x+=w+gap;
+    const hh=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;
+    const top=hh+(vw<700?56:70), bottom=vw<700?96:140, cap=44, rowGap=Math.max(18,vh*.035), gap=Math.max(16,vw*.025), side=Math.max(20,vw*.05);
+    const room=vh-top-bottom-cap*2-rowGap, h=Math.max(110,Math.min(room/2, vw*(vw<700?.48:.24)));
+    const y0=top+Math.max(0,(room-h*2)/2);   // rows sit in the middle of the free space
+    const ends=[side,side], ys=[y0, y0+h+cap+rowGap];
+    strip=items.map(el=>{
+      const w=h*(+el.dataset.r), row=ends[0]<=ends[1]?0:1, p={x:ends[row], y:ys[row], w, h, rot:0};
+      ends[row]+=w+gap; return p;
     });
-    bounds={minX:-(x-gap-vw*.5), maxX:0, minY:0, maxY:0};
+    const end=Math.max(ends[0],ends[1])-gap+side;
+    // short portfolio: centre it; long one: scroll from the left edge to the right edge
+    if(end<=vw){ const shift=(vw-end)/2; strip.forEach(p=>p.x+=shift); bounds={minX:0,maxX:0,minY:0,maxY:0}; }
+    else bounds={minX:-(end-vw), maxX:0, minY:0, maxY:0};
   }
   // three depth bands: [parallax factor, size scale]. Rows cycle through them.
   const DEPTH=[[.55,.74],[.78,.88],[1,1]];
@@ -63,7 +70,8 @@
     if(mode==='strip'&&!busy){
       // centre-weighted scale + progress + counter
       let best=0,bd=1e9;
-      items.forEach((el,i)=>{ const p=strip[i]; const cx=p.x+p.w/2+pan.x; const d=Math.abs(cx-vw/2); const k=1-Math.min(1,d/(vw*.6)); gsap.set(el,{scale:.82+k*.36}); el.style.zIndex=Math.round(k*100); if(d<bd){bd=d;best=i;} });
+      // photos near the middle are full size, the ones towards the edges ease down a little (never bigger, so nothing overlaps)
+      items.forEach((el,i)=>{ const p=strip[i]; const cx=p.x+p.w/2+pan.x; const d=Math.abs(cx-vw/2); const k=1-Math.min(1,d/(vw*.7)); gsap.set(el,{scale:.92+k*.08}); if(d<bd){bd=d;best=i;} });
       const prog=bounds.minX?pan.x/bounds.minX:0; bar.style.width=(prog*100)+'%'; cur.textContent=String(best+1).padStart(2,'0');
     }
     requestAnimationFrame(tick);
@@ -148,8 +156,8 @@
 
   /* ---------- init ---------- */
   layoutStrip(); apply(strip);
-  // start with the second photo centred so three are in view
-  const p0=-(strip[1].x+strip[1].w/2-vw/2); pan.x=pan.tx=p0; gsap.set(world,{x:p0});
+  // start at the left edge of the two rows
+  const p0=0; pan.x=pan.tx=p0; gsap.set(world,{x:p0});
   // intro: every photo small in one level row across the middle → zooms into the strip
   if(!reduce){
     busy=true; pf.classList.add('pf--busy');

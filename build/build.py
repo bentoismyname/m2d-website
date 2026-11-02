@@ -463,7 +463,7 @@ def about():
     steps = "".join(f'<div class="step" data-reveal><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for s in D["process"])
     people = ""
     for t in D["team"]:
-        people += f'''<article class="tp" data-name="{E(t["name"])}" data-role="{E(t["role"])}" data-lede="{E(t["lede"])}" data-bio="{E(t["bio"])}" data-link="{E(t.get("link") or "")}" data-linklabel="{E(t.get("link_label") or "")}" data-group="{"core" if t.get("group") == "core" else "creative"}" tabindex="0">
+        people += f'''<article class="tp" data-name="{E(t["name"])}" data-role="{E(t["role"])}" data-lede="{E(t["lede"])}" data-bio="{E(t["bio"])}" data-group="{"core" if t.get("group") == "core" else "creative"}" tabindex="0">
       <div class="tp__cap"><b>{E(t["name"])}</b><span>{E(t["role"])}</span><em>Read it</em></div>
       <div class="tp__media" data-clip><img src="{U(t["img"], r)}" alt="{E(t["name"])}" loading="lazy"></div>
     </article>'''
@@ -515,7 +515,6 @@ def about():
       <h3 class="spread__title"><span></span><b></b></h3>
       <p class="spread__lede"></p>
       <div class="spread__body"></div>
-      <a class="link spread__link" href="#" target="_blank" rel="noopener"><span>Personal brand</span> {ICON_ARROW}</a>
       <div class="spread__foot"><div><b>01</b> <small>/ {len(D["team"]):02d}</small></div><div><button class="spread__prev">Previous</button><button class="spread__next">Next</button></div></div>
     </div>
   </div>

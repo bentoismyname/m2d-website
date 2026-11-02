@@ -189,7 +189,7 @@
     people.forEach(p=>pio.observe(p));
     idx.forEach((s,k)=>s.addEventListener('click',()=>people[k].scrollIntoView({behavior:'smooth',block:'center'})));
     if(spread){
-      const img=$('.spread__photo img',spread), t1=$('.spread__title span',spread), t2=$('.spread__title b',spread), role=$('.spread__role',spread), lede=$('.spread__lede',spread), body=$('.spread__body',spread), link=$('.spread__link',spread), pg=$('.spread__foot b',spread), sig=$('.spread__photo .sig',spread);
+      const img=$('.spread__photo img',spread), t1=$('.spread__title span',spread), t2=$('.spread__title b',spread), role=$('.spread__role',spread), lede=$('.spread__lede',spread), body=$('.spread__body',spread), pg=$('.spread__foot b',spread), sig=$('.spread__photo .sig',spread);
       let cur=0, flyer=null, origin=null, busy=false;
       const easeIO='cubic-bezier(.76,0,.24,1)';
       function fill(n){
@@ -198,7 +198,6 @@
         const parts=d.name.split(' '); t1.textContent=parts[0]; t2.textContent=parts.slice(1).join(' ');
         role.innerHTML=d.role.replace(' / ','<br>'); lede.textContent=d.lede; body.innerHTML=d.bio.split('|').map(x=>'<p>'+x+'</p>').join('');
         sig.textContent=d.name+' — '+d.role;
-        if(d.link){ link.hidden=false; link.href=d.link; link.querySelector('span').textContent=d.linklabel||'Personal brand'; } else link.hidden=true;
         pg.textContent=String(cur+1).padStart(2,'0'); $('.spread__foot small',spread).textContent='/ '+String(people.length).padStart(2,'0');
         $('.spread__page',spread).scrollTop=0;
       }

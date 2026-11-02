@@ -592,8 +592,8 @@ body.menu-open .header__logo img{filter:brightness(0) invert(1)}
 .tp:nth-child(6n+6){grid-column:6/10;margin-top:clamp(30px,8vw,140px)}
 .tp__num{position:absolute;top:-.55em;left:-.2em;font-size:clamp(28px,3vw,44px);font-weight:500;line-height:1;z-index:3;font-family:Georgia,"Times New Roman",serif}
 .tp__media{aspect-ratio:4/5;overflow:hidden;background:var(--stone);position:relative}
-.tp__media img{width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(1) contrast(1.02);transition:filter .8s var(--ease),transform 1.3s var(--ease)}
-.tp:hover .tp__media img{filter:none;transform:scale(1.04)}
+.tp__media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 1.3s var(--ease)}
+.tp:hover .tp__media img{transform:scale(1.04)}
 .tp__media::after{content:"";position:absolute;inset:0;background:var(--orange);mix-blend-mode:multiply;opacity:0;transition:opacity .6s}
 .tp:hover .tp__media::after{opacity:.0}
 .tp__cap{position:absolute;left:calc(100% + 18px);bottom:12%;width:180px;font-size:11px;line-height:1.7;letter-spacing:.04em}
@@ -625,7 +625,7 @@ body.menu-open .header__logo img{filter:brightness(0) invert(1)}
 .spread.is-in .spread__photo img{opacity:1}
 .spread__photo .sig{position:absolute;left:18px;bottom:22px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .6s .3s}
 .spread.is-in .spread__photo .sig{opacity:.85}
-.spread__flyer{position:fixed;z-index:975;object-fit:cover;object-position:top;filter:grayscale(1);will-change:left,top,width,height;pointer-events:none}
+.spread__flyer{position:fixed;z-index:975;object-fit:cover;object-position:top;will-change:left,top,width,height;pointer-events:none}
 .spread__page{position:relative;padding:clamp(28px,5vw,80px) clamp(28px,6vw,110px) 90px;overflow:auto;display:flex;flex-direction:column;background:#fff}
 .spread__page>*{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .spread.is-in .spread__page>*{opacity:1;transform:none}
@@ -799,7 +799,7 @@ body.is-portfolio.pf-dark .header__logo img{filter:brightness(0) invert(1)}
   .pf__ui--br,.pf__ui--bl span{display:none}
   .pf__ui--bc h1{font-size:34px}
   .pf__ui--bc{bottom:22px}
-  .pf__ui--bl{bottom:30px}
+  .pf__ui--bl{display:none}
 }
 
 /* ---------- Team cards: caption above photo, no numbering ---------- */
