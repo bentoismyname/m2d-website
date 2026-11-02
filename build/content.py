@@ -237,10 +237,10 @@ SERVICE_COLS = [
 # "reveal"     : title card (the place) opens, photos spread out from behind it, then scroll for the story + photo write-ups
 # "horizontal" : side-scrolling story panels with photos and numbered paragraphs
 # "editorial"  : vertical magazine grid with text blocks between photos
-PROJECT_LAYOUT = {   # every home uses the side-scroll story ("horizontal"); "reveal" and "editorial" stay available in the CMS
-    "hotel-at-home": "horizontal", "japandi-spirit": "horizontal", "embrace-serenity": "horizontal",
-    "hozon": "horizontal", "urban-fusion": "horizontal", "chaseki": "horizontal",
-    "oak-and-ember": "horizontal", "fu": "horizontal", "nimbus": "horizontal", "sonata": "horizontal", "rattan": "horizontal",
+PROJECT_LAYOUT = {   # top-to-bottom pages: "reveal" (big photo + small ones around) or "editorial" (magazine); "horizontal" (side scroll) stays available in the CMS
+    "hotel-at-home": "reveal", "japandi-spirit": "reveal", "embrace-serenity": "reveal",
+    "urban-fusion": "reveal", "fu": "reveal", "sonata": "reveal",
+    "chaseki": "editorial", "hozon": "editorial", "nimbus": "editorial", "oak-and-ember": "editorial", "rattan": "editorial",
 }
 # background tone for the reveal card page (one per project; falls back to warm sand)
 PROJECT_TONE = {}  # all project pages stay white
