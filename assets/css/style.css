@@ -1324,3 +1324,9 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
   .cl__text .body{max-width:none}
 }
 .static .mz__t{opacity:1!important;transform:none!important}
+
+/* team section: room at the end so the big title never overlaps the next section (and a fallback when the fade can't run) */
+@media (min-width:901px){.team-ed{padding-bottom:clamp(160px,18vw,300px)}.static .team-ed__ghost{opacity:0}}
+
+/* story row with a landscape photo */
+.mag--story .mag__frame--wide img{aspect-ratio:4/3!important}

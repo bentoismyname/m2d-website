@@ -169,7 +169,8 @@ const SupaAPI = {
     return () => this.client.removeChannel(ch);
   },
   signInStaff(email, password) { return this.client.auth.signInWithPassword({ email, password }); },
-  sendCode(email) { return this.client.auth.signInWithOtp({ email, options: { shouldCreateUser: true } }); },
+  // Supabase's default email carries a link; with custom SMTP the template can carry a 6-digit code instead. Both land the homeowner here.
+  sendCode(email) { return this.client.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: location.origin + location.pathname } }); },
   verifyCode(email, token) { return this.client.auth.verifyOtp({ email, token, type: "email" }); },
   signOut() { return this.client.auth.signOut(); },
   async admin(action, body) {
@@ -213,13 +214,13 @@ function renderLogin() {
   const L = loginState;
   if (MODE === "client") {
     app.innerHTML = `<div class="card login"><h1>Your renovation, live.</h1>
-      <p>${L.sent ? `We emailed a 6-digit code to <b>${esc(L.email)}</b>. Enter it below.` : "Enter the email you gave your M2D designer and we'll send you a login code."}</p>
+      <p>${L.sent ? `We've emailed <b>${esc(L.email)}</b>. Tap the login link in that email, or if it shows a 6-digit code, enter it below.` : "Enter the email you gave your M2D designer and we'll send you a login email."}</p>
       <form id="loginForm">${L.sent
-        ? `<label class="fld code">Login code<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required autofocus></label>`
+        ? `<label class="fld code">Login code (if your email shows one)<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required autofocus></label>`
         : `<label class="fld">Email<input name="email" type="email" autocomplete="email" required value="${esc(L.email)}" autofocus></label>`}
         ${L.err ? `<div class="err">${esc(L.err)}</div>` : ""}
         <div class="row-end">${L.sent ? `<button class="link" type="button" id="resend">Use a different email</button>` : `<span class="hint">No password needed.</span>`}
-        <button class="btn primary" type="submit" ${L.busy ? "disabled" : ""}><span class="dot"></span>${L.sent ? "Log in" : "Send code"}</button></div></form></div>`;
+        <button class="btn primary" type="submit" ${L.busy ? "disabled" : ""}><span class="dot"></span>${L.sent ? "Log in" : "Send login email"}</button></div></form></div>`;
   } else {
     app.innerHTML = `<div class="card login"><h1>M2D staff login</h1><p>Designers and site staff sign in here. Homeowners use <a href="../my/">m2decor.com/my</a>.</p>
       <form id="loginForm"><label class="fld">Email<input name="email" type="email" autocomplete="username" required value="${esc(L.email)}"></label>
@@ -565,7 +566,7 @@ async function start() {
   const forceDemo = /[?&]demo\b/.test(location.search);
   if (!forceDemo && CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase) {
     LIVE = true; API = SupaAPI; SupaAPI.init();
-    SupaAPI.client.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_OUT") { me = null; view = { name: "home", id: null }; go(); } });
+    SupaAPI.client.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_OUT") { me = null; view = { name: "home", id: null }; go(); } if (ev === "SIGNED_IN" && !me) { history.replaceState(null, "", location.pathname); go(); } });
     go();
   } else {
     $("#demoBar").hidden = false;

@@ -295,6 +295,13 @@
     });
   }
 
+  /* ---------- About: the big "Our team" title fades away before the team section ends, so it never hangs into the next section ---------- */
+  const teamSec=$('.team-ed'), ghost=teamSec&&$('.team-ed__ghost',teamSec);
+  if(teamSec && ghost && window.gsap && window.ScrollTrigger && !reduce && !isStatic && innerWidth>900){
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.to(ghost,{opacity:0,y:-40,ease:'none',scrollTrigger:{trigger:teamSec,start:()=>'bottom bottom+='+Math.round(innerHeight*.55),end:()=>'bottom bottom+='+Math.round(innerHeight*.2),scrub:true}});
+  }
+
   /* ---------- About: scroll-open sequence ---------- */
   const ao=$('.about-open');
   // About opener video runs with the scroll: first frame while small, last frame the moment it has fully expanded; scrolling back rewinds it

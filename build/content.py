@@ -208,7 +208,7 @@ STORY = [
          text="M2D's story begins at a carpentry bench. Benjamin's father built the business on woodwork: cabinets, built-ins and the quiet discipline of making things that last. Rooted in the artistry of crafting wood, that background still shapes how we take on every project today."),
     dict(year="Father & son", n="02", title="The birth of craftsmanship", img="assets/img/home/01.jpg", wide=True,
          text="Two generations in one workshop. The first ran the fabrication and the crews; the second grew up on site, learned the trade from the ground up and brought design into the conversation. The company name honours that lineage: M Square Decor, the renovation and carpentry arm, and M2D Interior, the design studio."),
-    dict(year="2015", n="03", title="Changing homes, changing lives", img="assets/img/about/01.jpg",
+    dict(year="2015", n="03", title="Changing homes, changing lives", img="assets/img/about/story-consult.jpg", wide=True,
          text="Since 2015 we have focused on Singapore residential design and renovation, treating each home like a consultation rather than a sale. Over 200 households later, we are a trusted design-and-build firm with in-house carpentry, M&E and masonry, and a CaseTrust, HDB and BCA accredited team."),
     dict(year="Today", n="04", title="One team, four divisions", img="assets/img/home/07.jpg",
          text="M2D has grown into four divisions under one roof: Interior Design & Consultancy, Renovation & Carpentry, the Interior Design Workshop and Handyman & Home Repair. Different colours, one standard of work."),

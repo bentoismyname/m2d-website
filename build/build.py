@@ -38,7 +38,7 @@ def _defaults():
         services=[dict(line1=c["line1"], line2=c["line2"], sub=c["sub"].replace("<br>", "\n"), text=c["text"], img=c["img"], hover=c["hover"]) for c in C.SERVICE_COLS],
         team=[dict(name=t["name"], role=t["role"], group=t.get("group", "core"), img=t["img"], lede=t["lede"], bio=t["bio"],
                    link=C.SITE.get(t["link_key"], "") if t.get("link_key") else "", link_label=t.get("link_label", "")) for t in C.TEAM],
-        story=[dict(year=s["year"], title=s["title"], img=s.get("img", ""), text=s["text"]) for s in C.STORY],
+        story=[dict(year=s["year"], title=s["title"], img=s.get("img", ""), wide=s.get("wide", False), text=s["text"]) for s in C.STORY],
         reviews=[dict(name=n, role=r, text=q) for n, r, q in C.REVIEWS],
         process=[dict(n=n, title=t, items=list(items)) for n, t, items in C.PROCESS],
         faq_home=[dict(q=q, a=a) for q, a in C.FAQ_HOME],
@@ -465,7 +465,7 @@ def about():
     divs = "".join(f'<div class="story__div" style="background:{c}"><img src="assets/img/logo.png" alt="M2D"><span>{E(d["name"])}</span></div>' for d, c in zip(D["divisions"], DIV_COLOURS))
     story_rows = ""
     for s in D["story"]:
-        media = f'<div class="story__divs">{divs}</div>' if s.get("divs") or not s.get("img") else f'<div class="mag__frame"><img src="{U(s["img"], r)}" alt="" loading="lazy"></div>'
+        media = f'<div class="story__divs">{divs}</div>' if s.get("divs") or not s.get("img") else f'<div class="mag__frame{" mag__frame--wide" if s.get("wide") else ""}"><img src="{U(s["img"], r)}" alt="" loading="lazy"></div>'
         story_rows += f'''<div class="mag__row">
       <div class="mag__media" data-reveal="left">{media}</div>
       <div class="mag__text" data-reveal="right"><span class="eyebrow orange">{E(s["year"])}</span><h3 class="dash" style="margin-top:14px">{E(s["title"])}</h3><p class="body">{E(s["text"])}</p></div>
