@@ -1288,3 +1288,4 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
   .proj-hero__top .lede{color:rgba(255,255,255,.88)}
   .proj-hero__top .meta{color:rgba(255,255,255,.75)}
 }
+.wk__item img{object-position:center 35%}

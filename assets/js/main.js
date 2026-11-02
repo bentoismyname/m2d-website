@@ -305,8 +305,9 @@
     // when the text panel comes in from the right, "About us" slides across to the left edge (mirror of its 4% right margin)
     // the small photos around the video drift out to the corners and fade as it expands
     const phs=$$('.ao__ph',ao), out=[[-1,-1],[1,-1],[-1,1],[1,1]];
+    const dirOf=el=>out[((+(el.className.match(/ao__ph--(\d)/)||[0,1])[1])-1)%4];   // each photo leaves towards its own corner
     tl.to(img,{left:'0vw',top:'0vh',width:'100vw',height:'100vh',ease:'power2.inOut',duration:1.2})
-      .to(phs,{x:i=>out[i%4][0]*innerWidth*.12,y:i=>out[i%4][1]*innerHeight*.12,scale:.92,opacity:0,ease:'power2.in',duration:.9},0)
+      .to(phs,{x:i=>dirOf(phs[i])[0]*innerWidth*.12,y:i=>dirOf(phs[i])[1]*innerHeight*.12,scale:.92,opacity:0,ease:'power2.in',duration:.9},0)
       .to({},{duration:.5})
       .to(panel,{yPercent:0,ease:'power2.inOut',duration:1.1},'half')
       .to(about,{x:()=>about.offsetWidth-innerWidth*.92,ease:'power2.inOut',duration:1.1},'half')
