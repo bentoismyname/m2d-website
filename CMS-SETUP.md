@@ -65,6 +65,15 @@ siteUrl: "https://www.m2decor.com.sg",
 
 5. **Deploys → Trigger deploy**.
 
+### Or Vercel instead of Netlify
+The repository also works on Vercel: `vercel.json` holds the build settings, the `api/cms/` functions do the same
+job as the Netlify ones, and a Vercel cron publishes scheduled posts each night.
+1. Vercel → **Add New → Project → Import Git Repository** → GitHub → pick the repository → **Deploy** (leave the settings as they are).
+2. **Settings → Git → Deploy Hooks** → name `CMS publish`, branch `main` → **Create Hook**. Copy its URL.
+3. **Settings → Environment Variables**: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` as above,
+   `VERCEL_DEPLOY_HOOK` = the hook URL from step 2, and `CRON_SECRET` = any long random text (protects the nightly job).
+4. **Deployments → ⋯ → Redeploy** so the new values take effect.
+
 ## 4. First sign-in
 Open `/admin/`, sign in with the owner email. The admin copies the current website into the CMS on its own (a
 message says so). Add other people under **Settings → Team accounts**: Owner (everything), Editor (everything but

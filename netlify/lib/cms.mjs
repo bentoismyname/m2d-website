@@ -1,6 +1,8 @@
 // Shared helpers for the CMS functions (not a function itself).
-// Environment (Netlify > Site configuration > Environment variables):
-//   SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, NETLIFY_BUILD_HOOK
+// Used by the Netlify functions (netlify/functions) and the Vercel functions (api/cms).
+// Environment (Netlify: Site configuration > Environment variables; Vercel: Settings > Environment Variables):
+//   SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, and the build hook as
+//   NETLIFY_BUILD_HOOK (Netlify) or VERCEL_DEPLOY_HOOK (Vercel)
 export const env = name => (globalThis.Netlify?.env?.get(name)) || process.env[name] || "";
 export const missing = (...names) => names.filter(n => !env(n));
 
@@ -29,10 +31,13 @@ export async function whoIs(req) {
   return { email, role: me.role, name: me.name, userId: user.id };
 }
 
-// Start a Netlify build (pulls the CMS content, rebuilds the site, deploys it)
+// The URL that starts a new build of the site (Netlify build hook or Vercel deploy hook)
+export const buildHook = () => env("NETLIFY_BUILD_HOOK") || env("VERCEL_DEPLOY_HOOK") || env("BUILD_HOOK");
+
+// Start a build (pulls the CMS content, rebuilds the site, deploys it)
 export async function triggerBuild(title) {
-  const hook = env("NETLIFY_BUILD_HOOK");
-  const url = hook + (hook.includes("?") ? "&" : "?") + "trigger_title=" + encodeURIComponent(title);
+  const hook = buildHook();
+  const url = hook.includes("api.netlify.com") ? hook + (hook.includes("?") ? "&" : "?") + "trigger_title=" + encodeURIComponent(title) : hook;
   const r = await fetch(url, { method: "POST" });
   return r.ok;
 }
