@@ -358,6 +358,20 @@
   if(rh && window.gsap && window.ScrollTrigger && !reduce && !isStatic){
     gsap.registerPlugin(ScrollTrigger);
     const main=$('.rh__main',rh), cta=$('.rh__cta',rh), head=$('.rh__head',rh), sats=$$('.rh__sat',rh);
+    // "Our Portfolio" rises up into place and the button follows, once the photo is nearly full screen; scrolling back hides them again
+    const ctaLine=$('.rh__cta-line',rh), ctaBtn=$('.rh__cta .btn',rh);
+    const rhReveal=(tl,at)=>{
+      tl.to(cta,{opacity:1,duration:.25},at-.04);   // the dark tint over the photo still fades in with the scroll
+      gsap.set(ctaLine,{yPercent:110}); gsap.set(ctaBtn,{opacity:0,y:18});
+      const intro=gsap.timeline({paused:true})
+        .to(ctaLine,{yPercent:0,duration:1.1,ease:'power3.out'},0)
+        .to(ctaBtn,{opacity:1,y:0,duration:.8,ease:'power2.out'},.35);
+      let shown=false;
+      ScrollTrigger.create({trigger:rh,start:'top top',end:'bottom bottom',onUpdate:st=>{
+        if(!shown && st.progress>=at){ shown=true; intro.timeScale(1).play(); }
+        else if(shown && st.progress<at-.06){ shown=false; intro.timeScale(1.8).reverse(); }
+      }});
+    };
     const mm=gsap.matchMedia();
     // desktop: centre photo grows while the small photos fly out
     mm.add('(min-width:901px)',()=>{
@@ -365,16 +379,16 @@
       const tl=gsap.timeline({scrollTrigger:{trigger:rh,start:'top top',end:'bottom bottom',scrub:.8}});
       tl.to(main,{width:'100vw',height:'100vh',ease:'power2.inOut',duration:1},0)
         .to(sats,{x:i=>(i%2?1:-1)*innerWidth*.45,y:i=>(i<3?-1:1)*innerHeight*.5,opacity:0,ease:'power2.in',duration:.7,stagger:.03},0)
-        .to(head,{opacity:0,y:-30,duration:.4},0)
-        .to(cta,{opacity:1,duration:.3},.75);
+        .to(head,{opacity:0,y:-30,duration:.4},0);
+      rhReveal(tl,.78);
     });
     // phone: one portrait photo in the middle grows to fill the screen, then the button appears
     mm.add('(max-width:900px)',()=>{
       rh.classList.add('rh--phone');
       const tl=gsap.timeline({scrollTrigger:{trigger:rh,start:'top top',end:'bottom bottom',scrub:.6,invalidateOnRefresh:true}});
       tl.to(main,{width:()=>innerWidth,height:()=>innerHeight,top:'50%',ease:'power2.inOut',duration:1},0)
-        .to(head,{opacity:0,y:-24,duration:.35},0)
-        .to(cta,{opacity:1,duration:.3},.72);
+        .to(head,{opacity:0,y:-24,duration:.35},0);
+      rhReveal(tl,.74);
       return ()=>rh.classList.remove('rh--phone');
     });
     main.addEventListener('click',e=>{

@@ -421,7 +421,7 @@ def home():
   <div class="rh__stage">
     <div class="rh__head"><span class="eyebrow">{T("home.rh_eyebrow")}</span><h2 class="h-xl">{T("home.rh_title")}</h2></div>{sats}
     <a class="rh__main" href="portfolio.html"><img src="{P("home.rh_main", r)}" alt="{T("home.rh_main_alt")}">
-      <span class="rh__cta"><span class="rh__cta-title">{T("portfolio.title")}</span><span class="btn btn--light">{T("home.rh_button")} {ICON_ARROW}</span></span>
+      <span class="rh__cta"><span class="rh__cta-title"><span class="rh__cta-line">{T("portfolio.title")}</span></span><span class="btn btn--light">{T("home.rh_button")} {ICON_ARROW}</span></span>
     </a>
   </div>
 </section>
