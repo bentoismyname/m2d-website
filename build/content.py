@@ -13,6 +13,9 @@ SITE = dict(
     tiktok="https://www.tiktok.com/@m2decor",
     youtube="https://www.youtube.com/@M2Decor",
     google_reviews="https://www.google.com/maps/place/M2+Decor+Pte+Ltd/@1.454737,103.7983522,17z/data=!4m6!3m5!1s0x31da139a0f66d853:0xc810eab93ec98c2e!8m2!3d1.454737!4d103.7983522!16s%2Fg%2F11g0kfmnjb",
+    google_reviews_tab="https://www.google.com/maps/place/M2+Decor+Pte+Ltd/@1.454737,103.7983522,17z/data=!4m8!3m7!1s0x31da139a0f66d853:0xc810eab93ec98c2e!8m2!3d1.454737!4d103.7983522!9m1!1b1!16s%2Fg%2F11g0kfmnjb",
+    hometrust="https://www.hometrust.sg/interior-designers/m2-decor-pte-ltd#reviews",
+    qanvast="https://qanvast.com/sg/interior-designers-architects/m2-decor-2469#reviews",
     benjamin_link="#",            # Benjamin's personal brand — add URL when ready
 )
 
@@ -373,9 +376,11 @@ COPY = {
     "home.why_text": "Our roots lie in the art of woodwork. That background gives us a deep appreciation for materials, structure and space, and a crew that builds what we draw.",
     "home.rh_eyebrow": "Selected works", "home.rh_title": "Real homes,\nreal stories.", "home.rh_button": "View portfolio", "home.rh_main_alt": "Nimbus, 443 Punggol",
     "home.yt_eyebrow": "YouTube", "home.yt_title": "Step inside\nour homes.", "home.yt_link": "Watch more on YouTube",
-    "home.rev_eyebrow": "Loved by homeowners", "home.rev_score": "5",
-    "home.rev_text": "Over 95% positive reviews across Google, HomeTrust and Facebook. Read what the people living in our homes have to say.",
-    "home.rev_sources": "Google\nHomeTrust\nFacebook", "home.rev_link": "Read all on Google",
+    "home.rev_eyebrow": "Loved by homeowners", "home.rev_title": "What our homeowners say.",
+    "home.rev_text": "Rated by 200 homeowners across Google, Hometrust and Qanvast. Read what the people living in our homes have to say.",
+    "home.rev_google_score": "4.8", "home.rev_google_count": "116",
+    "home.rev_hometrust_score": "9.5", "home.rev_hometrust_count": "63",
+    "home.rev_qanvast_score": "4.9", "home.rev_qanvast_count": "21",
     "home.proc_eyebrow": "The process", "home.proc_title": "From conception\nto execution.", "home.proc_link": "About our studio",
     "home.blog_eyebrow": "Journal", "home.blog_title": "Latest articles.", "home.blog_button": "See all articles",
     "home.faq_eyebrow": "FAQ", "home.faq_title": "Frequently asked\nquestions.",

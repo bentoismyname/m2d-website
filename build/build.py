@@ -178,6 +178,7 @@ ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>'
 ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></svg>'
 ICON_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>'
 ICON_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>'
+GOOGLE_LOGO = '<span class="rv__g"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</span>'
 STAR = '<svg viewBox="0 0 24 24"><path d="M12 2l3 7 7.5.6-5.7 4.9 1.8 7.3L12 18l-6.6 3.8 1.8-7.3L1.5 9.6 9 9z"/></svg>'
 
 def shell(title, body, root="", transparent=False, desc="", extra_head="", extra_body="", body_class=""):
@@ -342,7 +343,22 @@ def home():
     steps = "".join(f'<div class="step" data-reveal class="d{i}"><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for i, s in enumerate(D["process"]))
     posts = "".join(post_card(p, r) for p in POSTS[:3])
     hero_title = "".join(f'<span class="line"><span>{x}</span></span>' for x in LINES("home.hero_title"))
-    sources = "".join(f"<span>{x}</span>" for x in LINES("home.rev_sources"))
+    def rev_plat(key, name, logo, url, out_of):
+        try: score = float(T(f"home.rev_{key}_score"))
+        except ValueError: score = 0
+        fill = max(0, min(100, score / out_of * 100))
+        stars = f'<span class="rv__stars" aria-hidden="true"><span>{STAR*5}</span><span style="width:{fill:.1f}%">{STAR*5}</span></span>'
+        out = f'<small>/{out_of}</small>' if out_of != 5 else ''
+        return f'''<a class="rv__plat" href="{url}" target="_blank" rel="noopener" aria-label="{name}: {T(f"home.rev_{key}_score")} out of {out_of}, {T(f"home.rev_{key}_count")} reviews">
+        <span class="rv__logo">{logo}</span>
+        <span class="rv__score">{T(f"home.rev_{key}_score")}{out}</span>{stars}
+        <span class="rv__count">{T(f"home.rev_{key}_count")} reviews</span>
+        <span class="rv__go">Read reviews {ICON_ARROW}</span></a>'''
+    plats = "".join([
+        rev_plat("google", "Google", GOOGLE_LOGO, SITE["google_reviews_tab"], 5),
+        rev_plat("hometrust", "Hometrust", f'<img src="{U("assets/img/reviews/hometrust.png", r)}" alt="Hometrust">', SITE["hometrust"], 10),
+        rev_plat("qanvast", "Qanvast", f'<img src="{U("assets/img/reviews/qanvast.svg", r)}" alt="Qanvast">', SITE["qanvast"], 5),
+    ])
     sats = "".join(f'\n    <figure class="rh__sat rh__sat--{i}"><img src="{P(f"home.rh_sat{i}", r)}" alt=""></figure>' for i in range(1, 7))
     body = f'''
 <div class="preloader" aria-hidden="true">
@@ -418,18 +434,16 @@ def home():
 </section>
 
 <section class="section">
-  <div class="container reviews">
-    <div class="reviews__score" data-reveal>
+  <div class="container rv">
+    <div class="rv__head" data-reveal>
       <span class="eyebrow">{T("home.rev_eyebrow")}</span>
-      <div class="big">{T("home.rev_score")}<span style="font-size:.45em;vertical-align:top;position:relative;top:.3em">★</span></div>
-      <div class="stars">{STAR*5}</div>
-      <p class="body" style="max-width:360px;text-align:left">{T("home.rev_text")}</p>
-      <div class="reviews__srcs">{sources}</div>
-      <a class="link" href="{SITE['google_reviews']}" target="_blank" rel="noopener">{T("home.rev_link")} {ICON_ARROW}</a>
+      <h2 class="h-lg">{T("home.rev_title")}</h2>
+      <p class="body">{T("home.rev_text")}</p>
     </div>
-    <div class="slider" data-reveal>
+    <div class="rv__plats" data-reveal>{plats}</div>
+    <div class="slider rv__slider" data-reveal>
       <div class="slider__track">{reviews}</div>
-      <div class="slider__nav"><button class="arrow-btn slider__prev" aria-label="Previous">{ICON_L}</button><button class="arrow-btn slider__next" aria-label="Next">{ICON_R}</button><div class="slider__dots" style="margin-left:10px"></div></div>
+      <div class="slider__nav"><button class="arrow-btn slider__prev" aria-label="Previous">{ICON_L}</button><div class="slider__dots"></div><button class="arrow-btn slider__next" aria-label="Next">{ICON_R}</button></div>
     </div>
   </div>
 </section>
