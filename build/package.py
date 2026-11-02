@@ -5,7 +5,7 @@ import os, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist")
-PAGES = ["index.html", "about.html", "portfolio.html", "blog.html", "contact.html"]
+PAGES = ["index.html", "about.html", "services.html", "portfolio.html", "blog.html", "contact.html"]
 FOLDERS = ["projects", "blog", "assets", "admin"]
 SKIP = {"hero-previous.mp4", "hero-source.mp4", "hero2-source.mp4", ".DS_Store"}
 

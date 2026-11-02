@@ -61,7 +61,7 @@
     },
     {
       "source": "/services",
-      "destination": "/",
+      "destination": "/services.html",
       "permanent": true
     },
     {
@@ -181,7 +181,7 @@
     },
     {
       "source": "/services/:s*",
-      "destination": "/",
+      "destination": "/services.html",
       "permanent": true
     }
   ]

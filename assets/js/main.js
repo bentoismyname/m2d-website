@@ -11,7 +11,10 @@
     const y=scrollY;
     if(header){
       header.classList.toggle('is-solid',y>60);
-      if(y>400 && y>lastY+6) header.classList.add('is-hidden'); else if(y<lastY-6||y<400) header.classList.remove('is-hidden');
+      // the header stays put through the About opener (video expanding, then the text panel)
+      const keep=document.querySelector('.about-open'), inKeep=keep&&y<keep.offsetTop+keep.offsetHeight-innerHeight*.5;
+      if(inKeep) header.classList.remove('is-hidden');
+      else if(y>400 && y>lastY+6) header.classList.add('is-hidden'); else if(y<lastY-6||y<400) header.classList.remove('is-hidden');
     }
     lastY=y;
   }
@@ -282,31 +285,44 @@
 
   /* ---------- About: scroll-open sequence ---------- */
   const ao=$('.about-open');
+  // About opener video runs with the scroll: first frame while small, last frame the moment it has fully expanded; scrolling back rewinds it
+  const aoVid=ao&&$('.ao__video',ao);
+  if(aoVid){ aoVid.pause(); const prime=()=>{ const p=aoVid.play(); if(p) p.then(()=>{ aoVid.pause(); aoVid.currentTime=0; }).catch(()=>{}); }; aoVid.readyState>0?prime():aoVid.addEventListener('loadedmetadata',prime,{once:true}); }
+  let aoWant=0, aoRaf=0;
+  const aoSeek=()=>{ aoRaf=0; const d=aoVid.duration; if(!d||!isFinite(d)) return; const t=Math.min(d-0.04,Math.max(0,aoWant*d)); if(Math.abs(aoVid.currentTime-t)>1/60) aoVid.currentTime=t; };
+  // tl: the opener timeline; expand: how long its expanding step lasts (the first step)
+  const aoScrub=(tl,expand)=>{ if(!aoVid) return; tl.eventCallback('onUpdate',()=>{ aoWant=Math.min(1,Math.max(0,tl.time()/expand)); if(!aoRaf) aoRaf=requestAnimationFrame(aoSeek); }); };
   if(ao && window.gsap && window.ScrollTrigger && !reduce && !isStatic && innerWidth>900){
     gsap.registerPlugin(ScrollTrigger);
     const img=$('.ao__img',ao), panel=$('.ao__panel',ao), hints=$$('.ao__corner',ao), items=$$('.ao__panel > *',ao).filter(e=>!e.classList.contains('dots')&&!e.classList.contains('ao__hint')&&!e.classList.contains('ao__inset')), inset=$('.ao__inset',ao), label=$('.ao__label',ao);
     gsap.set(panel,{x:0,xPercent:0,y:0,yPercent:100});
     // corner words rise in on load, then fade the moment you start scrolling
-    gsap.from($$('.ao__corner i',ao),{yPercent:110,duration:1.1,ease:'power3.out',stagger:.09,delay:.3});
-    gsap.to(hints,{opacity:0,y:-30,ease:'power1.out',scrollTrigger:{trigger:ao,start:'top top',end:'+=320',scrub:true}});
+    // "About us" sits on the video's bottom-right corner from the start and grows out with it; the small words fade as you scroll
+    const about=$('.ao__corner--about',ao);
+    gsap.to($$('.ao__corner--tag',ao),{opacity:0,y:-30,ease:'power1.out',scrollTrigger:{trigger:ao,start:'top top',end:'+=320',scrub:true}});
     const tl=gsap.timeline({scrollTrigger:{trigger:ao,start:'top top',end:()=>'bottom-='+innerHeight+' bottom',scrub:.9}});
+    aoScrub(tl,1.2);
+    // when the text panel comes in from the right, "About us" slides across to the left edge (mirror of its 4% right margin)
+    // the small photos around the video drift out to the corners and fade as it expands
+    const phs=$$('.ao__ph',ao), out=[[-1,-1],[1,-1],[-1,1],[1,1]];
     tl.to(img,{left:'0vw',top:'0vh',width:'100vw',height:'100vh',ease:'power2.inOut',duration:1.2})
+      .to(phs,{x:i=>out[i%4][0]*innerWidth*.12,y:i=>out[i%4][1]*innerHeight*.12,scale:.92,opacity:0,ease:'power2.in',duration:.9},0)
       .to({},{duration:.5})
       .to(panel,{yPercent:0,ease:'power2.inOut',duration:1.1},'half')
+      .to(about,{x:()=>about.offsetWidth-innerWidth*.92,ease:'power2.inOut',duration:1.1},'half')
       .from(items,{y:28,opacity:0,stagger:.08,duration:.6},'half+=.6')
       .from(inset,{y:40,duration:.6},'half+=.7')
-      .fromTo(label,{opacity:0,y:30},{opacity:1,y:0,duration:.6,ease:'power2.out'},'half+=.5')
       .to({},{duration:.4});
   }
   // phone: the same idea, zoomed in. The photo starts small in the centre, grows to fill the screen, then the text slides up over it
   else if(ao && window.gsap && window.ScrollTrigger && !reduce && !isStatic){
     gsap.registerPlugin(ScrollTrigger);
     ao.classList.add('ao--m');
-    const stage=$('.ao__stage',ao), img=$('.ao__img',ao), panel=$('.ao__panel',ao), corners=$$('.ao__corner',ao), items=$$('.ao__panel > *',ao).filter(e=>!e.classList.contains('dots')&&!e.classList.contains('ao__hint'));
+    const stage=$('.ao__stage',ao), img=$('.ao__img',ao), panel=$('.ao__panel',ao), mlabel=$('.ao__label',ao), corners=$$('.ao__corner',ao), items=$$('.ao__panel > *',ao).filter(e=>!e.classList.contains('dots')&&!e.classList.contains('ao__hint'));
     gsap.set(panel,{yPercent:100});
-    gsap.from($$('.ao__corner i',ao),{yPercent:110,duration:1.1,ease:'power3.out',stagger:.09,delay:.3});
-    gsap.to(corners,{opacity:0,y:-24,ease:'power1.out',scrollTrigger:{trigger:ao,start:'top top',end:'+=220',scrub:true}});
+    gsap.to($$('.ao__corner--tag',ao),{opacity:0,y:-24,ease:'power1.out',scrollTrigger:{trigger:ao,start:'top top',end:'+=220',scrub:true}});
     const tl=gsap.timeline({scrollTrigger:{trigger:ao,start:'top top',end:'bottom bottom',scrub:.8,invalidateOnRefresh:true}});
+    aoScrub(tl,1.2);
     // explicit start and end values, so a resize (phone address bar) never records a half-way state as the start
     const W=()=>stage.clientWidth, H=()=>stage.clientHeight, hh=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||70;
     tl.fromTo(img,{left:()=>W()*.14,top:()=>H()*.25+hh()/2,width:()=>W()*.72,height:()=>H()*.5},{left:0,top:0,width:W,height:H,ease:'power2.inOut',duration:1.2})

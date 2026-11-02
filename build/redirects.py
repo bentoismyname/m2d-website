@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(ROOT, "build"))
 
 PAGES = {
     "/aboutm2d": "/about.html", "/contactus": "/contact.html", "/projects": "/portfolio.html", "/blog": "/blog.html",
-    "/services": "/", "/privacy-policy": "/", "/sitemap": "/", "/menu": "/", "/home": "/",
+    "/services": "/services.html", "/privacy-policy": "/", "/sitemap": "/", "/menu": "/", "/home": "/",
     # old full-gallery pages
     "/hotelathome": "/projects/hotel-at-home.html", "/japandispirit": "/projects/japandi-spirit.html",
     "/embraceserenity": "/projects/embrace-serenity.html", "/hozon": "/projects/hozon.html",
@@ -38,7 +38,7 @@ def vercel_rules():
         {"source": "/post/:slug*", "destination": "/blog.html", "permanent": True},
         {"source": "/blog/categories/:c*", "destination": "/blog.html", "permanent": True},
         {"source": "/blog/page/:p*", "destination": "/blog.html", "permanent": True},
-        {"source": "/services/:s*", "destination": "/", "permanent": True},
+        {"source": "/services/:s*", "destination": "/services.html", "permanent": True},
     ]
     return rules
 
@@ -49,7 +49,7 @@ def netlify_block():
     r("/projects/solis-*", "/projects/oak-and-ember.html")
     for p in our_posts(): r(f"/post/{p}", f"/blog/{p}.html")
     for f in ("/post/*", "/blog/categories/*", "/blog/page/*"): r(f, "/blog.html")
-    r("/services/*", "/")
+    r("/services/*", "/services.html")
     r("/projects/*", "/portfolio.html")   # Netlify only uses this when no real page matches
     out.append("# REDIRECTS END")
     return "\n".join(out)

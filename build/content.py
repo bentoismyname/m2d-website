@@ -16,7 +16,7 @@ SITE = dict(
     benjamin_link="#",            # Benjamin's personal brand — add URL when ready
 )
 
-NAV = [("Home","index.html"),("About us","about.html"),("Portfolio","portfolio.html"),("Blog","blog.html"),("Contact us","contact.html")]
+NAV = [("Home","index.html"),("About us","about.html"),("Services","services.html"),("Portfolio","portfolio.html"),("Blog","blog.html"),("Contact us","contact.html")]
 
 # "Working with" marquee. Replace `img` with a logo path (assets/img/partners/xxx.png) when you have the files.
 PARTNERS = [
@@ -237,13 +237,10 @@ SERVICE_COLS = [
 # "reveal"     : title card (the place) opens, photos spread out from behind it, then scroll for the story + photo write-ups
 # "horizontal" : side-scrolling story panels with photos and numbered paragraphs
 # "editorial"  : vertical magazine grid with text blocks between photos
-PROJECT_LAYOUT = {
-    "hotel-at-home": "reveal", "japandi-spirit": "reveal", "embrace-serenity": "reveal",
-    "hozon": "horizontal", "urban-fusion": "horizontal",
-    "chaseki": "editorial",
-    "fu": "reveal", "sonata": "reveal",
-    "nimbus": "horizontal",
-    "oak-and-ember": "editorial", "rattan": "editorial",
+PROJECT_LAYOUT = {   # every home uses the side-scroll story ("horizontal"); "reveal" and "editorial" stay available in the CMS
+    "hotel-at-home": "horizontal", "japandi-spirit": "horizontal", "embrace-serenity": "horizontal",
+    "hozon": "horizontal", "urban-fusion": "horizontal", "chaseki": "horizontal",
+    "oak-and-ember": "horizontal", "fu": "horizontal", "nimbus": "horizontal", "sonata": "horizontal", "rattan": "horizontal",
 }
 # background tone for the reveal card page (one per project; falls back to warm sand)
 PROJECT_TONE = {}  # all project pages stay white
@@ -267,6 +264,10 @@ COPY = {
     "seo.title.blog": "Blog · M2D Interior Design & Consultancy",
     "seo.title.contact": "Contact us · M2D Interior Design & Consultancy",
     "seo.desc.home": "", "seo.desc.about": "", "seo.desc.portfolio": "", "seo.desc.blog": "", "seo.desc.contact": "",
+    "seo.title.services": "Services · M2D Interior Design, Renovation & Carpentry Singapore",
+    "seo.desc.services": "Interior design and consultancy, renovation with in-house carpentry, a bespoke workshop and handyman repairs. Four M2D divisions under one roof in Singapore.",
+    "services.eyebrow": "Services", "services.title": "Four divisions,\none roof",
+    "services.lede": "Design, renovation and carpentry by our own crew, a workshop that builds what the design needs, and a handyman team that stays after the handover.",
     "nav.enquire": "Enquire",
     "footer.text": "Interior design and turnkey renovation for Singapore homes, with our own carpentry workshop since 2001. CaseTrust accredited · HDB & BCA licensed.",
     "footer.h_info": "Information", "footer.h_projects": "Projects", "footer.h_enquire": "Enquire",
@@ -329,12 +330,18 @@ COPY = {
 PHOTOS = {
     "home.hero_video": "assets/video/hero.mp4",
     "home.hero_poster": "assets/video/hero-poster.jpg",
+    "home.hero_end": "assets/video/hero-end.jpg",   # the video's last frame, shown at once when a visitor comes back to Home
     "home.rh_main": "assets/img/punggol/01.jpg",
     "home.rh_sat1": "assets/img/thumb/serenity-01.jpg", "home.rh_sat2": "assets/img/thumb/hotel-04.jpg", "home.rh_sat3": "assets/img/thumb/japandi-01.jpg",
     "home.rh_sat4": "assets/img/thumb/chaseki-06.jpg", "home.rh_sat5": "assets/img/thumb/urban-06.jpg", "home.rh_sat6": "assets/img/thumb/hozon-05.jpg",
     "about.hero": "assets/img/westcoast/01.jpg",
+    # four small photos around the opener video on desktop; they move away as the video expands
+    "about.op1": "assets/img/about/ben-leon.jpg", "about.op2": "assets/img/home/05.jpg",
+    "about.op3": "assets/img/westcoast/01.jpg", "about.op4": "assets/img/home/09.jpg",
+    "about.hero_video": "assets/video/hero-scrub.mp4",   # runs with the scroll as the opener expands (every frame a keyframe, so it scrubs smoothly); empty = use the photo above
     "about.team": "assets/img/home/01.jpg",
     "contact.hero": "assets/img/punggol/01.jpg",
+    "services.hero": "assets/img/hozon/04.jpg",
     "cta.home": "assets/img/japandi/02.jpg",
     "cta.about": "assets/img/urban/04.jpg",
     "cta.blog": "assets/img/chaseki/09.jpg",

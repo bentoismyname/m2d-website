@@ -189,6 +189,7 @@ def shell(title, body, root="", transparent=False, desc="", extra_head="", extra
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{{if(sessionStorage.getItem('m2d-intro')==='1'&&!/[?&]intro/.test(location.search))document.documentElement.classList.add('intro-seen')}}catch(e){{}}</script>
 <title>{E(title)}</title>
 <meta name="description" content="{E(desc or COPY.get('seo.default_desc', ''))}">
 <link rel="icon" href="{root}assets/img/logo-icon.png">
@@ -300,20 +301,32 @@ def home_projects():
     picked = [p for p in PROJ if p.get("home")][:6]
     return picked + [p for p in PROJ if p not in picked][:6 - len(picked)]
 
+# ============================ SERVICE PANELS (home + services page) ============================
+def svc_panels(r, home=False):
+    """The four colour panels. A panel links to its own page once it has a link (CMS: Pages > Home > Services);
+    on the home page a panel without one goes to the Services page."""
+    out = ""
+    for c, col in zip(D["services"], SVC_COLOURS):
+        link = (c.get("link") or "").strip() or ("services.html" if home else "")
+        tag, attrs = ("a", f' href="{U(link, r)}"') if link else ("div", "")
+        more = f'<span class="svc__more">{T("home.svc_more")} {ICON_ARROW}</span>' if link else ""
+        out += f'''<{tag} class="svc"{attrs} style="--c:{col}" data-clip>
+      <img class="svc__img" src="{U(c["img"], r)}" alt="{E(c["line1"])} {E(c["line2"])}" loading="lazy">
+      <img class="svc__img svc__img--hover" src="{U(c["hover"], r)}" alt="" loading="lazy">
+      <div class="svc__tint"></div>
+      <div class="svc__logo"><img src="{r}assets/img/logo.png" alt="M2D"><span>{TX(c["sub"])}</span></div>
+      <p class="svc__text">{E(c["text"])}</p>
+      {more}
+      <h2 class="svc__name"><span>{E(c["line1"])}</span><span>{E(c["line2"])}</span></h2>
+    </{tag}>'''
+    return out
+
 # ============================ HOME ============================
 def home():
     r = ""
     partners = "".join(f'<div class="marquee__item marquee__item--{"award" if x.get("kind") == "award" else "logo"}"><img src="{U(x["img"], r)}" alt="{E(x["name"])}"></div>' for x in sorted(D["press"], key=lambda x: x.get("kind") == "award") if x.get("img"))
     ig = "".join(f'<a class="ig__item" href="{SITE["instagram"]}" target="_blank" rel="noopener"><img src="{U(i["img"], r)}" alt="" loading="lazy">{ICON_IG}</a>' for i in D["ig"] if i.get("img"))
-    services = "".join(f'''<a class="svc" href="{r}about.html" style="--c:{col}" data-clip>
-      <img class="svc__img" src="{U(c["img"], r)}" alt="" loading="lazy">
-      <img class="svc__img svc__img--hover" src="{U(c["hover"], r)}" alt="" loading="lazy">
-      <div class="svc__tint"></div>
-      <div class="svc__logo"><img src="{r}assets/img/logo.png" alt="M2D"><span>{TX(c["sub"])}</span></div>
-      <p class="svc__text">{E(c["text"])}</p>
-      <span class="svc__more">{T("home.svc_more")} {ICON_ARROW}</span>
-      <div class="svc__name"><span>{E(c["line1"])}</span><span>{E(c["line2"])}</span></div>
-    </a>''' for c, col in zip(D["services"], SVC_COLOURS))
+    services = svc_panels(r, home=True)
     stats = "".join(f'<div class="stat" data-reveal class="d{i}"><div class="stat__n"><span data-count="{re.sub(r"[^0-9.]", "", str(s["n"])) or 0}">0</span><sup>{E(s["suffix"])}</sup></div><div class="stat__l">{E(s["label"])}</div></div>' for i, s in enumerate(D["stats"]))
     letters = "abcdef"
     works = "".join(f'''<a class="work work--{letters[i]}" href="{r}projects/{p["slug"]}.html" data-reveal>
@@ -342,7 +355,7 @@ def home():
   </div>
 </div>
 <section class="hero">
-  <div class="hero__media"><video autoplay muted playsinline preload="auto" poster="{P("home.hero_poster", r)}"><source src="{P("home.hero_video", r)}" type="video/mp4"></video></div>
+  <div class="hero__media"><video autoplay muted playsinline preload="auto" poster="{P("home.hero_poster", r)}"><source src="{P("home.hero_video", r)}" type="video/mp4"></video><script>(function(v){{if(document.documentElement.classList.contains('intro-seen')&&v){{v.autoplay=false;v.removeAttribute('autoplay');v.pause();v.poster="{P("home.hero_end", r)}";}}}})(document.currentScript.previousElementSibling)</script></div>
   <div class="hero__shade"></div>
   <div class="container hero__content">
     <h1 class="hero__title">{hero_title}</h1>
@@ -457,7 +470,7 @@ def about():
       <div class="mag__media" data-reveal="left">{media}</div>
       <div class="mag__text" data-reveal="right"><span class="eyebrow orange">{E(s["year"])}</span><h3 class="dash" style="margin-top:14px">{E(s["title"])}</h3><p class="body">{E(s["text"])}</p></div>
     </div>'''
-    photos = "".join(f'<figure class="wk__item"><img src="{U(p["img"], r)}" alt="{E(p.get("caption") or "")}" loading="lazy" draggable="false"><figcaption>{E(p.get("caption") or "")}</figcaption></figure>' for p in D["work_photos"] if p.get("img"))
+    photos = "".join(f'<figure class="wk__item"><img src="{U(p["img"], r)}" alt="{E(p.get("caption") or "")}" loading="lazy" draggable="false"></figure>' for p in D["work_photos"] if p.get("img"))
     steps = "".join(f'<div class="step" data-reveal><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for s in D["process"])
     people = ""
     for t in D["team"]:
@@ -466,11 +479,18 @@ def about():
       <div class="tp__media" data-clip><img src="{U(t["img"], r)}" alt="{E(t["name"])}" loading="lazy"></div>
     </article>'''
     corner_tl = "".join(f"<i>{x}</i>" for x in LINES("about.corner_tl"))
+    ao_phs = "".join(f'<figure class="ao__ph ao__ph--{i}"><img src="{P(f"about.op{i}", r)}" alt="" loading="eager"></figure>' for i in range(1, 5) if PHOTOS.get(f"about.op{i}"))
+    # the opener: the hero video (plays as it expands) or, without one, the photo
+    if PHOTOS.get("about.hero_video"):
+        ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("home.hero_poster", r)}" aria-label="M2D interior design and renovation"><source src="{P("about.hero_video", r)}" type="video/mp4"></video>'
+    else:
+        ao_media = f'<img src="{P("about.hero", r)}" alt="{T("about.hero_alt")}">'
     corner_br = "".join(f"<i>{x}</i>" for x in LINES("about.corner_br"))
     body = f'''
 <section class="about-open">
   <div class="ao__stage">
-    <div class="ao__img"><img src="{P("about.hero", r)}" alt="{T("about.hero_alt")}"><span class="ao__corner ao__corner--tl">{corner_tl}</span><span class="ao__corner ao__corner--br">{corner_br}</span></div>
+    {ao_phs}
+    <div class="ao__img">{ao_media}<span class="ao__corner ao__corner--tag">{corner_br}</span><span class="ao__corner ao__corner--about">{corner_tl}</span></div>
     <span class="ao__label">{T("about.label")}</span>
     <div class="ao__panel">
       <span class="eyebrow">{T("about.ph_eyebrow")}</span>
@@ -595,18 +615,26 @@ def project(idx):
     <a href="{nxt["slug"]}.html"><span>Next</span><b>{E(nxt["name"])}</b></a>
   </div>
 </section>'''
-    facts = f'''<dl class="credits" data-reveal><dt>About.</dt><dd style="margin-bottom:28px">—</dd><dt>Area.</dt><dd>{E(p["area"])}</dd><dt>Rooms.</dt><dd>{E(p["rooms"])}</dd><dt>Type.</dt><dd>{E(p["type"])}</dd></dl>'''
-    creds = f'''<dl class="credits" data-reveal><dt>Credits.</dt><dd style="margin-bottom:28px">—</dd>{credits}</dl>'''
+    def text_rows(photos):
+        """Each paragraph sits beside a photo, alternating sides. Returns (rows html, photos left over)."""
+        n = min(len(paras), len(photos))
+        if not n: return "", photos
+        texts = [paras[i] for i in range(n)]
+        if len(paras) > n: texts[-1] = " ".join([texts[-1]] + paras[n:])
+        out = ""
+        for i in range(n):
+            side = "pa__row--r" if i % 2 else ""
+            out += f'<div class="pa__row {side}"><figure data-clip><img src="{src(photos[i])}" alt="{E(p["name"])}, {E(p["place"])}" loading="lazy"></figure><div class="pa__row-txt" data-reveal><p class="body">{E(texts[i])}</p></div></div>'
+        return out, photos[n:]
     title = f'{p["name"]} · M2D Portfolio'
 
     if layout == "reveal":
         main_n = g[0]; corners_n = (g[1:5] + g[1:5])[:4]; rest = g[5:] if len(g) > 5 else g[1:]
-        spread = "".join(f'<figure class="pa__ph pa__ph--{i+1}"><img src="{src(n)}" alt=""><figcaption>{E(cap(n,i+1))}</figcaption></figure>' for i, n in enumerate(corners_n))
-        rows = ""
-        for i, n in enumerate(rest):
-            side = "pa__row--r" if i % 2 else ""
-            txt = f'<p class="body">{E(paras[(i % max(1,len(paras)-1)) + 1])}</p>' if len(paras) > 1 and i < len(paras) - 1 else ""
-            rows += f'<div class="pa__row {side}"><figure data-clip><img src="{src(n)}" alt="" loading="lazy"><figcaption>{E(cap(n,i+1))}</figcaption></figure><div class="pa__row-txt" data-reveal>{txt}</div></div>'
+        spread = "".join(f'<figure class="pa__ph pa__ph--{i+1}"><img src="{src(n)}" alt=""></figure>' for i, n in enumerate(corners_n))
+        rows, left = text_rows(rest)
+        for i, n in enumerate(left):
+            side = "pa__row--r" if (i + len(paras)) % 2 else ""
+            rows += f'<div class="pa__row pa__row--solo {side}"><figure data-clip><img src="{src(n)}" alt="{E(p["name"])}" loading="lazy"></figure></div>'
         body = f'''
 <section class="pa">
   <div class="pa__side">
@@ -614,35 +642,29 @@ def project(idx):
     <h1 class="pa__title">{E(p["place"])}</h1>
     <p>{E(p["tagline"])}</p>
   </div>
-  <figure class="pa__main"><img src="{src(main_n)}" alt="{E(p["name"])}"><figcaption>{E(cap(main_n,0))}</figcaption></figure>
+  <figure class="pa__main"><img src="{src(main_n)}" alt="{E(p["name"])}"></figure>
   {spread}
-  <span class="pa__hint">Scroll</span>
 </section>
-<section id="story" class="container proj-intro">
-  {creds}
-  <div data-reveal><p class="statement">{E(paras[0])}</p></div>
-  {facts}
-</section>
-<section class="container pa__rows">{rows}</section>
+<section id="story" class="container pa__rows">{rows}</section>
 {nav}
 {cta(r, "cta.project")}
 '''
         return shell(title, body, r, desc=p["tagline"], body_class="is-reveal")
 
     if layout == "horizontal":
-        panels = f'''<div class="hs__panel hs__panel--title"><span class="eyebrow">{E(p["name"])} · {E(p["year"])}</span><h1 class="display">{E(p["place"])}</h1><p class="lede">{E(p["tagline"])}</p><div class="hs__meta"><span>{E(p["area"])}</span><span>{E(p["rooms"])}</span><span>{E(p["type"])}</span></div></div>'''
+        panels = f'''<div class="hs__panel hs__panel--title" style="--bg:url('{g[0]["src"] if g[0]["src"].startswith(("http","/")) else "/" + g[0]["src"]}')"><span class="eyebrow">{E(p["name"])} · {E(p["year"])}</span><h1 class="display">{E(p["place"])}</h1><p class="lede">{E(p["tagline"])}</p></div>'''
         k = 0
         for i, n in enumerate(g):
             if i % 3 == 0 and k < len(paras):
-                panels += f'<div class="hs__panel hs__panel--txt"><span class="hs__num">{k+1}</span><p class="body">{E(paras[k])}</p></div>'; k += 1
+                panels += f'<div class="hs__panel hs__panel--txt"><p class="body">{E(paras[k])}</p></div>'; k += 1
             tall = "hs__panel--tall" if i % 3 == 1 else ""
-            panels += f'<div class="hs__panel hs__panel--img {tall}"><figure><img src="{src(n)}" alt="" loading="lazy"><figcaption>{E(cap(n,i))}</figcaption></figure></div>'
-        panels += f'<div class="hs__panel hs__panel--end"><span class="eyebrow">Credits</span><dl class="credits">{credits}</dl><a class="hs__next" href="{nxt["slug"]}.html"><span>Next project</span><b>{E(nxt["name"])}</b></a></div>'
+            first = " hs__panel--first" if i == 0 else ""
+            panels += f'<div class="hs__panel hs__panel--img {tall}{first}"><figure><img src="{src(n)}" alt="{E(p["name"])}, {E(p["place"])}" loading="lazy"></figure></div>'
+        panels += f'<div class="hs__panel hs__panel--end"><a class="hs__next" href="{nxt["slug"]}.html"><span>Next project</span><b>{E(nxt["name"])}</b></a></div>'
         body = f'''
 <section class="hs">
   <div class="hs__wrap"><div class="hs__track">{panels}</div></div>
   <div class="hs__bar"><i></i></div>
-  <div class="hs__hint"><span>Scroll to read</span><span>{E(p["place"])}</span></div>
 </section>
 {nav}
 {cta(r, "cta.project")}
@@ -651,33 +673,48 @@ def project(idx):
 
     # editorial (vertical magazine grid)
     def im(n, cls): return f'<figure class="{cls}" data-clip><img src="{src(n)}" alt="{E(p["name"])}" loading="lazy"></figure>'
-    gallery = ""; rest = g[1:]
+    rows, rest = text_rows(g[1:])
+    gallery = ""
     layouts = ["g-l", "g-r", "g-half g-offset", "g-half", "g-full", "g-l2", "g-r2", "g-half", "g-half g-offset", "g-full"]
     for i, n in enumerate(rest):
         cls = layouts[i % len(layouts)]
         if i == len(rest) - 1 and cls.split()[0] in ("g-l", "g-l2", "g-half"): cls = "g-full"
         gallery += im(n, cls)
-        if i == 1 and len(paras) > 1: gallery += f'<div class="g-txt"><div class="body">{"".join(f"<p>{E(x)}</p>" for x in paras[1:])}</div></div>'
     body = f'''
 <section class="proj-hero">
   <div class="container">
     <div class="proj-hero__top">
-      <div><span class="eyebrow">Project {idx+1:02d} / {len(PROJ):02d}</span><h1 class="display" style="margin-top:16px">{E(p["name"])}</h1></div>
+      <div><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
       <div class="meta">{E(p["place"])} · {E(p["year"])}<br>({E(p["type"])})</div>
     </div>
   </div>
   <div class="container" style="margin-top:clamp(28px,4vw,60px)"><div class="proj-cover" data-clip><img src="{U(p["cover"], r)}" alt="{E(p["name"])}"></div></div>
 </section>
-<section class="container proj-intro">
-  {creds}
-  <div data-reveal><p class="statement">{E(p["tagline"])}</p><p class="body" style="margin-top:26px;text-align:left">{E(paras[0])}</p></div>
-  {facts}
-</section>
+<section id="story" class="container pa__rows">{rows}</section>
 <section class="container"><div class="proj-gallery">{gallery}</div></section>
 {nav}
 {cta(r, "cta.project")}
 '''
     return shell(title, body, r, desc=p["tagline"])
+
+# ============================ SERVICES ============================
+def services_page():
+    r = ""
+    body = f'''
+<section class="chero">
+  <div class="chero__bg"><img src="{P("services.hero", r)}" alt=""></div>
+  <div class="container chero__in">
+    <span class="eyebrow">{T("services.eyebrow")}</span>
+    <h1 class="display">{T("services.title")}</h1>
+    <p class="lede">{T("services.lede")}</p>
+  </div>
+</section>
+<section class="svc-page">
+  <div class="svc-grid">{svc_panels(r)}</div>
+</section>
+{cta(r, "cta.home")}
+'''
+    return shell(COPY.get("seo.title.services", ""), body, r, desc=COPY.get("seo.desc.services", ""))
 
 # ============================ BLOG ============================
 def blog():
@@ -787,7 +824,7 @@ def write_sitemap():
     """sitemap.xml + robots.txt so Google finds every page on the live address."""
     base = (D["site"].get("url") or "https://m2decor.com").rstrip("/")
     today = SG_TODAY
-    urls = [("/", today, "1.0"), ("/about.html", today, "0.8"), ("/portfolio.html", today, "0.9"), ("/blog.html", today, "0.8"), ("/contact.html", today, "0.7")]
+    urls = [("/", today, "1.0"), ("/about.html", today, "0.8"), ("/services.html", today, "0.9"), ("/portfolio.html", today, "0.9"), ("/blog.html", today, "0.8"), ("/contact.html", today, "0.7")]
     urls += [(f"/projects/{p['slug']}.html", today, "0.8") for p in PROJ]
     urls += [(f"/blog/{p['slug']}.html", str(p.get("date") or today)[:10], "0.6") for p in POSTS]
     xml = "".join(f"<url><loc>{base}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
@@ -812,7 +849,7 @@ def prune(folder, keep):
         if f.endswith(".html") and f not in keep: os.remove(os.path.join(d, f)); print("removed", f"{folder}/{f}")
 
 if __name__ == "__main__":
-    w("index.html", home()); w("about.html", about()); w("portfolio.html", portfolio()); w("blog.html", blog()); w("contact.html", contact())
+    w("index.html", home()); w("about.html", about()); w("portfolio.html", portfolio()); w("blog.html", blog()); w("contact.html", contact()); w("services.html", services_page())
     for i in range(len(PROJ)): w(f"projects/{PROJ[i]['slug']}.html", project(i))
     for p in POSTS: w(f"blog/{p['slug']}.html", post_page(p))
     prune("projects", {f"{p['slug']}.html" for p in PROJ}); prune("blog", {f"{p['slug']}.html" for p in POSTS})

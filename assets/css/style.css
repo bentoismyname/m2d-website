@@ -514,7 +514,7 @@ body.menu-open .header__logo img{filter:brightness(0) invert(1)}
 .proj-hero__top .meta{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);text-align:right;line-height:2}
 .proj-cover{aspect-ratio:16/8;overflow:hidden;background:var(--stone)}
 .proj-cover img{width:100%;height:100%;object-fit:cover}
-.proj-intro{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:clamp(28px,4vw,72px);padding-top:clamp(48px,7vw,100px);padding-bottom:clamp(48px,7vw,100px)}
+.proj-intro{display:grid;grid-template-columns:1fr 2fr;gap:clamp(28px,4vw,72px);padding-top:clamp(48px,7vw,100px);padding-bottom:clamp(48px,7vw,100px)}
 .credits dt{font-size:10px;letter-spacing:.24em;color:var(--grey-2);font-weight:600;margin-bottom:4px}
 .credits dd{font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;line-height:1.6}
 .proj-intro .statement{font-size:clamp(20px,2.2vw,30px);font-weight:300;line-height:1.4}
@@ -1192,3 +1192,79 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 .step li::before{top:.85em;width:8px}
 @media (max-width:900px){.step:nth-child(odd){padding-left:0}}
 @media (max-width:560px){.step{padding-left:0}}
+
+/* Reveal project pages on phones: one full-screen photo with a dark overlay, the hero words on top */
+@media (max-width:900px){
+  .pa{display:block;position:relative;height:100svh;min-height:520px;padding:0;overflow:hidden;background:#1E1C1B}
+  .pa__main{position:absolute;inset:0;width:100%;max-width:none;margin:0}
+  .pa__main img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;box-shadow:none}
+  .pa__main::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.42) 42%,rgba(0,0,0,.12) 75%,rgba(0,0,0,.25) 100%)}
+  .pa__main figcaption,.pa__ph{display:none}
+  .pa__side{position:absolute;left:var(--gutter);right:var(--gutter);bottom:clamp(56px,10svh,96px);z-index:3;max-width:none;margin:0;gap:14px}
+  .pa__side .eyebrow{color:rgba(255,255,255,.82)}
+  .pa__side .pa__title{color:#fff;font-size:clamp(44px,13vw,76px)}
+  .pa__side p{color:rgba(255,255,255,.88);max-width:34em}
+  .pa__hint{color:#fff;right:var(--gutter);bottom:22px}
+}
+
+/* Project pages: paragraphs sit beside the photos (no credits block) */
+.pa__rows{padding-top:clamp(56px,8vw,120px)}
+.pa__row-txt .body{text-align:left;max-width:440px;font-size:clamp(15px,1.15vw,18px);line-height:1.8;color:var(--ink-2)}
+.pa__row--solo{grid-template-columns:1fr}
+.pa__row--solo figure{max-width:min(100%,900px);justify-self:start}
+.pa__row--solo.pa__row--r figure{justify-self:end}
+.proj-hero__tag{margin-top:18px;max-width:520px}
+@media (max-width:900px){.pa__row-txt .body{max-width:none}}
+
+/* Side-scroll project pages on phones: they scroll down normally; the first photo opens full-screen with the words on top */
+@media (max-width:900px){
+  .hs__panel--title{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:calc(var(--header-h) + 24px) var(--gutter) clamp(56px,10svh,96px)!important;background:#1E1C1B var(--bg) center/cover no-repeat;color:#fff;isolation:isolate}
+  .hs__panel--title::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.42) 45%,rgba(0,0,0,.12) 78%,rgba(0,0,0,.25) 100%)}
+  .hs__panel--title .eyebrow{color:rgba(255,255,255,.82)}
+  .hs__panel--title .display{color:#fff}
+  .hs__panel--title .lede{color:rgba(255,255,255,.88)}
+  .hs__panel--first{display:none}
+}
+
+/* About opener with the hero video */
+.ao__img video{width:100%;height:100%;object-fit:cover;display:block;clip-path:inset(0);background:#1E1C1B}
+
+/* About opener: "About us" starts at the bottom right of the fully expanded video */
+.ao__label{left:auto;right:var(--gutter);text-align:right;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.3);will-change:transform,opacity}
+@media (max-width:900px){
+  .ao--m .ao__label{display:block;opacity:0;right:var(--gutter);bottom:clamp(110px,15svh,140px);font-size:clamp(44px,14vw,72px);z-index:4}
+}
+
+/* About opener corners (replaces the separate fading label): "About us" on the video's bottom-right corner, the small words top left */
+.ao__label{display:none!important}
+.ao__corner--about{left:auto;top:auto;right:4%;bottom:5%;text-align:right;align-items:flex-end;font-size:clamp(34px,5.2vw,96px)}
+.ao__corner--tag{right:auto;bottom:auto;left:-5%;top:-.6em;text-align:left;align-items:flex-start;font-size:clamp(22px,3vw,54px);font-family:Georgia,"Times New Roman",serif;text-transform:none;letter-spacing:-.01em}
+@media (max-width:900px){
+  .ao__corner--about,.ao--m .ao__corner--about{right:5%;bottom:4%;font-size:clamp(36px,11vw,60px)}
+  .ao__corner--tag,.ao--m .ao__corner--tag{left:-6%;top:-.6em;font-size:clamp(20px,6vw,30px)}
+}
+
+/* "About us": white, one line */
+.ao__corner--about{flex-direction:row;gap:.28em;white-space:nowrap;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.28)}
+@media (max-width:900px){.ao__corner--about,.ao--m .ao__corner--about{color:#fff;font-size:clamp(30px,9vw,52px)}}
+/* team titles: "creative team" / "core crew" in brand orange */
+.team-ed__ghost .ink{color:var(--orange)}
+
+/* Coming back to Home in the same tab: no loading screen, no replay — the finished hero is there from the first paint */
+.intro-seen .preloader{display:none!important}
+.intro-seen .hero .hero__shade{opacity:1;transition:none}
+.intro-seen .hero .hero__title .line span,.intro-seen .hero .hero__aside>*{transform:none;opacity:1;transition:none}
+.intro-seen .hero .hero__scroll{opacity:1;transition:none}
+.intro-seen .header.is-prelude-done{transition:none}
+
+/* About opener on desktop: small photos around the video instead of the small words */
+.ao__ph{position:absolute;margin:0;z-index:0;overflow:hidden;background:var(--stone);box-shadow:0 18px 40px rgba(0,0,0,.12);will-change:transform,opacity}
+.ao__ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ao__ph--1{left:7%;top:calc(var(--header-h) + 4vh);width:clamp(140px,13vw,230px);aspect-ratio:4/5}
+.ao__ph--2{right:6%;top:calc(var(--header-h) + 1vh);width:clamp(130px,12vw,210px);aspect-ratio:1}
+.ao__ph--3{left:10%;bottom:7vh;width:clamp(160px,15vw,270px);aspect-ratio:4/3}
+.ao__ph--4{right:8%;bottom:6vh;width:clamp(120px,11vw,200px);aspect-ratio:3/4}
+.ao__img{z-index:1}
+@media (min-width:901px){.ao__corner--tag{display:none}}
+@media (max-width:900px){.ao__ph{display:none}}
+.static .ao__ph{display:none}

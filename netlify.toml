@@ -47,7 +47,7 @@
 
 [[redirects]]
   from = "/services"
-  to = "/"
+  to = "/services.html"
   status = 301
 
 [[redirects]]
@@ -257,7 +257,7 @@
 
 [[redirects]]
   from = "/services/*"
-  to = "/"
+  to = "/services.html"
   status = 301
 
 [[redirects]]
