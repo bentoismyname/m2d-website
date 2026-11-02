@@ -1370,3 +1370,56 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 /* bigger click area for the testimonial dashes */
 .slider__dots button{position:relative}
 .slider__dots button::after{content:"";position:absolute;inset:-12px -2px}
+.rv__plat[data-reveal="left"]{transform:translateX(-60px)}
+.rv__plat[data-reveal].in{transform:none}
+.rv__plat{transition:opacity 1.1s var(--ease),transform 1.1s var(--ease),background .5s var(--ease)}
+.rv__plat:nth-child(2){transition-delay:.22s,.22s,0s}
+.rv__plat:nth-child(3){transition-delay:.44s,.44s,0s}
+
+/* Home "Real homes" on phones: same grow effect with one portrait photo */
+@media (max-width:900px){
+  .rh.rh--phone{height:220vh;padding:0}
+  .rh--phone .rh__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;padding:0}
+  .rh--phone .rh__head{position:absolute;left:var(--gutter);right:var(--gutter);top:calc(var(--header-h) + 14px);margin:0;z-index:3}
+  .rh--phone .rh__main{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);width:62vw;height:calc(62vw * 1.3);aspect-ratio:auto;max-width:none}
+  .rh--phone .rh__cta{opacity:0}
+}
+
+/* Home hero on phones: bigger title on two lines (Interior / Design Studio), everything centred */
+@media (max-width:900px){
+  .hero__content{justify-content:center;align-items:center;text-align:center;gap:30px;padding-bottom:calc(var(--header-h) * .5)}
+  .hero__title{display:block;text-align:center;font-size:min(calc((100vw - 2 * var(--gutter)) * .123),64px);line-height:1}
+  .hero__title .line{display:block}
+  .hero__title .line:nth-child(2),.hero__title .line:nth-child(3){display:inline-block;vertical-align:top}
+  .hero__title .line:nth-child(3){margin-left:.26em}
+  .hero__aside{align-items:center;text-align:center;max-width:340px}
+  .hero__aside p{text-align:center}
+}
+@media (max-width:900px){
+  .hero__shade{background:linear-gradient(180deg,rgba(20,16,14,.45) 0%,rgba(20,16,14,.42) 30%,rgba(20,16,14,.55) 55%,rgba(20,16,14,.5) 80%,rgba(20,16,14,.65) 100%)}
+}
+
+/* Project pages on phones: opener styled like the Contact us hero — shorter frame that shows more of the room, no zoom */
+.proj-hero__eyebrow{display:none}
+@media (max-width:900px){
+  .proj-hero{min-height:min(72svh,135vw);padding:calc(var(--header-h) + 60px) 0 clamp(40px,6vw,64px)}
+  .proj-hero .proj-cover img{object-position:center 60%}
+  .proj-hero .proj-cover::after{background:linear-gradient(180deg,rgba(20,17,16,.25) 0%,rgba(20,17,16,.35) 50%,rgba(20,17,16,.8) 100%)}
+  .proj-hero [data-clip],.proj-hero [data-clip].in{clip-path:none!important}
+  .proj-hero [data-clip] img,.proj-hero [data-clip].in img{transform:none!important;transition:none!important}
+  .proj-hero__eyebrow{display:inline-flex;color:rgba(255,255,255,.75);margin-bottom:18px}
+  .proj-hero__top .display{font-size:clamp(44px,7.5vw,112px)}
+  .proj-hero__top .lede{color:rgba(255,255,255,.85);max-width:520px}
+  .proj-hero__top{gap:22px}
+}
+@media (max-width:900px){
+  .proj-hero{min-height:72svh}
+  body.is-collage .header,body.is-reveal .header,body.is-horizontal .header,body.is-editorial .header{background:transparent;color:#fff;box-shadow:none}
+  body.is-collage .header.is-solid,body.is-reveal .header.is-solid,body.is-horizontal .header.is-solid,body.is-editorial .header.is-solid{background:rgba(255,255,255,.96);color:var(--ink)}
+}
+@media (max-width:900px){
+  /* the cover keeps the screen's width; its 2:1 desktop shape made it 4x wider than a phone */
+  .proj-hero .proj-cover{aspect-ratio:auto;width:100%}
+}
+/* About opener on phones: "About us" on the bottom-left, clear of the WhatsApp button */
+.ao--m .ao__corner--about{left:var(--gutter)!important;right:auto!important;text-align:left!important;justify-content:flex-start!important}

@@ -6,6 +6,7 @@
   addEventListener('pageshow',e=>{ if(e.persisted) location.reload(); });
   const world=pf.querySelector('.pf__world'), items=[...pf.querySelectorAll('.pf__item')], sw=pf.querySelector('.pf__switch'), swLabel=pf.querySelector('.pf__sw-label');
   const bar=pf.querySelector('.pf__bar em'), cur=pf.querySelector('.pf__cur'), hint=pf.querySelector('.pf__hint');
+  if(hint && matchMedia('(pointer:coarse)').matches) hint.textContent=hint.textContent.replace(/^\s*click\s*(&|and)\s*/i,'');
   const N=items.length, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let vw=innerWidth, vh=innerHeight;
   let mode='strip', busy=false;
@@ -66,16 +67,19 @@
   let galRows=[];
   function layoutGallery(){
     vw=innerWidth; vh=innerHeight;
-    const cols=6, rows=Math.ceil(N/cols);
-    const cellW=vw*.3, rowH=vh*.44, W=cols*cellW, H=rows*rowH;
+    const small=vw<=900;
+    // phones: two staggered columns of larger photos that fill the screen; desktop: six loose columns
+    const cols=small?2:6, rows=Math.ceil(N/cols)+(small?.5:0);
+    const cellW=small?vw*.46:vw*.3, rowH=small?vh*.29:vh*.44, W=cols*cellW, H=rows*rowH;
     gal=[]; galRows=[];
     items.forEach((el,i)=>{
       const r=+el.dataset.r, c=i%cols, rw=Math.floor(i/cols), d=ROW_DEPTH[rw%ROW_DEPTH.length], sc=DEPTH[d][1];
       // box the photo inside its cell (max 72% of the cell either way) so rows and columns can never cross
-      let w=cellW*(.5+rnd(i*7+1)*.22)*sc, h=w/r;
-      const maxH=rowH*.72; if(h>maxH){ h=maxH; w=h*r; }
-      const x=c*cellW+(cellW-w)*rnd(i*3+2)-W/2+vw/2;
-      const y=rw*rowH+(rowH-h)*(.15+rnd(i*5+3)*.7)-H/2+vh/2;
+      let w=cellW*(small?(.74+rnd(i*7+1)*.18):(.5+rnd(i*7+1)*.22))*(small?(.88+sc*.12):sc), h=w/r;
+      const maxH=rowH*(small?.84:.72); if(h>maxH){ h=maxH; w=h*r; }
+      const x=c*cellW+(cellW-w)*(small?(.25+rnd(i*3+2)*.5):rnd(i*3+2))-W/2+vw/2;
+      const stag=small&&c===1?rowH*.5:0;
+      const y=rw*rowH+stag+(rowH-h)*(small?(.3+rnd(i*5+3)*.4):(.15+rnd(i*5+3)*.7))-H/2+vh/2;
       gal.push({x,y,w,h,rot:0}); galRows.push(d);
     });
     bounds={minX:-(W/2-vw/2+vw*.08), maxX:(W/2-vw/2+vw*.08), minY:-(H/2-vh/2+vh*.12), maxY:(H/2-vh/2+vh*.12)};
@@ -107,10 +111,25 @@
   let drag=null, moved=0;
   pf.addEventListener('wheel',e=>{ if(busy) return; e.preventDefault(); const d=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY); if(mode==='strip') pan.tx-=d*1.1; else { pan.ty-=e.deltaY*1.1; pan.tx-=e.deltaX*1.1; } },{passive:false});
   let downItem=null;
-  pf.addEventListener('pointerdown',e=>{ if(busy||e.target.closest('.pf__ui')) return; downItem=e.target.closest('.pf__item'); drag={x:e.clientX,y:e.clientY,px:pan.tx,py:pan.ty}; moved=0; pf.setPointerCapture(e.pointerId); });
-  pf.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; moved=Math.max(moved,Math.abs(dx),Math.abs(dy)); if(mode==='strip') pan.tx=drag.px+dx*1.4; else { pan.tx=drag.px+dx; pan.ty=drag.py+dy; } });
+  pf.addEventListener('pointerdown',e=>{ if(busy||e.target.closest('.pf__ui')) return; downItem=e.target.closest('.pf__item'); drag={x:e.clientX,y:e.clientY,px:pan.tx,py:pan.ty,row:rowAtY(e.clientY),lx:e.clientX,lt:performance.now(),v:0}; moved=0; pf.setPointerCapture(e.pointerId); });
+  pf.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; moved=Math.max(moved,Math.abs(dx),Math.abs(dy));
+    const now=performance.now(), dt=Math.max(1,now-drag.lt); drag.v=drag.v*.6+((e.clientX-drag.lx)/dt)*.4; drag.lx=e.clientX; drag.lt=now;
+    if(mode==='strip') pan.tx=drag.px+dx*1.4; else { pan.tx=drag.px+dx; pan.ty=drag.py+dy; } });
+
+  /* ---------- phones: after a swipe, the nearest photo in the swiped row glides to the centre and stops ---------- */
+  const phone=()=>matchMedia('(max-width:900px)').matches;
+  function rowAtY(y){ if(!strip.length) return 0; const y1=strip[rowOf.indexOf(1)]?.y; return (y1!==undefined && y>=y1-10)?1:0; }
+  function snapStrip(row,flick){
+    if(mode!=='strip'||!strip.length) return;
+    const T=pan.tx+flick, sign=row===0?1:-1; let best=null;
+    const look=(p,r)=>{ if(r!==row) return; const c=wrapX(p,r,T)+p.w/2, d=vw/2-c; if(best===null||Math.abs(d)<Math.abs(best)) best=d; };
+    strip.forEach((p,i)=>look(p,rowOf[i])); clones.forEach(c=>look(c,c.row));
+    if(best!==null) pan.tx=T+sign*best;
+  }
   // pointer capture keeps the click on the canvas, so open the photo's project ourselves on a clean tap
-  pf.addEventListener('pointerup',e=>{ const it=downItem; drag=null; downItem=null; if(it&&moved<=6&&!busy&&e.button===0){ openProject(it); } });
+  pf.addEventListener('pointerup',e=>{ const it=downItem, d=drag; drag=null; downItem=null;
+    if(it&&moved<=6&&!busy&&e.button===0){ openProject(it); return; }
+    if(d&&moved>6&&!busy&&phone()) snapStrip(d.row, Math.max(-1,Math.min(1,d.v))*260); });
 
   /* ---------- click: the photo comes to the centre, its siblings burst out, then the project opens ---------- */
   function openProject(it){
@@ -119,6 +138,8 @@
       gsap.set(orig,{x:gsap.getProperty(it,'x'),y:gsap.getProperty(it,'y'),width:it.offsetWidth,height:it.offsetHeight,scale:gsap.getProperty(it,'scale')});
       it=orig;
     }
+    // phones: open the home straight away, no zoom
+    if(phone()){ location.href=it.href; return; }
     busy=true; pf.classList.add('pf--busy');
     clones.forEach(c=>gsap.to(c.el,{opacity:0,duration:.35}));
     const href=it.href;

@@ -465,7 +465,7 @@ const PAGES = [
       ...[1, 2, 3, 4, 5, 6].map(i => F.photo(`home.rh_sat${i}`, `Small photo ${i}`))] },
     { t: "YouTube", f: [F.text("home.yt_eyebrow", "Small heading"), F.lines("home.yt_title", "Title"), F.text("home.yt_link", "Link text"),
       F.list("videos", "Videos", { add: { id: "", title: "", text: "" }, title: i => i.title, item: [F.yt("id", "YouTube link", "Paste the video's link from YouTube."), F.text("title", "Title"), F.area("text", "Text")] })] },
-    { t: "Reviews", f: [F.text("home.rev_eyebrow", "Small heading"), F.text("home.rev_title", "Title"), F.area("home.rev_text", "Text"),
+    { t: "Reviews", f: [F.text("home.rev_title", "Title"), F.area("home.rev_text", "Text"),
       F.text("home.rev_google_score", "Google rating", "Out of 5, for example 4.8"), F.text("home.rev_google_count", "Google review count"),
       F.text("home.rev_hometrust_score", "Hometrust rating", "Out of 10, for example 9.5"), F.text("home.rev_hometrust_count", "Hometrust review count"),
       F.text("home.rev_qanvast_score", "Qanvast rating", "Out of 5, for example 4.9"), F.text("home.rev_qanvast_count", "Qanvast review count"),

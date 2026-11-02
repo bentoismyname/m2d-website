@@ -343,21 +343,21 @@ def home():
     steps = "".join(f'<div class="step" data-reveal class="d{i}"><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for i, s in enumerate(D["process"]))
     posts = "".join(post_card(p, r) for p in POSTS[:3])
     hero_title = "".join(f'<span class="line"><span>{x}</span></span>' for x in LINES("home.hero_title"))
-    def rev_plat(key, name, logo, url, out_of):
+    def rev_plat(key, name, logo, url, out_of, n=0):
         try: score = float(T(f"home.rev_{key}_score"))
         except ValueError: score = 0
         fill = max(0, min(100, score / out_of * 100))
         stars = f'<span class="rv__stars" aria-hidden="true"><span>{STAR*5}</span><span style="width:{fill:.1f}%">{STAR*5}</span></span>'
         out = f'<small>/{out_of}</small>' if out_of != 5 else ''
-        return f'''<a class="rv__plat" href="{url}" target="_blank" rel="noopener" aria-label="{name}: {T(f"home.rev_{key}_score")} out of {out_of}, {T(f"home.rev_{key}_count")} reviews">
+        return f'''<a class="rv__plat" data-reveal="left" href="{url}" target="_blank" rel="noopener" aria-label="{name}: {T(f"home.rev_{key}_score")} out of {out_of}, {T(f"home.rev_{key}_count")} reviews">
         <span class="rv__logo">{logo}</span>
         <span class="rv__score">{T(f"home.rev_{key}_score")}{out}</span>{stars}
         <span class="rv__count">{T(f"home.rev_{key}_count")} reviews</span>
         <span class="rv__go">Read reviews {ICON_ARROW}</span></a>'''
     plats = "".join([
-        rev_plat("google", "Google", GOOGLE_LOGO, SITE["google_reviews_tab"], 5),
-        rev_plat("hometrust", "Hometrust", f'<img src="{U("assets/img/reviews/hometrust.png", r)}" alt="Hometrust">', SITE["hometrust"], 10),
-        rev_plat("qanvast", "Qanvast", f'<img src="{U("assets/img/reviews/qanvast.svg", r)}" alt="Qanvast">', SITE["qanvast"], 5),
+        rev_plat("google", "Google", GOOGLE_LOGO, SITE["google_reviews_tab"], 5, 0),
+        rev_plat("hometrust", "Hometrust", f'<img src="{U("assets/img/reviews/hometrust.png", r)}" alt="Hometrust">', SITE["hometrust"], 10, 1),
+        rev_plat("qanvast", "Qanvast", f'<img src="{U("assets/img/reviews/qanvast.svg", r)}" alt="Qanvast">', SITE["qanvast"], 5, 2),
     ])
     sats = "".join(f'\n    <figure class="rh__sat rh__sat--{i}"><img src="{P(f"home.rh_sat{i}", r)}" alt=""></figure>' for i in range(1, 7))
     body = f'''
@@ -436,14 +436,12 @@ def home():
 <section class="section">
   <div class="container rv">
     <div class="rv__head" data-reveal>
-      <span class="eyebrow">{T("home.rev_eyebrow")}</span>
       <h2 class="h-lg">{T("home.rev_title")}</h2>
       <p class="body">{T("home.rev_text")}</p>
     </div>
-    <div class="rv__plats" data-reveal>{plats}</div>
+    <div class="rv__plats">{plats}</div>
     <div class="slider rv__slider" data-reveal>
       <div class="slider__track">{reviews}</div>
-      <div class="slider__nav"><button class="arrow-btn slider__prev" aria-label="Previous">{ICON_L}</button><div class="slider__dots"></div><button class="arrow-btn slider__next" aria-label="Next">{ICON_R}</button></div>
     </div>
   </div>
 </section>
@@ -497,10 +495,12 @@ def about():
     # the opener: the hero video (plays as it expands) or, without one, the photo
     if PHOTOS.get("about.hero_video"):
         v = PHOTOS["about.hero_video"]
-        if v == "assets/video/hero-scrub.mp4":   # the prepared clip comes in three sizes: big screens, desktops, phones
-            srcs = (f'<source src="{U("assets/video/hero-scrub-2560.mp4", r)}" type="video/mp4" media="(min-width:1600px)">'
-                    f'<source src="{U("assets/video/hero-scrub.mp4", r)}" type="video/mp4" media="(min-width:901px)">'
-                    f'<source src="{U("assets/video/hero-scrub-1280.mp4", r)}" type="video/mp4">')
+        big, small = v[:-4] + "-2560.mp4", v[:-4] + "-1280.mp4"
+        if v.endswith(".mp4") and os.path.exists(os.path.join(ROOT, big)) and os.path.exists(os.path.join(ROOT, small)):
+            # a prepared clip comes in three sizes (name.mp4, name-2560.mp4, name-1280.mp4): big screens, desktops, phones
+            srcs = (f'<source src="{U(big, r)}" type="video/mp4" media="(min-width:1600px)">'
+                    f'<source src="{U(v, r)}" type="video/mp4" media="(min-width:901px)">'
+                    f'<source src="{U(small, r)}" type="video/mp4">')
         else:
             srcs = f'<source src="{P("about.hero_video", r)}" type="video/mp4">'
         ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("about.hero_poster", r)}" aria-label="M2D interior design and renovation">{srcs}</video>'
@@ -676,7 +676,7 @@ def project(idx):
 <section class="proj-hero proj-hero--collage">
   <div class="container">
     <div class="proj-hero__top">
-      <div><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
+      <div><span class="eyebrow proj-hero__eyebrow">{T("portfolio.title")}</span><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
       <div class="meta">{E(p["place"])} · {E(p["year"])}<br>({E(p["type"])})</div>
     </div>
   </div>
@@ -744,7 +744,7 @@ def project(idx):
 <section class="proj-hero">
   <div class="container">
     <div class="proj-hero__top">
-      <div><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
+      <div><span class="eyebrow proj-hero__eyebrow">{T("portfolio.title")}</span><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
       <div class="meta">{E(p["place"])} · {E(p["year"])}<br>({E(p["type"])})</div>
     </div>
   </div>
@@ -885,9 +885,9 @@ def write_sitemap():
     """sitemap.xml + robots.txt so Google finds every page on the live address."""
     base = (D["site"].get("url") or "https://m2decor.com").rstrip("/")
     today = SG_TODAY
-    urls = [("/", today, "1.0"), ("/about.html", today, "0.8"), ("/services.html", today, "0.9"), ("/portfolio.html", today, "0.9"), ("/blog.html", today, "0.8"), ("/contact.html", today, "0.7")]
-    urls += [(f"/projects/{p['slug']}.html", today, "0.8") for p in PROJ]
-    urls += [(f"/blog/{p['slug']}.html", str(p.get("date") or today)[:10], "0.6") for p in POSTS]
+    urls = [("/", today, "1.0"), ("/about", today, "0.8"), ("/services", today, "0.9"), ("/portfolio", today, "0.9"), ("/blog", today, "0.8"), ("/contact", today, "0.7")]
+    urls += [(f"/projects/{p['slug']}", today, "0.8") for p in PROJ]
+    urls += [(f"/blog/{p['slug']}", str(p.get("date") or today)[:10], "0.6") for p in POSTS]
     xml = "".join(f"<url><loc>{base}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     open(os.path.join(ROOT, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{xml}</urlset>\n')
     open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /id/\nDisallow: /my/\n\nSitemap: {base}/sitemap.xml\n")

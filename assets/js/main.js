@@ -149,8 +149,8 @@
   /* ---------- Testimonial / generic sliders ---------- */
   $$('.slider').forEach(sl=>{
     const slides=$$('.slide',sl), dots=$('.slider__dots',sl); let i=0, timer;
-    slides.forEach((s,k)=>{const b=document.createElement('button'); b.setAttribute('aria-label','Slide '+(k+1)); b.addEventListener('click',()=>show(k,true)); dots.appendChild(b);});
-    const ds=$$('button',dots);
+    if(dots) slides.forEach((s,k)=>{const b=document.createElement('button'); b.setAttribute('aria-label','Slide '+(k+1)); b.addEventListener('click',()=>show(k,true)); dots.appendChild(b);});
+    const ds=dots?$$('button',dots):[];
     function show(k,user){ i=(k+slides.length)%slides.length; slides.forEach((s,n)=>s.classList.toggle('is-active',n===i)); ds.forEach((d,n)=>d.classList.toggle('is-active',n===i)); if(user) restart(); }
     function restart(){ clearInterval(timer); timer=setInterval(()=>show(i+1),6500); }
     $('.slider__prev',sl)&&$('.slider__prev',sl).addEventListener('click',()=>show(i-1,true));
@@ -310,7 +310,8 @@
   let aoWant=0, aoRaf=0;
   const aoSeek=()=>{ aoRaf=0; const d=aoVid.duration; if(!d||!isFinite(d)) return; const t=Math.min(d-0.04,Math.max(0,aoWant*d)); if(Math.abs(aoVid.currentTime-t)>1/60) aoVid.currentTime=t; };
   // tl: the opener timeline; expand: how long its expanding step lasts (the first step)
-  const aoScrub=(tl,expand)=>{ if(!aoVid) return; tl.eventCallback('onUpdate',()=>{ aoWant=Math.min(1,Math.max(0,tl.time()/expand)); if(!aoRaf) aoRaf=requestAnimationFrame(aoSeek); }); };
+  // the video follows the same easing as the photo's growth, so its last frame lands exactly as the photo fills the screen
+  const aoScrub=(tl,expand)=>{ if(!aoVid) return; const ease=gsap.parseEase('power2.inOut'); tl.eventCallback('onUpdate',()=>{ aoWant=ease(Math.min(1,Math.max(0,tl.time()/expand))); if(!aoRaf) aoRaf=requestAnimationFrame(aoSeek); }); };
   if(ao && window.gsap && window.ScrollTrigger && !reduce && !isStatic && innerWidth>900){
     gsap.registerPlugin(ScrollTrigger);
     const img=$('.ao__img',ao), panel=$('.ao__panel',ao), hints=$$('.ao__corner',ao), items=$$('.ao__panel > *',ao).filter(e=>!e.classList.contains('dots')&&!e.classList.contains('ao__hint')&&!e.classList.contains('ao__inset')), inset=$('.ao__inset',ao), label=$('.ao__label',ao);
@@ -354,15 +355,28 @@
 
   /* ---------- Home: Real homes scene — centre photo grows on scroll, CTA appears, press to zoom into the portfolio ---------- */
   const rh=$('.rh');
-  if(rh && window.gsap && window.ScrollTrigger && !reduce && !isStatic && innerWidth>900){
+  if(rh && window.gsap && window.ScrollTrigger && !reduce && !isStatic){
     gsap.registerPlugin(ScrollTrigger);
     const main=$('.rh__main',rh), cta=$('.rh__cta',rh), head=$('.rh__head',rh), sats=$$('.rh__sat',rh);
-    gsap.from(sats,{opacity:0,y:40,duration:1.1,ease:'power3.out',stagger:.08,scrollTrigger:{trigger:rh,start:'top 70%'}});
-    const tl=gsap.timeline({scrollTrigger:{trigger:rh,start:'top top',end:'bottom bottom',scrub:.8}});
-    tl.to(main,{width:'100vw',height:'100vh',ease:'power2.inOut',duration:1},0)
-      .to(sats,{x:i=>(i%2?1:-1)*innerWidth*.45,y:i=>(i<3?-1:1)*innerHeight*.5,opacity:0,ease:'power2.in',duration:.7,stagger:.03},0)
-      .to(head,{opacity:0,y:-30,duration:.4},0)
-      .to(cta,{opacity:1,duration:.3},.75);
+    const mm=gsap.matchMedia();
+    // desktop: centre photo grows while the small photos fly out
+    mm.add('(min-width:901px)',()=>{
+      gsap.from(sats,{opacity:0,y:40,duration:1.1,ease:'power3.out',stagger:.08,scrollTrigger:{trigger:rh,start:'top 70%'}});
+      const tl=gsap.timeline({scrollTrigger:{trigger:rh,start:'top top',end:'bottom bottom',scrub:.8}});
+      tl.to(main,{width:'100vw',height:'100vh',ease:'power2.inOut',duration:1},0)
+        .to(sats,{x:i=>(i%2?1:-1)*innerWidth*.45,y:i=>(i<3?-1:1)*innerHeight*.5,opacity:0,ease:'power2.in',duration:.7,stagger:.03},0)
+        .to(head,{opacity:0,y:-30,duration:.4},0)
+        .to(cta,{opacity:1,duration:.3},.75);
+    });
+    // phone: one portrait photo in the middle grows to fill the screen, then the button appears
+    mm.add('(max-width:900px)',()=>{
+      rh.classList.add('rh--phone');
+      const tl=gsap.timeline({scrollTrigger:{trigger:rh,start:'top top',end:'bottom bottom',scrub:.6,invalidateOnRefresh:true}});
+      tl.to(main,{width:()=>innerWidth,height:()=>innerHeight,top:'50%',ease:'power2.inOut',duration:1},0)
+        .to(head,{opacity:0,y:-24,duration:.35},0)
+        .to(cta,{opacity:1,duration:.3},.72);
+      return ()=>rh.classList.remove('rh--phone');
+    });
     main.addEventListener('click',e=>{
       e.preventDefault();
       const img=$('img',main); const veil=document.createElement('div'); veil.style.cssText='position:fixed;inset:0;z-index:2000;background:#fff;opacity:0;pointer-events:none'; document.body.appendChild(veil);

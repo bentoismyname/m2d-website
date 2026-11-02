@@ -27,27 +27,17 @@
 # REDIRECTS START (written by build/redirects.py)
 [[redirects]]
   from = "/aboutm2d"
-  to = "/about.html"
+  to = "/about"
   status = 301
 
 [[redirects]]
   from = "/contactus"
-  to = "/contact.html"
+  to = "/contact"
   status = 301
 
 [[redirects]]
   from = "/projects"
-  to = "/portfolio.html"
-  status = 301
-
-[[redirects]]
-  from = "/blog"
-  to = "/blog.html"
-  status = 301
-
-[[redirects]]
-  from = "/services"
-  to = "/services.html"
+  to = "/portfolio"
   status = 301
 
 [[redirects]]
@@ -72,197 +62,182 @@
 
 [[redirects]]
   from = "/hotelathome"
-  to = "/projects/hotel-at-home.html"
+  to = "/projects/hotel-at-home"
   status = 301
 
 [[redirects]]
   from = "/japandispirit"
-  to = "/projects/japandi-spirit.html"
+  to = "/projects/japandi-spirit"
   status = 301
 
 [[redirects]]
   from = "/embraceserenity"
-  to = "/projects/embrace-serenity.html"
+  to = "/projects/embrace-serenity"
   status = 301
 
 [[redirects]]
   from = "/hozon"
-  to = "/projects/hozon.html"
+  to = "/projects/hozon"
   status = 301
 
 [[redirects]]
   from = "/ubbanfusion"
-  to = "/projects/urban-fusion.html"
+  to = "/projects/urban-fusion"
   status = 301
 
 [[redirects]]
   from = "/ubbanfusion-1"
-  to = "/projects/chaseki.html"
-  status = 301
-
-[[redirects]]
-  from = "/projects/hotel-at-home"
-  to = "/projects/hotel-at-home.html"
+  to = "/projects/chaseki"
   status = 301
 
 [[redirects]]
   from = "/projects/japandispirit"
-  to = "/projects/japandi-spirit.html"
-  status = 301
-
-[[redirects]]
-  from = "/projects/embrace-serenity"
-  to = "/projects/embrace-serenity.html"
+  to = "/projects/japandi-spirit"
   status = 301
 
 [[redirects]]
   from = "/projects/the-hozon"
-  to = "/projects/hozon.html"
+  to = "/projects/hozon"
   status = 301
 
 [[redirects]]
   from = "/projects/urban-grain"
-  to = "/projects/urban-fusion.html"
-  status = 301
-
-[[redirects]]
-  from = "/projects/chaseki"
-  to = "/projects/chaseki.html"
+  to = "/projects/urban-fusion"
   status = 301
 
 [[redirects]]
   from = "/projects/victorian-revival"
-  to = "/projects/rattan.html"
+  to = "/projects/rattan"
   status = 301
 
 [[redirects]]
   from = "/projects/solis-*"
-  to = "/projects/oak-and-ember.html"
+  to = "/projects/oak-and-ember"
   status = 301
 
 [[redirects]]
   from = "/post/5-room-bto-interior-design-ideas-that-balance-space-style-and-function"
-  to = "/blog/5-room-bto-interior-design-ideas-that-balance-space-style-and-function.html"
+  to = "/blog/5-room-bto-interior-design-ideas-that-balance-space-style-and-function"
   status = 301
 
 [[redirects]]
   from = "/post/5-zoning-tips-for-narrow-terrace-house-designs"
-  to = "/blog/5-zoning-tips-for-narrow-terrace-house-designs.html"
+  to = "/blog/5-zoning-tips-for-narrow-terrace-house-designs"
   status = 301
 
 [[redirects]]
   from = "/post/60-30-10-rule-explained-why-it-works-and-how-it-can-transform-any-room"
-  to = "/blog/60-30-10-rule-explained-why-it-works-and-how-it-can-transform-any-room.html"
+  to = "/blog/60-30-10-rule-explained-why-it-works-and-how-it-can-transform-any-room"
   status = 301
 
 [[redirects]]
   from = "/post/bedroom-interior-design-for-couples-style-storage-compromise"
-  to = "/blog/bedroom-interior-design-for-couples-style-storage-compromise.html"
+  to = "/blog/bedroom-interior-design-for-couples-style-storage-compromise"
   status = 301
 
 [[redirects]]
   from = "/post/blending-wabi-sabi-and-japandi-interiors-can-you-have-the-best-of-both-worlds"
-  to = "/blog/blending-wabi-sabi-and-japandi-interiors-can-you-have-the-best-of-both-worlds.html"
+  to = "/blog/blending-wabi-sabi-and-japandi-interiors-can-you-have-the-best-of-both-worlds"
   status = 301
 
 [[redirects]]
   from = "/post/colour-palettes-for-scandinavian-hdb-interior-designs-from-cool-whites-to-earthy-tones"
-  to = "/blog/colour-palettes-for-scandinavian-hdb-interior-designs-from-cool-whites-to-earthy-tones.html"
+  to = "/blog/colour-palettes-for-scandinavian-hdb-interior-designs-from-cool-whites-to-earthy-tones"
   status = 301
 
 [[redirects]]
   from = "/post/form-function-and-flow-comparing-japandi-and-scandinavian-design"
-  to = "/blog/form-function-and-flow-comparing-japandi-and-scandinavian-design.html"
+  to = "/blog/form-function-and-flow-comparing-japandi-and-scandinavian-design"
   status = 301
 
 [[redirects]]
   from = "/post/hdb-lighting-guide-how-to-light-every-room-in-your-flat-efficiently"
-  to = "/blog/hdb-lighting-guide-how-to-light-every-room-in-your-flat-efficiently.html"
+  to = "/blog/hdb-lighting-guide-how-to-light-every-room-in-your-flat-efficiently"
   status = 301
 
 [[redirects]]
   from = "/post/how-to-create-a-cosy-living-room-without-sacrificing-style"
-  to = "/blog/how-to-create-a-cosy-living-room-without-sacrificing-style.html"
+  to = "/blog/how-to-create-a-cosy-living-room-without-sacrificing-style"
   status = 301
 
 [[redirects]]
   from = "/post/how-to-fit-a-walk-in-wardrobe-into-your-hdb-master-bedroom"
-  to = "/blog/how-to-fit-a-walk-in-wardrobe-into-your-hdb-master-bedroom.html"
+  to = "/blog/how-to-fit-a-walk-in-wardrobe-into-your-hdb-master-bedroom"
   status = 301
 
 [[redirects]]
   from = "/post/interior-design-for-small-spaces-how-to-make-a-small-room-look-bigger"
-  to = "/blog/interior-design-for-small-spaces-how-to-make-a-small-room-look-bigger.html"
+  to = "/blog/interior-design-for-small-spaces-how-to-make-a-small-room-look-bigger"
   status = 301
 
 [[redirects]]
   from = "/post/key-differences-between-minimalist-and-industrial-interior-designs"
-  to = "/blog/key-differences-between-minimalist-and-industrial-interior-designs.html"
+  to = "/blog/key-differences-between-minimalist-and-industrial-interior-designs"
   status = 301
 
 [[redirects]]
   from = "/post/minimalist-interior-design-in-singapore-ideas-for-hdbs-condos"
-  to = "/blog/minimalist-interior-design-in-singapore-ideas-for-hdbs-condos.html"
+  to = "/blog/minimalist-interior-design-in-singapore-ideas-for-hdbs-condos"
   status = 301
 
 [[redirects]]
   from = "/post/natural-light-vs-artificial-light-when-to-use-which-in-home-design"
-  to = "/blog/natural-light-vs-artificial-light-when-to-use-which-in-home-design.html"
+  to = "/blog/natural-light-vs-artificial-light-when-to-use-which-in-home-design"
   status = 301
 
 [[redirects]]
   from = "/post/small-condo-design-tips-furniture-strategies-storage-solutions-and-visual-flow"
-  to = "/blog/small-condo-design-tips-furniture-strategies-storage-solutions-and-visual-flow.html"
+  to = "/blog/small-condo-design-tips-furniture-strategies-storage-solutions-and-visual-flow"
   status = 301
 
 [[redirects]]
   from = "/post/understanding-hdb-renovation-guidelines-stay-compliant-and-hassle-free"
-  to = "/blog/understanding-hdb-renovation-guidelines-stay-compliant-and-hassle-free.html"
+  to = "/blog/understanding-hdb-renovation-guidelines-stay-compliant-and-hassle-free"
   status = 301
 
 [[redirects]]
   from = "/post/what-goes-into-a-4-room-hdb-resale-renovation"
-  to = "/blog/what-goes-into-a-4-room-hdb-resale-renovation.html"
+  to = "/blog/what-goes-into-a-4-room-hdb-resale-renovation"
   status = 301
 
 [[redirects]]
   from = "/post/what-impacts-resale-hdb-value-most-location-layout-or-renovation"
-  to = "/blog/what-impacts-resale-hdb-value-most-location-layout-or-renovation.html"
+  to = "/blog/what-impacts-resale-hdb-value-most-location-layout-or-renovation"
   status = 301
 
 [[redirects]]
   from = "/post/what-is-an-open-floor-plan-pros-and-cons-for-modern-homes"
-  to = "/blog/what-is-an-open-floor-plan-pros-and-cons-for-modern-homes.html"
+  to = "/blog/what-is-an-open-floor-plan-pros-and-cons-for-modern-homes"
   status = 301
 
 [[redirects]]
   from = "/post/what-is-contemporary-interior-design-key-features-and-how-it-differs-from-modern-design"
-  to = "/blog/what-is-contemporary-interior-design-key-features-and-how-it-differs-from-modern-design.html"
+  to = "/blog/what-is-contemporary-interior-design-key-features-and-how-it-differs-from-modern-design"
   status = 301
 
 [[redirects]]
   from = "/post/*"
-  to = "/blog.html"
+  to = "/blog"
   status = 301
 
 [[redirects]]
   from = "/blog/categories/*"
-  to = "/blog.html"
+  to = "/blog"
   status = 301
 
 [[redirects]]
   from = "/blog/page/*"
-  to = "/blog.html"
+  to = "/blog"
   status = 301
 
 [[redirects]]
   from = "/services/*"
-  to = "/services.html"
+  to = "/services"
   status = 301
 
 [[redirects]]
   from = "/projects/*"
-  to = "/portfolio.html"
+  to = "/portfolio"
   status = 301
 
 # REDIRECTS END

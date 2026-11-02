@@ -313,9 +313,9 @@ IG_ITEMS = ["assets/img/serenity/01.jpg","assets/img/chaseki/02.jpg","assets/img
 SERVICE_COLS = [
     dict(key="design", colour="#E37F32", line1="Interior Design", line2="& Consultancy", img="assets/img/strathmore/01.jpg", hover="assets/img/japandi/07.jpg", sub="Interior Design<br>and Consultancy",
          text="Space planning, concept boards, 3D visualisation and material selection, designed around how you actually live: the morning routine, the hosting, the quiet evenings."),
-    dict(key="reno", colour="#6B4A14", line1="Renovation", line2="& Carpentry", img="assets/img/home/05.jpg", hover="assets/img/home/09.jpg", sub="Renovation<br>and Carpentry",
+    dict(key="reno", colour="#6B4A14", line1="Renovation", line2="& Carpentry", img="assets/img/svc/reno-carpenter.jpg", hover="assets/img/home/09.jpg", sub="Renovation<br>and Carpentry",
          text="Turnkey renovation with our own crew: M&E, ceiling, masonry, tiling, painting and carpentry fabricated in our workshop and installed by the people who built it."),
-    dict(key="handyman", colour="#1F4A3C", line1="Handyman", line2="& Home Repair", img="assets/img/svc/handyman-ladder.jpg", hover="assets/img/svc/handyman-ceiling.jpg", sub="Handyman<br>and Home Repair",
+    dict(key="handyman", colour="#1F4A3C", line1="Handyman", line2="& Home Repair", img="assets/img/svc/handyman-ladder.jpg", hover="assets/img/svc/handyman-plaster.jpg", sub="Handyman<br>and Home Repair",
          text="After the handover, we stay. Touch-ups, repairs, re-fits and small works for homes we built and homes we did not."),
     dict(key="workshop", colour="#B3422D", line1="Interior Design", line2="Workshop", img="assets/img/svc/workshop-ben2.jpg", hover="assets/img/svc/workshop-teach.jpg", sub="Interior Design<br>Workshop",
          text="Bespoke built-ins, feature walls and furniture made to drawing. Where a design needs a piece that does not exist yet, the workshop makes it."),
@@ -433,8 +433,8 @@ PHOTOS = {
     # four small photos around the opener video on desktop; they move away as the video expands
     "about.op1": "assets/img/about/op-slatwall.jpg", "about.op2": "",
     "about.op3": "assets/img/about/op-lorry.jpg", "about.op4": "assets/img/about/op-kitchen.jpg",
-    "about.hero_poster": "assets/video/hero-poster.jpg",   # first frame of the About opener video
-    "about.hero_video": "assets/video/hero-scrub.mp4",   # runs with the scroll as the opener expands (every frame a keyframe, so it scrubs smoothly); empty = use the photo above
+    "about.hero_poster": "assets/video/about-turn-poster.jpg",   # first frame of the About opener video
+    "about.hero_video": "assets/video/about-turn.mp4",   # Nimbus living room, 3 s camera turn ending square-on;   # runs with the scroll as the opener expands (every frame a keyframe, so it scrubs smoothly); empty = use the photo above
     "about.team": "assets/img/home/01.jpg",
     "contact.hero": "assets/img/punggol/01.jpg",
     "services.hero": "assets/img/cantonment/01.jpg",

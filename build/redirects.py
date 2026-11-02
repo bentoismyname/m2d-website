@@ -21,42 +21,55 @@ PAGES = {
     "/projects/victorian-revival": "/projects/rattan.html",
 }
 
+def clean(u):
+    """/about.html -> /about, /index.html -> / (the site runs with clean addresses)."""
+    u = re.sub(r"\.html$", "", u)
+    return re.sub(r"(^|/)index$", r"\1", u) or "/"
+
+def our_projects():
+    return sorted(f[:-5] for f in os.listdir(os.path.join(ROOT, "projects")) if f.endswith(".html"))
+
+def page_rules():
+    """PAGES with clean destinations, leaving out any old address that is now a real page itself."""
+    return [(s, clean(d)) for s, d in PAGES.items() if s != clean(d)]
+
 def our_posts():
     return sorted(f[:-5] for f in os.listdir(os.path.join(ROOT, "blog")) if f.endswith(".html"))
 
 def vercel_rules():
-    rules = [{"source": s, "destination": d, "permanent": True} for s, d in PAGES.items()]
+    rules = [{"source": s, "destination": d, "permanent": True} for s, d in page_rules()]
+    ours = "|".join(re.escape(p) for p in our_projects())
     rules += [
-        {"source": "/projects/:slug(solis.*)", "destination": "/projects/oak-and-ember.html", "permanent": True},
-        # any other old project address (no ".html") -> the portfolio
-        {"source": "/projects/:slug([^.]+)", "destination": "/portfolio.html", "permanent": True},
+        {"source": "/projects/:slug(solis.*)", "destination": "/projects/oak-and-ember", "permanent": True},
+        # any other old project address that isn't one of our pages -> the portfolio
+        {"source": "/projects/:slug((?!(?:" + ours + ")(?:$|/))[^./]+)", "destination": "/portfolio", "permanent": True},
     ]
     posts = our_posts()
     if posts:
-        rules.append({"source": "/post/:slug(" + "|".join(re.escape(p) for p in posts) + ")", "destination": "/blog/:slug.html", "permanent": True})
+        rules.append({"source": "/post/:slug(" + "|".join(re.escape(p) for p in posts) + ")", "destination": "/blog/:slug", "permanent": True})
     rules += [
-        {"source": "/post/:slug*", "destination": "/blog.html", "permanent": True},
-        {"source": "/blog/categories/:c*", "destination": "/blog.html", "permanent": True},
-        {"source": "/blog/page/:p*", "destination": "/blog.html", "permanent": True},
-        {"source": "/services/:s*", "destination": "/services.html", "permanent": True},
+        {"source": "/post/:slug*", "destination": "/blog", "permanent": True},
+        {"source": "/blog/categories/:c*", "destination": "/blog", "permanent": True},
+        {"source": "/blog/page/:p*", "destination": "/blog", "permanent": True},
+        {"source": "/services/:s+", "destination": "/services", "permanent": True},
     ]
     return rules
 
 def netlify_block():
     out = ["# REDIRECTS START (written by build/redirects.py)"]
     def r(f, t): out.append(f'[[redirects]]\n  from = "{f}"\n  to = "{t}"\n  status = 301\n')
-    for s, d in PAGES.items(): r(s, d)
-    r("/projects/solis-*", "/projects/oak-and-ember.html")
-    for p in our_posts(): r(f"/post/{p}", f"/blog/{p}.html")
-    for f in ("/post/*", "/blog/categories/*", "/blog/page/*"): r(f, "/blog.html")
-    r("/services/*", "/services.html")
-    r("/projects/*", "/portfolio.html")   # Netlify only uses this when no real page matches
+    for s, d in page_rules(): r(s, d)
+    r("/projects/solis-*", "/projects/oak-and-ember")
+    for p in our_posts(): r(f"/post/{p}", f"/blog/{p}")
+    for f in ("/post/*", "/blog/categories/*", "/blog/page/*"): r(f, "/blog")
+    r("/services/*", "/services")
+    r("/projects/*", "/portfolio")   # Netlify only uses this when no real page matches
     out.append("# REDIRECTS END")
     return "\n".join(out)
 
 if __name__ == "__main__":
     vp = os.path.join(ROOT, "vercel.json"); v = json.load(open(vp))
-    v["redirects"] = vercel_rules(); json.dump(v, open(vp, "w"), indent=2); open(vp, "a").write("\n")
+    v["cleanUrls"] = True; v["redirects"] = vercel_rules(); json.dump(v, open(vp, "w"), indent=2); open(vp, "a").write("\n")
     np_ = os.path.join(ROOT, "netlify.toml"); n = open(np_).read()
     n = re.sub(r"\n# REDIRECTS START.*?# REDIRECTS END\n?", "\n", n, flags=re.S).rstrip() + "\n\n" + netlify_block() + "\n"
     open(np_, "w").write(n)
