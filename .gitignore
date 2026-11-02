@@ -14,3 +14,6 @@ assets/video/hero2-source.mp4
 # secrets
 .env
 .env.*
+
+# loose files dropped into the project folder
+/WhatsApp *
