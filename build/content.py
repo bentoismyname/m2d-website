@@ -171,7 +171,7 @@ FAQ_ABOUT = [
 
 # ---- Team (order = numbering on the About page). bio paragraphs separated by " | "
 TEAM = [
-    dict(name="Benjamin Toh", role="Director / Interior Designer", img="assets/img/about/01.jpg",
+    dict(name="Benjamin Toh", role="Director / Interior Designer", img="assets/img/about/ben.jpg",
          lede="You grew up around your father's carpentry workshop before leading M2D into interior design. What changed, and what stayed the same?",
          bio="The wood never left. Everything we draw today still has to be buildable by the people in our own workshop, and that discipline is what keeps our designs honest. | What changed is the conversation. Since 2015 we have treated every home like a consultation: you share the pain points, the lifestyle, the wants and the needs, and we advise and then operate. Design is only half of it; the other half is being on site until the handover is right.",),
     dict(name="Leon Yap", role="Architectural Designer", img="assets/img/about/04.jpg",
