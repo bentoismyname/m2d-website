@@ -1271,6 +1271,6 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 /* Enquiry form: sent straight to the inbox */
 .form__trap{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
 .form__note a{color:var(--orange);text-decoration:underline;text-underline-offset:3px}
-.form.is-sending button[type=submit]{opacity:.6;pointer-events:none}
+.form.is-sending button[type=submit]{opacity:.75;pointer-events:none;cursor:progress}
 .form__status{grid-column:1/-1;margin-top:18px;padding:16px 20px;font-size:14px;line-height:1.6;border-left:3px solid var(--orange);background:#F6F1EC;color:var(--ink)}
 .form__status.is-err{border-left-color:#B3422D;background:#F8ECE9}

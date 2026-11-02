@@ -441,8 +441,12 @@
       if((d.get('_honey')||'').trim()) return;   // a bot filled the hidden field
       const name=(d.get('name')||'').trim();
       btn.disabled=true; form.classList.add('is-sending');
+      const label=$('.btn__t span',btn), was=label?label.textContent:'';
+      if(label) label.textContent=form.dataset.sending||'Sending…';
+      status.textContent=form.dataset.wait||''; status.className='form__status'; status.hidden=!status.textContent;
+      const stop=new AbortController(), timer=setTimeout(()=>stop.abort(),30000);   // never leave the visitor waiting more than 30 seconds
       try{
-        const r=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(form.dataset.to),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({
+        const r=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(form.dataset.to),{method:'POST',signal:stop.signal,headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({
           _subject:'Website enquiry — '+name+' ('+d.get('property')+')', _template:'table', _captcha:'false', _replyto:d.get('email'),
           Name:name, Email:d.get('email'), Phone:d.get('phone'), Property:d.get('property'), 'How they know us':d.get('source'), Message:d.get('message')||'—', Page:location.href
         })});
@@ -453,6 +457,7 @@
       }catch(err){
         status.textContent=form.dataset.error; status.className='form__status is-err';
       }
+      clearTimeout(timer); if(label) label.textContent=was;
       status.hidden=false; btn.disabled=false; form.classList.remove('is-sending');
     });
   }

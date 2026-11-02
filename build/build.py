@@ -796,7 +796,7 @@ def contact():
       <a href="{SITE['tiktok']}" target="_blank" rel="noopener" aria-label="TikTok">{ICON_TT}</a>
       <a href="{SITE['youtube']}" target="_blank" rel="noopener" aria-label="YouTube">{ICON_YT}</a></div></div>
   </div>
-  <form class="form" id="enquiry" data-reveal data-to="{E(SITE['email'])}" data-thanks="{T("contact.form_thanks")}" data-error="{T("contact.form_error")}">
+  <form class="form" id="enquiry" data-reveal data-to="{E(SITE['email'])}" data-thanks="{T("contact.form_thanks")}" data-error="{T("contact.form_error")}" data-sending="{T("contact.form_sending")}" data-wait="{T("contact.form_wait")}">
     <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" required></div>
     <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required></div>
     <div class="field"><label for="f-phone">Phone number</label><input id="f-phone" name="phone" type="tel" required></div>

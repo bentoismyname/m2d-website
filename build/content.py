@@ -324,6 +324,8 @@ COPY = {
     # contact
     "contact.form_note": "Your enquiry goes straight to our team and we reply within one working day. Prefer to chat?",
     "contact.form_send": "Send enquiry",
+    "contact.form_sending": "Sending…",
+    "contact.form_wait": "Sending your enquiry, this can take a few seconds…",
     "contact.form_thanks": "Thank you, your enquiry is with us. We'll be in touch within one working day.",
     "contact.form_error": "Sorry, that didn't go through. Please try again, or WhatsApp us.",
     "contact.eyebrow": "Contact us", "contact.title": "Drop us\na message",
