@@ -418,9 +418,9 @@ COPY = {
 }
 
 PHOTOS = {
-    "home.hero_video": "assets/video/hero-3s.mp4",   # the continuous dining-room shot, reversed and sped up to 3 s
-    "home.hero_poster": "assets/video/hero-2-poster.jpg",
-    "home.hero_end": "assets/video/hero-2-end.jpg",   # the video's last frame, shown at once when a visitor comes back to Home
+    "home.hero_video": "assets/video/hero.mp4",   # the Hozon dining room (4 s); hero-3s.mp4 is the alternative reversed clip
+    "home.hero_poster": "assets/video/hero-poster.jpg",
+    "home.hero_end": "assets/video/hero-end.jpg",   # the video's last frame, shown at once when a visitor comes back to Home
     "home.rh_main": "assets/img/punggol/01.jpg",
     "home.rh_sat1": "assets/img/thumb/serenity-01.jpg", "home.rh_sat2": "assets/img/thumb/hotel-04.jpg", "home.rh_sat3": "assets/img/thumb/japandi-01.jpg",
     "home.rh_sat4": "assets/img/thumb/chaseki-06.jpg", "home.rh_sat5": "assets/img/thumb/urban-06.jpg", "home.rh_sat6": "assets/img/thumb/hozon-05.jpg",
