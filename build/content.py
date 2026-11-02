@@ -227,10 +227,10 @@ SERVICE_COLS = [
          text="Space planning, concept boards, 3D visualisation and material selection, designed around how you actually live: the morning routine, the hosting, the quiet evenings."),
     dict(key="reno", colour="#6B4A14", line1="Renovation", line2="& Carpentry", img="assets/img/home/05.jpg", hover="assets/img/home/09.jpg", sub="Renovation<br>and Carpentry",
          text="Turnkey renovation with our own crew: M&E, ceiling, masonry, tiling, painting and carpentry fabricated in our workshop and installed by the people who built it."),
-    dict(key="workshop", colour="#B3422D", line1="Interior Design", line2="Workshop", img="assets/img/serenity/02.jpg", hover="assets/img/chaseki/06.jpg", sub="Interior Design<br>Workshop",
-         text="Bespoke built-ins, feature walls and furniture made to drawing. Where a design needs a piece that does not exist yet, the workshop makes it."),
     dict(key="handyman", colour="#1F4A3C", line1="Handyman", line2="& Home Repair", img="assets/img/urban/06.jpg", hover="assets/img/hozon/05.jpg", sub="Handyman<br>and Home Repair",
          text="After the handover, we stay. Touch-ups, repairs, re-fits and small works for homes we built and homes we did not."),
+    dict(key="workshop", colour="#B3422D", line1="Interior Design", line2="Workshop", img="assets/img/serenity/02.jpg", hover="assets/img/chaseki/06.jpg", sub="Interior Design<br>Workshop",
+         text="Bespoke built-ins, feature walls and furniture made to drawing. Where a design needs a piece that does not exist yet, the workshop makes it."),
 ]
 
 # ---- Project page layouts ----

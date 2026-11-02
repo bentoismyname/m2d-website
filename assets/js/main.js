@@ -242,6 +242,44 @@
     }
   }
 
+
+  /* ---------- About "How we work": endless photo strip — drifts slowly, drag or swipe to move it ---------- */
+  $$('[data-wk]').forEach(wk=>{
+    const track=$('.wk__track',wk), orig=[...track.children]; if(!orig.length) return;
+    // repeat the photos until one set is wider than the screen, then add one more full set so the loop has no seam
+    for(let g=0; track.scrollWidth<innerWidth*1.3 && g<20; g++) orig.forEach(n=>{ const c=n.cloneNode(true); c.setAttribute('aria-hidden','true'); track.appendChild(c); });
+    [...track.children].forEach(n=>{ const c=n.cloneNode(true); c.setAttribute('aria-hidden','true'); track.appendChild(c); });
+    const gapPx=()=>parseFloat(getComputedStyle(track).columnGap)||0;
+    let period=0; const measure=()=>{ const kids=track.children, half=kids.length/2; period=kids[half].offsetLeft-kids[0].offsetLeft; };
+    measure(); addEventListener('resize',measure);
+    let x=0, vel=0, drag=null, hover=false, inView=true, last=performance.now();
+    const speed=reduce?0:.045;   // px per ms
+    new IntersectionObserver(es=>{ inView=es[0].isIntersecting; },{rootMargin:'100px'}).observe(wk);
+    wk.addEventListener('mouseenter',()=>hover=true); wk.addEventListener('mouseleave',()=>hover=false);
+    wk.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,start:x,lx:e.clientX,lt:performance.now(),axis:null}; vel=0; });
+    addEventListener('pointermove',e=>{
+      if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+      if(!drag.axis){ if(Math.abs(dx)<6&&Math.abs(dy)<6) return; drag.axis=Math.abs(dx)>Math.abs(dy)?'x':'y'; if(drag.axis==='x'){ wk.classList.add('is-drag'); try{wk.setPointerCapture(e.pointerId);}catch(_){} } }
+      if(drag.axis!=='x') return;
+      const now=performance.now(); vel=(e.clientX-drag.lx)/Math.max(1,now-drag.lt); drag.lx=e.clientX; drag.lt=now; x=drag.start+dx;
+    });
+    let dragged=false;
+    const end=()=>{ if(!drag) return; dragged=drag.axis==='x'; drag=null; wk.classList.remove('is-drag'); setTimeout(()=>dragged=false,0); };
+    // a drag is not a click (so swiping the videos never starts one)
+    wk.addEventListener('click',e=>{ if(dragged){ e.preventDefault(); e.stopPropagation(); } },true);
+    addEventListener('pointerup',end); addEventListener('pointercancel',end);
+    (function loop(now){
+      const dt=Math.min(50,now-last); last=now;
+      if(inView&&period){
+        if(!drag){ x+=vel*dt; vel*=Math.pow(.94,dt/16); if(Math.abs(vel)<.01) vel=0; if(!hover&&!wk.classList.contains('is-playing')) x-=speed*dt; }
+        if(x<=-period) { x+=period; if(drag) drag.start+=period; }
+        if(x>0) { x-=period; if(drag) drag.start-=period; }
+        track.style.transform=`translate3d(${x}px,0,0)`;
+      }
+      requestAnimationFrame(loop);
+    })(last);
+  });
+
   /* ---------- About: scroll-open sequence ---------- */
   const ao=$('.about-open');
   if(ao && window.gsap && window.ScrollTrigger && !reduce && !isStatic && innerWidth>900){
@@ -349,7 +387,8 @@
 
   /* ---------- YouTube lazy ---------- */
   $$('.vid[data-yt]').forEach(v=>v.addEventListener('click',e=>{
-    e.preventDefault(); const f=$('.vid__frame',v);
+    e.preventDefault(); const f=$('.vid__frame',v); if($('iframe',f)) return;
+    const strip=v.closest('[data-wk]'); if(strip) strip.classList.add('is-playing');   // the strip holds still while a video plays
     f.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.dataset.yt}?autoplay=1&rel=0" title="${v.dataset.title||'Video'}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   }));
 

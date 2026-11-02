@@ -19,7 +19,7 @@ SG_TODAY = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(ho
 
 # ============================ CONTENT MODEL ============================
 # Fixed-size lists: the page layout is built around exactly this many items.
-FIXED = {"stats": 3, "services": 4, "process": 4, "videos": 3, "work_photos": 3, "divisions": 4}
+FIXED = {"stats": 3, "services": 4, "process": 4, "divisions": 4}
 LAYOUTS = ("reveal", "horizontal", "editorial")
 
 def _img_alt(tag):
@@ -324,9 +324,9 @@ def home():
       <div class="work__meta"><h3>{E(p["name"])}</h3><span>{E(p["place"])} · {E(p["year"])}</span></div>
       <div class="work__tag">{E(p["area"])} · {E(p["type"])}</div>
     </a>''' for i, p in enumerate(home_projects()))
-    vids = "".join(f'''<a class="vid" href="https://www.youtube.com/watch?v={E(v["id"])}" data-yt="{E(v["id"])}" data-title="{E(v["title"])}" data-reveal>
+    vids = "".join(f'''<a class="vid" href="https://www.youtube.com/watch?v={E(v["id"])}" data-yt="{E(v["id"])}" data-title="{E(v["title"])}" draggable="false">
       <div class="vid__frame"><img src="https://i.ytimg.com/vi/{E(v["id"])}/hqdefault.jpg" alt="" loading="lazy"><div class="vid__play"><i>{ICON_PLAY}</i></div></div>
-      <h3>{E(v["title"])}</h3><p>{E(v["text"])}</p></a>''' for v in D["videos"])
+      <h3>{E(v["title"])}</h3><p>{E(v["text"])}</p></a>''' for v in D["videos"] if v.get("id"))
     reviews = "".join(f'<figure class="slide"><blockquote>{E(v["text"])}</blockquote><figcaption><b>{E(v["name"])}</b>{E(v["role"])}</figcaption></figure>' for v in D["reviews"])
     steps = "".join(f'<div class="step" data-reveal class="d{i}"><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for i, s in enumerate(D["process"]))
     posts = "".join(post_card(p, r) for p in POSTS[:3])
@@ -402,8 +402,8 @@ def home():
 <section class="section section--stone">
   <div class="container">
     <div class="sec-head"><div><span class="eyebrow">{T("home.yt_eyebrow")}</span><h2 class="h-lg" style="margin-top:14px">{T("home.yt_title")}</h2></div><a class="link" href="{SITE['youtube']}" target="_blank" rel="noopener">{T("home.yt_link")} {ICON_ARROW}</a></div>
-    <div class="vids">{vids}</div>
   </div>
+  <div class="wk wk--vids" data-wk><div class="wk__track">{vids}</div></div>
 </section>
 
 <section class="section">
@@ -459,7 +459,7 @@ def about():
       <div class="mag__media" data-reveal="left">{media}</div>
       <div class="mag__text" data-reveal="right"><span class="eyebrow orange">{E(s["year"])}</span><h3 class="dash" style="margin-top:14px">{E(s["title"])}</h3><p class="body">{E(s["text"])}</p></div>
     </div>'''
-    photos = "".join(f'<figure class="ph-{"abe"[i]}" data-clip><img src="{U(p["img"], r)}" alt="" loading="lazy"><figcaption>{E(p["caption"])}</figcaption></figure>' for i, p in enumerate(D["work_photos"]))
+    photos = "".join(f'<figure class="wk__item"><img src="{U(p["img"], r)}" alt="{E(p.get("caption") or "")}" loading="lazy" draggable="false"><figcaption>{E(p.get("caption") or "")}</figcaption></figure>' for p in D["work_photos"] if p.get("img"))
     steps = "".join(f'<div class="step" data-reveal><div class="num-outline">{E(s["n"])}</div><h3>{E(s["title"])}</h3><ul>{"".join(f"<li>{E(x)}</li>" for x in s["items"] if str(x).strip())}</ul></div>' for s in D["process"])
     people = ""
     for t in D["team"]:
@@ -535,8 +535,8 @@ def about():
 <section class="section">
   <div class="container">
     <div class="sec-head"><div><span class="eyebrow">{T("about.work_eyebrow")}</span><h2 class="h-lg" style="margin-top:14px">{T("about.work_title")}</h2></div><p class="lede">{T("about.work_lede")}</p></div>
-    <div class="photos">{photos}</div>
   </div>
+  <div class="wk" data-wk><div class="wk__track">{photos}</div></div>
 </section>
 
 <section class="section section--stone">

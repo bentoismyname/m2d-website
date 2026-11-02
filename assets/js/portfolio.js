@@ -18,23 +18,48 @@
   function rnd(seed){ let t=seed+0x6D2B79F5; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }
 
   /* ---------- layouts (all in world coords, screen = world + pan) ---------- */
-  // two even rows: every photo the same height, same gaps, captions underneath; each photo joins the shorter row so both rows stay level
+  // two even rows: every photo the same height, same gaps, captions underneath; each photo joins the shorter row.
+  // Scrolling moves the top row left and the bottom row right; both loop forever (copies fill a row that is too short).
+  let rowOf=[], rowLen=[0,0], clones=[], maxW=0, sgap=0;
   function layoutStrip(){
     vw=innerWidth; vh=innerHeight;
     const hh=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;
-    const top=hh+(vw<700?56:70), bottom=vw<700?96:140, cap=44, rowGap=Math.max(18,vh*.035), gap=Math.max(16,vw*.025), side=Math.max(20,vw*.05);
+    const top=hh+(vw<700?56:70), bottom=vw<700?96:140, cap=44, rowGap=Math.max(18,vh*.035), side=Math.max(20,vw*.05);
+    sgap=Math.max(16,vw*.025);
     const room=vh-top-bottom-cap*2-rowGap, h=Math.max(110,Math.min(room/2, vw*(vw<700?.48:.24)));
-    const y0=top+Math.max(0,(room-h*2)/2);   // rows sit in the middle of the free space
-    const ends=[side,side], ys=[y0, y0+h+cap+rowGap];
-    strip=items.map(el=>{
-      const w=h*(+el.dataset.r), row=ends[0]<=ends[1]?0:1, p={x:ends[row], y:ys[row], w, h, rot:0};
-      ends[row]+=w+gap; return p;
+    const y0=top+Math.max(0,(room-h*2)/2), ys=[y0, y0+h+cap+rowGap];
+    clones.forEach(c=>c.el.remove()); clones=[];
+    const ends=[0,0]; strip=[]; rowOf=[];
+    items.forEach(el=>{
+      const w=h*(+el.dataset.r), row=ends[0]<=ends[1]?0:1;
+      strip.push({x:side+ends[row], y:ys[row], w, h, rot:0}); rowOf.push(row); ends[row]+=w+sgap;
     });
-    const end=Math.max(ends[0],ends[1])-gap+side;
-    // short portfolio: centre it; long one: scroll from the left edge to the right edge
-    if(end<=vw){ const shift=(vw-end)/2; strip.forEach(p=>p.x+=shift); bounds={minX:0,maxX:0,minY:0,maxY:0}; }
-    else bounds={minX:-(end-vw), maxX:0, minY:0, maxY:0};
+    maxW=Math.max(...strip.map(p=>p.w));
+    const need=vw+maxW*2+sgap*2;
+    [0,1].forEach(row=>{
+      const src=items.map((_,i)=>i).filter(i=>rowOf[i]===row); if(!src.length) return;
+      // repeat the whole row (never part of it) so the loop always shows the photos in the same order
+      const sets=Math.max(0,Math.ceil(need/ends[row])-1);
+      for(let k=0; k<sets*src.length; k++){
+        const i=src[k%src.length], el=items[i].cloneNode(true);
+        el.classList.add('pf__clone'); el.setAttribute('aria-hidden','true'); el.tabIndex=-1; el.dataset.src=i;
+        el.addEventListener('click',e=>e.preventDefault());
+        world.appendChild(el);
+        const c={el, i, x:side+ends[row], y:ys[row], w:strip[i].w, h, row};
+        gsap.set(el,{x:c.x,y:c.y,width:c.w,height:c.h,opacity:0}); clones.push(c); ends[row]+=c.w+sgap;
+      }
+    });
+    rowLen=ends.slice();
+    bounds={minX:-Infinity,maxX:Infinity,minY:0,maxY:0};
   }
+  // where a photo sits on screen for the current scroll: top row follows the scroll, bottom row runs the other way, both wrap round
+  function wrapX(p,row,px){
+    const L=rowLen[row]; if(!L) return p.x;
+    const start=-(maxW+sgap), off=row===0?px:-px;
+    return start+((((p.x+off-start)%L)+L)%L);
+  }
+  const showClones=(d=.6)=>clones.forEach(c=>gsap.to(c.el,{opacity:1,duration:d,overwrite:'auto'}));
+  const hideClones=()=>clones.forEach(c=>gsap.set(c.el,{opacity:0}));
   // three depth bands: [parallax factor, size scale]. Rows cycle through them.
   const DEPTH=[[.55,.74],[.78,.88],[1,1]];
   const ROW_DEPTH=[2,0,1,2,1,0,2,0,1,2];
@@ -66,14 +91,15 @@
     if(mode==='gallery'&&!busy){
       gsap.set(world,{x:0,y:0});
       items.forEach((el,i)=>{ const p=gal[i], f=DEPTH[galRows[i]][0]; gsap.set(el,{x:p.x+pan.x*f+mouse.x*(f-.78)*90, y:p.y+pan.y+mouse.y*(f-.78)*50}); });
-    } else gsap.set(world,{x:pan.x,y:pan.y});
-    if(mode==='strip'&&!busy){
-      // centre-weighted scale + progress + counter
-      let best=0,bd=1e9;
+    } else if(mode==='strip'&&!busy){
+      gsap.set(world,{x:0,y:0});
       // photos near the middle are full size, the ones towards the edges ease down a little (never bigger, so nothing overlaps)
-      items.forEach((el,i)=>{ const p=strip[i]; const cx=p.x+p.w/2+pan.x; const d=Math.abs(cx-vw/2); const k=1-Math.min(1,d/(vw*.7)); gsap.set(el,{scale:.92+k*.08}); if(d<bd){bd=d;best=i;} });
-      const prog=bounds.minX?pan.x/bounds.minX:0; bar.style.width=(prog*100)+'%'; cur.textContent=String(best+1).padStart(2,'0');
-    }
+      let best=0,bd=1e9;
+      const place=(el,p,row,i)=>{ const x=wrapX(p,row,pan.x), d=Math.abs(x+p.w/2-vw/2), k=1-Math.min(1,d/(vw*.7)); gsap.set(el,{x,y:p.y,scale:.92+k*.08}); if(d<bd){bd=d;best=i;} };
+      items.forEach((el,i)=>place(el,strip[i],rowOf[i],i));
+      clones.forEach(c=>place(c.el,c,c.row,c.i));
+      const L=rowLen[0]||1, prog=((((-pan.x)%L)+L)%L)/L; bar.style.width=(prog*100)+'%'; cur.textContent=String(best+1).padStart(2,'0');
+    } else gsap.set(world,{x:pan.x,y:pan.y});
     requestAnimationFrame(tick);
   }
 
@@ -88,7 +114,13 @@
 
   /* ---------- click: the photo comes to the centre, its siblings burst out, then the project opens ---------- */
   function openProject(it){
+    if(it.classList.contains('pf__clone')){
+      const orig=items[+it.dataset.src];
+      gsap.set(orig,{x:gsap.getProperty(it,'x'),y:gsap.getProperty(it,'y'),width:it.offsetWidth,height:it.offsetHeight,scale:gsap.getProperty(it,'scale')});
+      it=orig;
+    }
     busy=true; pf.classList.add('pf--busy');
+    clones.forEach(c=>gsap.to(c.el,{opacity:0,duration:.35}));
     const href=it.href;
     if(reduce){ location.href=href; return; }
     const wx=gsap.getProperty(world,'x'), wy=gsap.getProperty(world,'y');
@@ -131,6 +163,7 @@
   async function switchMode(){
     if(busy) return; busy=true; pf.classList.add('pf--busy'); sw.disabled=true;
     const toGallery=mode==='strip';
+    hideClones();
     // bake the current pan into item positions so the world can sit at 0 during the move
     const wx=gsap.getProperty(world,'x'), wy=gsap.getProperty(world,'y');
     const current=items.map(el=>({x:gsap.getProperty(el,'x')+wx, y:gsap.getProperty(el,'y')+wy, w:el.offsetWidth, h:el.offsetHeight, rot:0}));
@@ -146,18 +179,20 @@
     await new Promise(r=>setTimeout(r,reduce?0:260));
     // 2. boom: burst out into the new layout
     if(toGallery) layoutGallery(); else layoutStrip();
-    const target=toGallery?gal:strip;
+    const target=toGallery?gal:strip.map((p,i)=>({...p,x:wrapX(p,rowOf[i],0)}));
     items.forEach((el,i)=>el.style.zIndex=1);
     await animateTo(target,{dur:reduce?.01:1.15,ease:'expo.out',stagger:i=>rnd(i*19)*.18});
-    if(toGallery){ hint.classList.add('is-on'); setTimeout(()=>hint.classList.remove('is-on'),2200); }
+    if(toGallery){ hint.classList.add('is-on'); setTimeout(()=>hint.classList.remove('is-on'),2200); clones.forEach(c=>c.el.remove()); clones=[]; }
+    else showClones();
     busy=false; pf.classList.remove('pf--busy'); sw.disabled=false;
   }
   sw.addEventListener('click',switchMode);
 
   /* ---------- init ---------- */
   layoutStrip(); apply(strip);
-  // start at the left edge of the two rows
-  const p0=0; pan.x=pan.tx=p0; gsap.set(world,{x:p0});
+  // start with both rows at their beginning
+  const p0=0; pan.x=pan.tx=p0; gsap.set(world,{x:0});
+  const stripAt0=strip.map((p,i)=>({...p,x:wrapX(p,rowOf[i],0)}));
   // intro: every photo small in one level row across the middle → zooms into the strip
   if(!reduce){
     busy=true; pf.classList.add('pf--busy');
@@ -165,10 +200,10 @@
     if(total>vw*.94){ const k=vw*.94/total; hm*=k; total=items.reduce((t,el)=>t+hm*(+el.dataset.r),0)+gap*(N-1); }
     let x=(vw-total)/2-p0; const row=items.map(el=>{ const w=hm*(+el.dataset.r); const p={x,y:vh/2-hm/2,w,h:hm}; x+=w+gap; return p; });
     items.forEach((el,i)=>gsap.set(el,{x:row[i].x,y:row[i].y,width:row[i].w,height:row[i].h,scale:1,opacity:0}));
-    const tl=gsap.timeline({delay:.2,onComplete:()=>{ busy=false; pf.classList.remove('pf--busy'); }});
+    const tl=gsap.timeline({delay:.2,onComplete:()=>{ busy=false; pf.classList.remove('pf--busy'); showClones(); }});
     tl.to(items,{opacity:1,duration:.5,ease:'power2.out',stagger:.012})
-      .to(items,{x:i=>strip[i].x,y:i=>strip[i].y,width:i=>strip[i].w,height:i=>strip[i].h,duration:1.3,ease:'expo.inOut'},'+=.35');
-  }
-  addEventListener('resize',()=>{ if(busy) return; if(mode==='strip'){ layoutStrip(); apply(strip); } else { layoutGallery(); apply(gal); } });
+      .to(items,{x:i=>stripAt0[i].x,y:i=>stripAt0[i].y,width:i=>stripAt0[i].w,height:i=>stripAt0[i].h,duration:1.3,ease:'expo.inOut'},'+=.35');
+  } else showClones(0);
+  addEventListener('resize',()=>{ if(busy) return; if(mode==='strip'){ layoutStrip(); apply(strip); showClones(0); } else { layoutGallery(); apply(gal); } });
   requestAnimationFrame(tick);
 })();
