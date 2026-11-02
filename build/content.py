@@ -174,7 +174,7 @@ TEAM = [
     dict(name="Benjamin Toh", role="Director / Interior Designer", img="assets/img/about/ben.jpg",
          lede="You grew up around your father's carpentry workshop before leading M2D into interior design. What changed, and what stayed the same?",
          bio="The wood never left. Everything we draw today still has to be buildable by the people in our own workshop, and that discipline is what keeps our designs honest. | What changed is the conversation. Since 2015 we have treated every home like a consultation: you share the pain points, the lifestyle, the wants and the needs, and we advise and then operate. Design is only half of it; the other half is being on site until the handover is right.",),
-    dict(name="Leon Yap", role="Architectural Designer", img="assets/img/about/04.jpg",
+    dict(name="Leon Yap", role="Architectural Designer", img="assets/img/about/leon.jpg",
          lede="Where does an architectural eye make the biggest difference inside a Singapore flat?",
          bio="In the plan. Most homes are not short of space; they are short of flow. Moving one wall, widening a threshold or borrowing light from the next room can change how a 90 square metre flat feels. | I look after the technical drawings and the 3D walkthroughs, so what a client approves on screen is exactly what the crew builds on site."),
     dict(name="Raymond Ng", role="Head Interior Designer", img="assets/img/about/11.jpg",
@@ -344,3 +344,5 @@ PHOTOS = {
 # the first three people are the creative team, the rest the core crew (the About page title switches between them)
 for _i, _t in enumerate(TEAM):
     _t.setdefault("group", "creative" if _i < 3 else "core")
+
+SITE.setdefault("url", "https://m2decor.com")   # the live address, used for the sitemap

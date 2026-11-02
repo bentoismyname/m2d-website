@@ -421,7 +421,7 @@ body.menu-open .header__logo img{filter:brightness(0) invert(1)}
 
 /* ---------- Footer ---------- */
 .footer{background:var(--ink);color:#fff;padding:clamp(56px,7vw,96px) 0 32px}
-.footer__top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.12)}
+.footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.12)}
 .footer__logo img{height:34px}
 .footer__brand p{margin-top:22px;font-size:13px;color:rgba(255,255,255,.6);max-width:340px;line-height:1.7}
 .footer h4{font-size:10px;letter-spacing:.26em;color:rgba(255,255,255,.5);margin-bottom:18px;font-weight:600}
@@ -1183,3 +1183,12 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 .wk--vids .vid{flex:0 0 auto;width:clamp(280px,30vw,520px)}
 .wk--vids .vid h3,.wk--vids .vid p{white-space:normal}
 @media (max-width:760px){.wk--vids .vid{width:80vw}}
+
+/* Process steps: keep each column clear of the divider line, dashes centred on the first line of each point */
+.step{padding-left:clamp(18px,2vw,34px)}
+.step:first-child{padding-left:0}
+.step li{padding-left:18px}
+.step li+li{margin-top:6px}
+.step li::before{top:.85em;width:8px}
+@media (max-width:900px){.step:nth-child(odd){padding-left:0}}
+@media (max-width:560px){.step{padding-left:0}}

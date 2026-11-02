@@ -4,9 +4,185 @@
   "installCommand": "",
   "buildCommand": "python3 build/pull_cms.py && python3 build/build.py && python3 build/package.py",
   "outputDirectory": "dist",
-  "crons": [{ "path": "/api/cms/daily", "schedule": "5 16 * * *" }],
+  "crons": [
+    {
+      "path": "/api/cms/daily",
+      "schedule": "5 16 * * *"
+    }
+  ],
   "headers": [
-    { "source": "/admin/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Cache-Control", "value": "no-cache" }] },
-    { "source": "/(.*)", "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }, { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }] }
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/aboutm2d",
+      "destination": "/about.html",
+      "permanent": true
+    },
+    {
+      "source": "/contactus",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects",
+      "destination": "/portfolio.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/services",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/menu",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/hotelathome",
+      "destination": "/projects/hotel-at-home.html",
+      "permanent": true
+    },
+    {
+      "source": "/japandispirit",
+      "destination": "/projects/japandi-spirit.html",
+      "permanent": true
+    },
+    {
+      "source": "/embraceserenity",
+      "destination": "/projects/embrace-serenity.html",
+      "permanent": true
+    },
+    {
+      "source": "/hozon",
+      "destination": "/projects/hozon.html",
+      "permanent": true
+    },
+    {
+      "source": "/ubbanfusion",
+      "destination": "/projects/urban-fusion.html",
+      "permanent": true
+    },
+    {
+      "source": "/ubbanfusion-1",
+      "destination": "/projects/chaseki.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/hotel-at-home",
+      "destination": "/projects/hotel-at-home.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/japandispirit",
+      "destination": "/projects/japandi-spirit.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/embrace-serenity",
+      "destination": "/projects/embrace-serenity.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/the-hozon",
+      "destination": "/projects/hozon.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/urban-grain",
+      "destination": "/projects/urban-fusion.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/chaseki",
+      "destination": "/projects/chaseki.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/victorian-revival",
+      "destination": "/projects/rattan.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/:slug(solis.*)",
+      "destination": "/projects/oak-and-ember.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects/:slug([^.]+)",
+      "destination": "/portfolio.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/:slug(5\\-room\\-bto\\-interior\\-design\\-ideas\\-that\\-balance\\-space\\-style\\-and\\-function|5\\-zoning\\-tips\\-for\\-narrow\\-terrace\\-house\\-designs|60\\-30\\-10\\-rule\\-explained\\-why\\-it\\-works\\-and\\-how\\-it\\-can\\-transform\\-any\\-room|bedroom\\-interior\\-design\\-for\\-couples\\-style\\-storage\\-compromise|blending\\-wabi\\-sabi\\-and\\-japandi\\-interiors\\-can\\-you\\-have\\-the\\-best\\-of\\-both\\-worlds|colour\\-palettes\\-for\\-scandinavian\\-hdb\\-interior\\-designs\\-from\\-cool\\-whites\\-to\\-earthy\\-tones|form\\-function\\-and\\-flow\\-comparing\\-japandi\\-and\\-scandinavian\\-design|hdb\\-lighting\\-guide\\-how\\-to\\-light\\-every\\-room\\-in\\-your\\-flat\\-efficiently|how\\-to\\-create\\-a\\-cosy\\-living\\-room\\-without\\-sacrificing\\-style|how\\-to\\-fit\\-a\\-walk\\-in\\-wardrobe\\-into\\-your\\-hdb\\-master\\-bedroom|interior\\-design\\-for\\-small\\-spaces\\-how\\-to\\-make\\-a\\-small\\-room\\-look\\-bigger|key\\-differences\\-between\\-minimalist\\-and\\-industrial\\-interior\\-designs|minimalist\\-interior\\-design\\-in\\-singapore\\-ideas\\-for\\-hdbs\\-condos|natural\\-light\\-vs\\-artificial\\-light\\-when\\-to\\-use\\-which\\-in\\-home\\-design|small\\-condo\\-design\\-tips\\-furniture\\-strategies\\-storage\\-solutions\\-and\\-visual\\-flow|understanding\\-hdb\\-renovation\\-guidelines\\-stay\\-compliant\\-and\\-hassle\\-free|what\\-goes\\-into\\-a\\-4\\-room\\-hdb\\-resale\\-renovation|what\\-impacts\\-resale\\-hdb\\-value\\-most\\-location\\-layout\\-or\\-renovation|what\\-is\\-an\\-open\\-floor\\-plan\\-pros\\-and\\-cons\\-for\\-modern\\-homes|what\\-is\\-contemporary\\-interior\\-design\\-key\\-features\\-and\\-how\\-it\\-differs\\-from\\-modern\\-design)",
+      "destination": "/blog/:slug.html",
+      "permanent": true
+    },
+    {
+      "source": "/post/:slug*",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/categories/:c*",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/page/:p*",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/services/:s*",
+      "destination": "/",
+      "permanent": true
+    }
   ]
 }

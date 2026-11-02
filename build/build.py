@@ -224,7 +224,6 @@ def shell(title, body, root="", transparent=False, desc="", extra_head="", extra
 </html>'''
 
 def footer(root):
-    projects = "".join(f'<li><a href="{root}projects/{p["slug"]}.html">{E(p["name"])}</a></li>' for p in PROJ)
     divs = "".join(f'<span><i style="background:{c}"></i>{E(d["name"])}</span>' for d, c in zip(D["divisions"], DIV_COLOURS))
     return f'''<footer class="footer">
   <div class="container">
@@ -235,7 +234,6 @@ def footer(root):
         <div class="footer__divs">{divs}</div>
       </div>
       <div><h4>{T("footer.h_info")}</h4><ul>{"".join(f'<li><a href="{root}{h}">{E(t)}</a></li>' for t,h in NAV)}</ul></div>
-      <div><h4>{T("footer.h_projects")}</h4><ul>{projects}</ul></div>
       <div><h4>{T("footer.h_enquire")}</h4><ul>
         <li><a href="tel:+{SITE['phone_raw']}">{E(SITE['phone'])}</a></li>
         <li><a href="mailto:{SITE['email']}">{E(SITE['email'])}</a></li>
@@ -785,6 +783,18 @@ def site_assets():
             if re.search(r"\.(jpe?g|png|webp)$", f, re.I) and not f.startswith("logo"): out.append(f"{rel}/{f}")
     return sorted(out)
 
+def write_sitemap():
+    """sitemap.xml + robots.txt so Google finds every page on the live address."""
+    base = (D["site"].get("url") or "https://m2decor.com").rstrip("/")
+    today = SG_TODAY
+    urls = [("/", today, "1.0"), ("/about.html", today, "0.8"), ("/portfolio.html", today, "0.9"), ("/blog.html", today, "0.8"), ("/contact.html", today, "0.7")]
+    urls += [(f"/projects/{p['slug']}.html", today, "0.8") for p in PROJ]
+    urls += [(f"/blog/{p['slug']}.html", str(p.get("date") or today)[:10], "0.6") for p in POSTS]
+    xml = "".join(f"<url><loc>{base}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
+    open(os.path.join(ROOT, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{xml}</urlset>\n')
+    open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: {base}/sitemap.xml\n")
+    print(f"wrote sitemap.xml ({len(urls)} pages) + robots.txt")
+
 def write_seed():
     """admin/seed.json: the site's current content, which the CMS starts from (and imports into Supabase)."""
     seed = dict(generated=datetime.datetime.now(datetime.timezone.utc).isoformat(), content=D, projects=ALL_PROJECTS, posts=ALL_POSTS,
@@ -806,4 +816,5 @@ if __name__ == "__main__":
     for i in range(len(PROJ)): w(f"projects/{PROJ[i]['slug']}.html", project(i))
     for p in POSTS: w(f"blog/{p['slug']}.html", post_page(p))
     prune("projects", {f"{p['slug']}.html" for p in PROJ}); prune("blog", {f"{p['slug']}.html" for p in POSTS})
+    write_sitemap()
     write_seed()

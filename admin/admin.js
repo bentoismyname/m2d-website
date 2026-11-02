@@ -507,7 +507,7 @@ const PAGES = [
   ] },
   { id: "footer", name: "Header, footer and Google", url: "index.html", img: "assets/img/home/01.jpg", blurb: "Footer text, division names, the Enquire button and the standard Google description.", sections: [
     { t: "Header", f: [F.text("nav.enquire", "Button at the top right")] },
-    { t: "Footer", f: [F.area("footer.text", "Text under the logo"), F.text("footer.h_info", "First column heading"), F.text("footer.h_projects", "Second column heading"), F.text("footer.h_enquire", "Third column heading"), F.text("footer.copyright", "Bottom left"), F.text("footer.right", "Bottom right"),
+    { t: "Footer", f: [F.area("footer.text", "Text under the logo"), F.text("footer.h_info", "First column heading"), F.text("footer.h_enquire", "Third column heading"), F.text("footer.copyright", "Bottom left"), F.text("footer.right", "Bottom right"),
       F.list("divisions", "The four divisions", { fixed: true, colours: () => SEED.divisions.map(d => d.colour), title: i => i.name, item: [F.text("name", "Name")] })] },
     { t: "Google", f: [F.area("seo.default_desc", "Standard description for Google", "Used by every page that has no description of its own.")] },
   ] },
