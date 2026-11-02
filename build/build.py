@@ -181,7 +181,7 @@ ICON_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 STAR = '<svg viewBox="0 0 24 24"><path d="M12 2l3 7 7.5.6-5.7 4.9 1.8 7.3L12 18l-6.6 3.8 1.8-7.3L1.5 9.6 9 9z"/></svg>'
 
 def shell(title, body, root="", transparent=False, desc="", extra_head="", extra_body="", body_class=""):
-    nav = "".join(f'<a href="{root}{h}">{E(t)}</a>' for t, h in NAV)
+    nav = "".join(f'<a href="{root}{h}">{E(t)}</a>' for t, h in NAV if h != "contact.html")
     mnav = "".join(f'<a href="{root}{h}">{E(t)}</a>' for t, h in NAV)
     hcls = "header header--transparent" if transparent else "header"
     return f'''<!doctype html>
@@ -482,7 +482,14 @@ def about():
     ao_phs = "".join(f'<figure class="ao__ph ao__ph--{i}"><img src="{P(f"about.op{i}", r)}" alt="" loading="eager"></figure>' for i in range(1, 5) if PHOTOS.get(f"about.op{i}"))
     # the opener: the hero video (plays as it expands) or, without one, the photo
     if PHOTOS.get("about.hero_video"):
-        ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("home.hero_poster", r)}" aria-label="M2D interior design and renovation"><source src="{P("about.hero_video", r)}" type="video/mp4"></video>'
+        v = PHOTOS["about.hero_video"]
+        if v == "assets/video/hero-scrub.mp4":   # the prepared clip comes in three sizes: big screens, desktops, phones
+            srcs = (f'<source src="{U("assets/video/hero-scrub-2560.mp4", r)}" type="video/mp4" media="(min-width:1600px)">'
+                    f'<source src="{U("assets/video/hero-scrub.mp4", r)}" type="video/mp4" media="(min-width:901px)">'
+                    f'<source src="{U("assets/video/hero-scrub-1280.mp4", r)}" type="video/mp4">')
+        else:
+            srcs = f'<source src="{P("about.hero_video", r)}" type="video/mp4">'
+        ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("home.hero_poster", r)}" aria-label="M2D interior design and renovation">{srcs}</video>'
     else:
         ao_media = f'<img src="{P("about.hero", r)}" alt="{T("about.hero_alt")}">'
     corner_br = "".join(f"<i>{x}</i>" for x in LINES("about.corner_br"))
@@ -533,7 +540,7 @@ def about():
       <h3 class="spread__title"><span></span><b></b></h3>
       <p class="spread__lede"></p>
       <div class="spread__body"></div>
-      <div class="spread__foot"><div><b>01</b> <small>/ {len(D["team"]):02d}</small></div><div><button class="spread__prev">Previous</button><button class="spread__next">Next</button></div></div>
+      <div class="spread__foot"><div></div><div><button class="spread__prev">Previous</button><button class="spread__next">Next</button></div></div>
     </div>
   </div>
 </div>
@@ -789,15 +796,16 @@ def contact():
       <a href="{SITE['tiktok']}" target="_blank" rel="noopener" aria-label="TikTok">{ICON_TT}</a>
       <a href="{SITE['youtube']}" target="_blank" rel="noopener" aria-label="YouTube">{ICON_YT}</a></div></div>
   </div>
-  <form class="form" id="enquiry" data-reveal>
+  <form class="form" id="enquiry" data-reveal data-to="{E(SITE['email'])}" data-thanks="{T("contact.form_thanks")}" data-error="{T("contact.form_error")}">
     <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" required></div>
     <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required></div>
     <div class="field"><label for="f-phone">Phone number</label><input id="f-phone" name="phone" type="tel" required></div>
     <div class="field"><label for="f-prop">Type of property</label><select id="f-prop" name="property"><option>HDB (resale)</option><option>HDB BTO</option><option>Condominium</option><option>Landed</option><option>Commercial</option></select></div>
     <div class="field field--full"><label for="f-src">How do you know us?</label><select id="f-src" name="source"><option>Google</option><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Facebook</option><option>Friend / referral</option><option>Other</option></select></div>
     <div class="field field--full"><label for="f-msg">Tell us about your home</label><textarea id="f-msg" name="message" placeholder="Size, key date, must-haves, budget range…"></textarea></div>
-    <div class="field field--full"><label>Send via</label><div style="display:flex;gap:28px;font-size:13px"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink)"><input type="radio" name="via" value="whatsapp" checked style="width:auto">WhatsApp</label><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink)"><input type="radio" name="via" value="email" style="width:auto">Email</label></div></div>
-    <div class="form__foot"><p class="form__note">Your message opens in WhatsApp or your mail app with everything pre-filled. Nothing is stored on this site.</p><button class="btn btn--orange" type="submit">Submit {ICON_ARROW}</button></div>
+    <div class="form__trap" aria-hidden="true"><label>Leave this empty<input name="_honey" tabindex="-1" autocomplete="off"></label></div>
+    <div class="form__foot"><p class="form__note">{T("contact.form_note")} <a href="https://wa.me/{SITE['phone_raw']}" target="_blank" rel="noopener">WhatsApp us</a>.</p><button class="btn btn--orange" type="submit">{T("contact.form_send")} {ICON_ARROW}</button></div>
+    <p class="form__status" role="status" aria-live="polite" hidden></p>
   </form>
 </section>
 <div class="map"><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=M2%20Decor%20Pte%20Ltd&ll=1.454737,103.7983522&z=17&hl=en&output=embed" title="M2 Decor Pte Ltd on Google Maps"></iframe></div>

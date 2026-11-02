@@ -201,7 +201,7 @@
         const parts=d.name.split(' '); t1.textContent=parts[0]; t2.textContent=parts.slice(1).join(' ');
         role.innerHTML=d.role.replace(' / ','<br>'); lede.textContent=d.lede; body.innerHTML=d.bio.split('|').map(x=>'<p>'+x+'</p>').join('');
         sig.textContent=d.name+' — '+d.role;
-        pg.textContent=String(cur+1).padStart(2,'0'); $('.spread__foot small',spread).textContent='/ '+String(people.length).padStart(2,'0');
+        if(pg){ pg.textContent=String(cur+1).padStart(2,'0'); const tot=$('.spread__foot small',spread); if(tot) tot.textContent='/ '+String(people.length).padStart(2,'0'); }
         $('.spread__page',spread).scrollTop=0;
       }
       function photoBox(){ return $('.spread__photo',spread).getBoundingClientRect(); }
@@ -431,16 +431,29 @@
     }));
   }
 
-  /* ---------- Contact form → WhatsApp / email ---------- */
+  /* ---------- Contact form → emailed straight to the enquiry inbox (via FormSubmit) ---------- */
   const form=$('#enquiry');
   if(form){
-    form.addEventListener('submit',e=>{
+    const status=$('.form__status',form), btn=$('button[type=submit]',form);
+    form.addEventListener('submit',async e=>{
       e.preventDefault();
       const d=new FormData(form);
-      const lines=[`Hi M2D, I'd like to enquire about a renovation.`,``,`Name: ${d.get('name')}`,`Email: ${d.get('email')}`,`Phone: ${d.get('phone')}`,`Property: ${d.get('property')}`,`Heard about you via: ${d.get('source')}`,``,`${d.get('message')||''}`];
-      const text=encodeURIComponent(lines.join('\n'));
-      if(d.get('via')==='email') location.href=`mailto:enquire@m2decor.com.sg?subject=${encodeURIComponent('Renovation enquiry — '+d.get('name'))}&body=${text}`;
-      else open(`https://wa.me/6598221113?text=${text}`,'_blank');
+      if((d.get('_honey')||'').trim()) return;   // a bot filled the hidden field
+      const name=(d.get('name')||'').trim();
+      btn.disabled=true; form.classList.add('is-sending');
+      try{
+        const r=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(form.dataset.to),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({
+          _subject:'Website enquiry — '+name+' ('+d.get('property')+')', _template:'table', _captcha:'false', _replyto:d.get('email'),
+          Name:name, Email:d.get('email'), Phone:d.get('phone'), Property:d.get('property'), 'How they know us':d.get('source'), Message:d.get('message')||'—', Page:location.href
+        })});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok||String(j.success)==='false') throw new Error(j.message||'send failed');
+        form.reset(); form.classList.add('is-sent');
+        status.textContent=form.dataset.thanks; status.className='form__status is-ok';
+      }catch(err){
+        status.textContent=form.dataset.error; status.className='form__status is-err';
+      }
+      status.hidden=false; btn.disabled=false; form.classList.remove('is-sending');
     });
   }
 

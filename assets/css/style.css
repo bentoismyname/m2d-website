@@ -1264,7 +1264,13 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 .ao__ph--2{right:6%;top:calc(var(--header-h) + 1vh);width:clamp(130px,12vw,210px);aspect-ratio:1}
 .ao__ph--3{left:10%;bottom:7vh;width:clamp(160px,15vw,270px);aspect-ratio:4/3}
 .ao__ph--4{right:8%;bottom:6vh;width:clamp(120px,11vw,200px);aspect-ratio:3/4}
-.ao__img{z-index:1}
 @media (min-width:901px){.ao__corner--tag{display:none}}
 @media (max-width:900px){.ao__ph{display:none}}
 .static .ao__ph{display:none}
+
+/* Enquiry form: sent straight to the inbox */
+.form__trap{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form__note a{color:var(--orange);text-decoration:underline;text-underline-offset:3px}
+.form.is-sending button[type=submit]{opacity:.6;pointer-events:none}
+.form__status{grid-column:1/-1;margin-top:18px;padding:16px 20px;font-size:14px;line-height:1.6;border-left:3px solid var(--orange);background:#F6F1EC;color:var(--ink)}
+.form__status.is-err{border-left-color:#B3422D;background:#F8ECE9}

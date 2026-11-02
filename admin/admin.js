@@ -506,6 +506,7 @@ const PAGES = [
   ] },
   { id: "contact", name: "Contact us", url: "contact.html", img: "assets/img/punggol/01.jpg", blurb: "Hero photo and headings. Phone, email and hours are in Settings.", sections: [
     { t: "Hero", f: [F.photo("contact.hero", "Photo"), F.text("contact.eyebrow", "Small heading"), F.lines("contact.title", "Title"), F.area("contact.lede", "Text")] },
+    { t: "Enquiry form", d: "Enquiries are emailed to the email address in Settings > Contact details.", f: [F.area("contact.form_note", "Note beside the button"), F.text("contact.form_send", "Button"), F.area("contact.form_thanks", "Message after sending"), F.area("contact.form_error", "Message if sending fails")] },
     { t: "Contact details headings", d: "The phone number, email, address and hours themselves are in Settings > Contact details.", f: [F.text("contact.h_wa", "Phone heading"), F.text("contact.h_email", "Email heading"), F.text("contact.h_studio", "Address heading"), F.text("contact.h_hours", "Hours heading"), F.text("contact.h_follow", "Social media heading")] },
     { t: "Google", f: seoFields("contact") },
   ] },
