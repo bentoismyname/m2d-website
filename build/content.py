@@ -345,4 +345,4 @@ PHOTOS = {
 for _i, _t in enumerate(TEAM):
     _t.setdefault("group", "creative" if _i < 3 else "core")
 
-SITE.setdefault("url", "https://m2decor.com")   # the live address, used for the sitemap
+SITE.setdefault("url", "https://www.m2decor.com")   # the live address, used for the sitemap

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://m2decor.com/sitemap.xml
+Sitemap: https://www.m2decor.com/sitemap.xml
