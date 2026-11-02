@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Renovation Progress · M2D</title>
+<meta name="description" content="Live renovation progress for M2D homeowners and designers.">
+<meta name="theme-color" content="#e37f32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap">
+<style>
+:root {
+  --bg: #f6f3ef; --card: #ffffff; --soft: #f1ebe4; --line: #e7ded4;
+  --ink: #1f1813; --ink-2: #5e5248; --ink-3: #94877b;
+  --orange: #e37f32; --orange-ink: #a3521a; --brown: #6b4a14; --tint: #fcebdc;
+  --ok: #2f7d4f; --ok-tint: #e1f1e7; --warn: #b3422d; --warn-tint: #f8e3de;
+  --shadow: 0 1px 2px rgba(60,40,20,.06), 0 4px 14px rgba(60,40,20,.05);
+  --f: "Montserrat", "Gotham", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --bg: #15110e; --card: #1f1915; --soft: #2a221c; --line: #352b23;
+  --ink: #f4ede6; --ink-2: #c9bbad; --ink-3: #9a8b7d;
+  --orange: #ef9452; --orange-ink: #f2a66c; --brown: #d9b27a; --tint: #3a2516;
+  --ok: #72c895; --ok-tint: #173326; --warn: #f08a74; --warn-tint: #3a1d17;
+  --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark } }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.col { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* demo bar */
+.demo { background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 600; }
+.demo .col { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-block: 8px; }
+.demo .seg { background: rgba(255,255,255,.12); }
+.demo .seg button { color: inherit; opacity: .75; }
+.demo .seg button[aria-pressed="true"] { background: var(--orange); color: #1f1813; opacity: 1; box-shadow: none; }
+.demo small { opacity: .7; font-weight: 500; }
+
+/* header */
+header { padding-block: 26px 14px; }
+.hrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.brand { font-size: 11.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--brown); }
+.brand b { color: var(--orange); }
+.who span:not(.role) { white-space: nowrap; }
+.who { font-size: 12.5px; color: var(--ink-3); font-weight: 600; display: flex; gap: 10px; align-items: center; }
+.who .role { background: var(--soft); color: var(--ink-2); padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.link { border: 0; background: none; padding: 0; color: var(--ink-2); font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-size: 12.5px; }
+h1 { margin: 12px 0 0; font-size: clamp(28px, 6vw, 40px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; }
+.sub { margin: 6px 0 0; color: var(--ink-2); }
+main { padding-block: 8px 80px; }
+
+/* cards */
+.card { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); }
+.plist { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.pcard { padding: 16px; text-align: left; border: 1.5px solid transparent; cursor: pointer; display: grid; gap: 10px; width: 100%; }
+.pcard:hover { border-color: var(--orange); }
+.pcard strong { font-size: 16px; }
+.pcard .meta { font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.pcard .now { font-size: 13px; font-weight: 700; color: var(--orange-ink); }
+.bar { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--orange); border-radius: 4px; transition: width .3s; }
+
+/* summary */
+.back { margin: 6px 0 4px; }
+.sum { padding: 18px; display: grid; gap: 14px; margin-bottom: 16px; }
+.sum-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+.sum h2 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.015em; }
+.sum .addr { color: var(--ink-3); font-size: 13px; font-weight: 600; margin-top: 2px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.fact { background: var(--soft); border-radius: 12px; padding: 10px 12px; }
+.fact .l { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.fact .v { font-size: 15px; font-weight: 700; margin-top: 2px; overflow-wrap: anywhere; }
+.live { font-size: 12px; font-weight: 600; color: var(--ink-3); display: inline-flex; gap: 6px; align-items: center; }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+/* stages */
+.stages { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; position: relative; }
+.stage { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); border: 1.5px solid transparent; }
+.stage.open { border-color: var(--line); }
+.stage.doing { border-color: var(--orange); }
+.st-head { width: 100%; border: 0; background: none; display: grid; grid-template-columns: 30px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 13px 14px; text-align: left; cursor: pointer; }
+.num { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 800; background: var(--soft); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.done .num { background: var(--ok); color: #fff; }
+.doing .num { background: var(--orange); color: #1f1813; }
+.delayed .num { background: var(--warn); color: #fff; }
+.st-name { display: grid; gap: 1px; min-width: 0; }
+.st-name strong { font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.st-name small { font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.st-name small .has { color: var(--orange-ink); }
+.chip { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--soft); color: var(--ink-3); white-space: nowrap; }
+.done .chip { background: var(--ok-tint); color: var(--ok); }
+.doing .chip { background: var(--tint); color: var(--orange-ink); }
+.delayed .chip { background: var(--warn-tint); color: var(--warn); }
+.st-body { padding: 0 14px 16px 56px; display: grid; gap: 12px; }
+@media (max-width: 560px) { .st-body { padding-left: 14px; } }
+.seg { display: flex; gap: 4px; background: var(--soft); border-radius: 10px; padding: 3px; }
+.seg button { flex: 1; border: 0; background: transparent; border-radius: 8px; padding: 7px 8px; font-size: 13px; font-weight: 700; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--orange-ink); box-shadow: var(--shadow); }
+.dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.fld { display: grid; gap: 4px; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+.fld input, .fld textarea { width: 100%; min-width: 0; border: 1.5px solid var(--line); background: var(--bg); border-radius: 10px; padding: 9px 10px; font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: 0; text-transform: none; }
+.fld textarea { min-height: 84px; resize: vertical; font-weight: 500; line-height: 1.45; }
+.fld input:focus, .fld textarea:focus { outline: none; border-color: var(--orange); background: var(--card); }
+.view-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.notes { white-space: pre-wrap; background: var(--soft); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; }
+.notes .t { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.empty { color: var(--ink-3); font-size: 13.5px; font-weight: 600; }
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.ph { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: var(--soft); border: 0; padding: 0; cursor: zoom-in; }
+.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph .x { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 14px; line-height: 24px; text-align: center; cursor: pointer; }
+.addph { border: 1.5px dashed var(--line); border-radius: 10px; aspect-ratio: 1; display: grid; place-items: center; color: var(--ink-2); font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: center; padding: 6px; }
+.addph:hover { border-color: var(--orange); color: var(--orange-ink); }
+.addph input { display: none; }
+.row-end { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hint { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.hint.warn { color: var(--warn); }
+.rm { border: 0; background: none; color: var(--ink-3); font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 4px 0; }
+.rm:hover { color: var(--warn); }
+.viewtabs { margin: 0 0 4px; max-width: 280px; }
+.tl { padding: 16px; margin-top: 14px; }
+.tl-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.tl-late { color: var(--warn); } .tl-ok { color: var(--ok); }
+.tl-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; font-weight: 700; color: var(--ink-2); margin-bottom: 10px; }
+.tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tl .tl-legend i { position: static; display: inline-block; width: 18px; height: 8px; border-radius: 4px; }
+.tl-today-key { width: 2px !important; height: 12px !important; background: var(--warn); border-radius: 0 !important; }
+.tl-grid { --lab: 132px; font-size: 12.5px; }
+@media (min-width: 640px) { .tl-grid { --lab: 210px; } }
+.tl-axis, .tl-row, .tl-lines { display: grid; grid-template-columns: var(--lab) 1fr; gap: 10px; }
+.tl-axis { height: 20px; }
+.tl-axis .tl-track span { position: absolute; top: 0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); transform: translateX(2px); white-space: nowrap; }
+.tl-body { position: relative; padding-bottom: 20px; }
+.tl-lines { position: absolute; inset: 0; pointer-events: none; }
+.tl-lines b { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); opacity: .55; }
+.tl-lines b.m { opacity: 1; }
+.tl-lines b.today { width: 2px; background: var(--warn); opacity: 1; z-index: 2; }
+.tl-lines b.today span { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 800; color: var(--warn); text-transform: uppercase; letter-spacing: .06em; }
+.tl-track { position: relative; }
+.tl-ph { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); padding: 12px 0 4px; position: relative; }
+.tl-row { min-height: 34px; align-items: center; border-top: 1px solid var(--soft); }
+.tl-lab { display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 0; font-weight: 600; color: var(--ink-2); line-height: 1.25; }
+.tl-lab span { overflow-wrap: anywhere; }
+.tl-lab em { font-style: normal; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.tl-lab em.late { color: var(--warn); } .tl-lab em.ok { color: var(--ok); }
+.tl-row .tl-track { height: 22px; }
+.tl i { position: absolute; height: 8px; border-radius: 4px; }
+.tl-row .tl-plan { top: 2px; }
+.tl-row .tl-act { top: 12px; }
+.tl-plan { background: var(--tint); border: 1px solid var(--orange); opacity: .8; box-sizing: border-box; }
+.tl-act.done { background: var(--ok); }
+.tl-act.doing, .tl-act.todo { background: var(--orange); }
+.tl-act.delayed, .tl-act.late { background: var(--warn); }
+.tl-act.open { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.tl-empty { padding: 18px; margin-top: 14px; }
+.phase { margin-top: 22px; }
+.ph-head { display: flex; align-items: center; gap: 10px; margin: 0 2px 10px; }
+.ph-head h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); flex: 1; }
+.ph-n { width: 22px; height: 22px; border-radius: 6px; background: var(--brown); color: var(--bg); font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.ph-c { font-size: 12px; font-weight: 700; color: var(--ink-3); }
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.phs { display: grid; gap: 6px; }
+.phs span { font-size: 11.5px; font-weight: 700; color: var(--ink-3); line-height: 1.2; }
+.phs.on span { color: var(--orange-ink); }
+.phs.ok span { color: var(--ok); }
+.phs.ok .bar i { background: var(--ok); }
+.parts { display: flex; flex-wrap: wrap; gap: 8px; }
+.part { display: inline-flex; align-items: center; gap: 8px; background: var(--soft); border-radius: 999px; padding: 7px 14px 7px 8px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; }
+label.part input { width: 18px; height: 18px; margin: 0; accent-color: var(--ok); cursor: pointer; }
+span.part { cursor: default; }
+span.part i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-style: normal; font-size: 11px; }
+.part.ok { background: var(--ok-tint); color: var(--ok); }
+span.part.ok i { background: var(--ok); border-color: var(--ok); color: #fff; }
+.stage.na { background: transparent; box-shadow: none; border: 1.5px dashed var(--line); }
+.stage.na strong { color: var(--ink-3); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.stage.na .chip { background: transparent; border: 1px solid var(--line); }
+.part.na { background: transparent; border: 1px dashed var(--line); color: var(--ink-3); text-decoration: line-through; padding: 7px 14px; }
+.na-t { display: inline-flex; gap: 8px; align-items: center; font-size: 13.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; }
+.na-t.sm { font-size: 12px; color: var(--ink-3); }
+.na-t input { width: 16px; height: 16px; margin: 0; accent-color: var(--ink-2); }
+.link.sm { font-size: 12px; }
+.pick { display: grid; gap: 10px; }
+.pick-row { display: grid; gap: 6px; }
+.pick-ph { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brown); }
+.pick label.part:not(:has(input:checked)) { background: transparent; border: 1px dashed var(--line); color: var(--ink-3); text-decoration: line-through; }
+.fld select { width: 100%; border: 1.5px solid var(--line); background: var(--bg); border-radius: 10px; padding: 9px 10px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: 0; text-transform: none; }
+.add { border: 1.5px dashed var(--line); background: transparent; border-radius: 14px; padding: 14px; color: var(--ink-2); font-weight: 700; cursor: pointer; width: 100%; }
+.add:hover { border-color: var(--orange); color: var(--orange-ink); }
+
+/* forms & buttons */
+.btn { border: 0; border-radius: 999px; padding: 11px 20px; font-weight: 700; font-size: 14.5px; cursor: pointer; background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-right: 8px; vertical-align: 1px; }
+.form { padding: 18px; display: grid; gap: 12px; margin-bottom: 16px; }
+.form h3 { margin: 0; font-size: 17px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.toolbar h2 { margin: 0; font-size: 18px; }
+
+/* login */
+.login { padding: 28px 22px; text-align: center; display: grid; gap: 14px; justify-items: center; max-width: 440px; margin: 30px auto; }
+.login p { margin: 0; color: var(--ink-2); }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 9; white-space: nowrap; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: grid; place-items: center; z-index: 10; padding: 20px; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="demo" id="demoBar" hidden><div class="col">
+  <span>Demo mode · view as</span>
+  <div class="seg" id="demoRole">
+    <button type="button" data-role="designer" aria-pressed="true">Designer</button>
+    <button type="button" data-role="client" aria-pressed="false">Homeowner</button>
+  </div>
+  <small>Open this page in a second tab as the homeowner to watch updates arrive.</small>
+</div></div>
+
+<header class="col">
+  <div class="hrow">
+    <div class="brand"><b>M2D</b> Interior Design &amp; Consultancy</div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<main class="col" id="app"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+"use strict";
+// ---------- shared model ----------
+// The four portions of an M2D renovation, each with its stages. A third value lists tick-off parts inside a stage.
+const PHASES = [
+  ["prelim", "Preliminaries", [["design", "Design & quotation"], ["permits", "Permits & approvals"]]],
+  ["foundation", "Foundation stage", [["hacking", "Hacking & demolition"], ["me", "M&E works", ["Aircon", "Electricals", "Plumbing"]],
+    ["plaster", "Plastering of walls"], ["ceiling", "False ceiling & partition works"], ["wet", "Masonry, waterproofing & tiling"], ["paint", "Painting works"]]],
+  ["fittings", "Fittings", [["windows", "Windows", ["Measurement", "Installation"]], ["maindoor", "Main door & gate", ["Measurement", "Installation"]],
+    ["doors", "Doors", ["Measurement", "Installation"]], ["carpentry", "Carpentry works", ["Measurement", "Installation"]], ["stone", "Stone works", ["Measurement", "Installation"]],
+    ["glass", "Glass works", ["Measurement", "Installation"]], ["fittings", "Lights, sanitary & appliances"]]],
+  ["finishing", "Finishing", [["clean", "Final cleaning"], ["handover", "Handover"]]]
+];
+const PHASE_OF = Object.fromEntries(PHASES.flatMap(([ph, , list]) => list.map(([k]) => [k, ph])));
+const STATUS = { todo: "Not started", doing: "In progress", done: "Done", delayed: "Delayed" };
+const STAGE_FIELDS = ["status", "tStart", "tEnd", "aStart", "aEnd", "notes", "name"];
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+const slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const newStage = (id, name, phase, parts) => ({ id, name, phase: phase || "fittings", status: "todo", tStart: "", tEnd: "", aStart: "", aEnd: "", notes: "", photos: [],
+  parts: parts ? parts.map(n => ({ id: slug(n), name: n, done: false, skip: false })) : [], skip: false, custom: false });
+// Older projects saved before the four portions: put each stage in its portion.
+const normalize = p => { if (p && p.stages) p.stages.forEach(s => { if (!s.phase) s.phase = PHASE_OF[s.id] || (s.id === "services" ? "foundation" : "fittings"); if (!s.parts) s.parts = []; s.skip = !!s.skip; }); return p; };
+function newProject(f) {
+  const now = new Date().toISOString();
+  return { id: uid(), name: f.name, address: f.address || "", clientName: f.clientName || "", clientEmail: (f.clientEmail || "").toLowerCase().trim(),
+    designerName: f.designerName || "", designerEmail: (f.designerEmail || "").toLowerCase().trim(), createdAt: now, updatedAt: now,
+    stages: PHASES.flatMap(([ph, , list]) => list.map(([k, n, parts]) => { const st = newStage(k, n, ph, parts); st.skip = (f.skip || []).includes(k); return st; })) };
+}
+function applyStagePatch(p, stageId, patch) {
+  const s = p.stages.find(x => x.id === stageId); if (!s) return p;
+  for (const k of STAGE_FIELDS) if (k in patch) s[k] = String(patch[k] ?? "").slice(0, k === "notes" ? 4000 : 200);
+  let st = patch.status;
+  if ("skip" in patch) s.skip = !!patch.skip; // not applicable to this project
+  if (patch.part && s.parts) { // ticking a part moves the stage along: first tick starts it, last tick finishes it
+    const pt = s.parts.find(x => x.id === patch.part.id);
+    if (pt) { if ("done" in patch.part) pt.done = !!patch.part.done; if ("skip" in patch.part) { pt.skip = !!patch.part.skip; if (pt.skip) pt.done = false; }
+      const use = s.parts.filter(x => !x.skip), n = use.filter(x => x.done).length;
+      if (use.length && n === use.length) st = s.status = "done"; else if (n && (s.status === "todo" || s.status === "done")) st = s.status = "doing"; else if (!n && s.status === "done") st = s.status = "doing";
+      if (st === "doing") s.aEnd = ""; }
+  }
+  if (st === "doing" && !s.aStart) s.aStart = today();
+  if (st === "done") { if (!s.aStart) s.aStart = today(); if (!s.aEnd) s.aEnd = today(); }
+  s.updatedAt = p.updatedAt = new Date().toISOString();
+  return p;
+}
+
+// ---------- demo backend (this browser only) ----------
+const DEMO_KEY = "m2d-progress-demo-v5";
+const DEMO_USERS = {
+  designer: { email: "alicia@m2decor.com", name: "Alicia", role: "designer" },
+  client: { email: "tan.family@example.com", name: "Mr & Mrs Tan", role: "client" }
+};
+function seed() {
+  const p = newProject({ name: "Tampines BTO · Blk 618C", address: "#12-345, Tampines North Drive", clientName: "Mr & Mrs Tan", clientEmail: DEMO_USERS.client.email, designerName: "Alicia", designerEmail: DEMO_USERS.designer.email });
+  const plan = { design: ["2026-09-01","2026-09-20","2026-09-01","2026-09-18","done","Final 3D and quotation signed. Thank you!"], permits: ["2026-09-21","2026-10-02","2026-09-21","2026-09-30","done","HDB renovation permit approved."],
+    hacking: ["2026-10-05","2026-10-09","2026-10-05","2026-10-09","done","Kitchen wall hacked as planned. Debris cleared."],
+    me: ["2026-10-12","2026-10-30","2026-10-12","","doing","Power points and kitchen piping done. Aircon piping goes in next week before the ceiling closes."],
+    plaster: ["2026-11-02","2026-11-04"], ceiling: ["2026-11-05","2026-11-09"], wet: ["2026-11-09","2026-11-20"], paint: ["2026-11-23","2026-11-27"],
+    carpentry: ["2026-10-26","2026-12-04","2026-10-28","","doing","Site measurement done. Kitchen and wardrobe carcasses being made at our Woodlands workshop; installation from 30 Nov."],
+    maindoor: ["2026-11-02","2026-12-10","2026-11-02","","doing","Main door and gate measured on site. Installation after painting."], doors: ["2026-11-02","2026-12-10"],
+    stone: ["2026-12-01","2026-12-08"], glass: ["2026-12-07","2026-12-10"], fittings: ["2026-12-09","2026-12-15"], clean: ["2026-12-17","2026-12-18"], handover: ["2026-12-21","2026-12-21"] };
+  p.stages.forEach(s => { const v = plan[s.id]; if (v) { [s.tStart, s.tEnd, s.aStart = "", s.aEnd = "", s.status = "todo", s.notes = ""] = v; } });
+  p.stages.find(s => s.id === "me").parts.forEach(pt => { pt.done = pt.id !== "aircon"; });
+  p.stages.find(s => s.id === "windows").skip = true; // BTO comes with windows
+  p.stages.find(s => s.id === "carpentry").parts[0].done = true; // measured, not installed yet
+  p.stages.find(s => s.id === "maindoor").parts[0].done = true;
+  const q = newProject({ name: "Bishan condo · Sky Habitat", address: "#20-08, Bishan Street 15", clientName: "Ms Lim", clientEmail: "lim@example.com", designerName: "Alicia", designerEmail: DEMO_USERS.designer.email });
+  q.stages[0].status = "doing"; q.stages[0].tStart = "2026-10-20"; q.stages[0].tEnd = "2026-11-14"; q.stages[0].aStart = "2026-10-21";
+  return { projects: { [p.id]: p, [q.id]: q }, photos: {} };
+}
+function demoDB() { try { const d = JSON.parse(localStorage.getItem(DEMO_KEY) || "null"); if (d && d.projects) return d; } catch (e) {} const s = seed(); demoSave(s); return s; }
+function demoSave(db) { try { localStorage.setItem(DEMO_KEY, JSON.stringify(db)); return true; } catch (e) { toast("Demo storage is full, remove a photo"); return false; } }
+let memDB = null; // fallback when storage is blocked
+const demoGet = () => { try { localStorage.getItem("x"); return demoDB(); } catch (e) { return memDB || (memDB = seed()); } };
+const demoPut = db => { memDB = db; demoSave(db); };
+let demoRole = "designer";
+try { demoRole = localStorage.getItem(DEMO_KEY + "-role") || "designer"; } catch (e) {}
+const canView = (p, u) => u.role === "admin" || p.designerEmail === u.email || p.clientEmail === u.email;
+const canEdit = (p, u) => u.role === "admin" || (u.role === "designer" && p.designerEmail === u.email);
+
+const DemoAPI = {
+  me: async () => DEMO_USERS[demoRole],
+  list: async () => { const u = DEMO_USERS[demoRole]; return Object.values(demoGet().projects).map(normalize).filter(p => canView(p, u)); },
+  get: async id => { const p = normalize(demoGet().projects[id]); if (!p || !canView(p, DEMO_USERS[demoRole])) throw new Error("Not found"); return p; },
+  create: async f => { const db = demoGet(); const u = DEMO_USERS[demoRole]; const p = newProject({ ...f, designerName: u.name, designerEmail: u.email }); db.projects[p.id] = p; demoPut(db); return p; },
+  stage: async (id, stageId, patch) => { const db = demoGet(); const p = db.projects[id]; if (!canEdit(p, DEMO_USERS[demoRole])) throw new Error("Not allowed"); applyStagePatch(p, stageId, patch); demoPut(db); return p; },
+  addStage: async (id, name, phase) => { const db = demoGet(); const p = normalize(db.projects[id]); const s = newStage("c" + uid(), name, phase); s.custom = true; p.stages.push(s); p.updatedAt = new Date().toISOString(); demoPut(db); return p; },
+  removeStage: async (id, stageId) => { const db = demoGet(); const p = db.projects[id]; p.stages = p.stages.filter(s => s.id !== stageId || !s.custom); p.updatedAt = new Date().toISOString(); demoPut(db); return p; },
+  addPhoto: async (id, stageId, dataUrl) => { const db = demoGet(); const p = db.projects[id]; const s = p.stages.find(x => x.id === stageId); const pid = uid(); db.photos[pid] = dataUrl; s.photos.push({ id: pid, at: new Date().toISOString() }); p.updatedAt = new Date().toISOString(); if (!demoSave(db)) { delete db.photos[pid]; s.photos.pop(); } memDB = db; return p; },
+  removePhoto: async (id, stageId, photoId) => { const db = demoGet(); const p = db.projects[id]; const s = p.stages.find(x => x.id === stageId); s.photos = s.photos.filter(x => x.id !== photoId); delete db.photos[photoId]; p.updatedAt = new Date().toISOString(); demoPut(db); return p; },
+  photoUrl: async (id, photoId) => demoGet().photos[photoId] || ""
+};
+
+// ---------- live backend (Netlify Identity + Functions) ----------
+const ni = () => window.netlifyIdentity;
+async function call(path, opts = {}) {
+  const user = ni().currentUser(); if (!user) throw new Error("Please log in");
+  const token = await user.jwt();
+  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", Authorization: "Bearer " + token, ...(opts.headers || {}) } });
+  if (!r.ok) { let m = "Something went wrong"; try { m = (await r.json()).error || m; } catch (e) {} throw new Error(m); }
+  return r;
+}
+const post = (path, body) => call(path, { method: "POST", body: JSON.stringify(body) }).then(r => r.json());
+const photoCache = {};
+const LiveAPI = {
+  me: async () => { const u = ni().currentUser(); if (!u) return null; const roles = (u.app_metadata && u.app_metadata.roles) || [];
+    return { email: (u.email || "").toLowerCase(), name: (u.user_metadata && u.user_metadata.full_name) || u.email, role: roles.includes("admin") ? "admin" : roles.includes("designer") ? "designer" : "client" }; },
+  list: () => call("/api/projects").then(r => r.json()).then(l => l.map(normalize)),
+  get: id => call("/api/projects?id=" + encodeURIComponent(id)).then(r => r.json()).then(normalize),
+  create: async f => { const p = await post("/api/projects", { action: "create", ...f });
+    try { await post("/.netlify/functions/invite", { email: p.clientEmail }); } catch (e) { toast("Project created, but the invite email failed: " + e.message); }
+    return p; },
+  stage: (id, stageId, patch) => post("/api/projects", { action: "stage", id, stageId, patch }),
+  addStage: (id, name, phase) => post("/api/projects", { action: "addStage", id, name, phase }),
+  removeStage: (id, stageId) => post("/api/projects", { action: "removeStage", id, stageId }),
+  addPhoto: (id, stageId, dataUrl) => post("/api/photos", { action: "add", id, stageId, dataUrl }),
+  removePhoto: (id, stageId, photoId) => post("/api/photos", { action: "remove", id, stageId, photoId }),
+  photoUrl: async (id, photoId) => { if (photoCache[photoId]) return photoCache[photoId];
+    const r = await call("/api/photos?id=" + encodeURIComponent(id) + "&photo=" + encodeURIComponent(photoId)); return (photoCache[photoId] = URL.createObjectURL(await r.blob())); }
+};
+
+// ---------- UI ----------
+let API = DemoAPI, LIVE = false, me = null;
+let view = { name: "home", id: null }, current = null, open = new Set(), showNew = false, autoOpened = null, addingStage = false, tab = "stages";
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = d => d ? new Date(d + "T00:00:00").toLocaleDateString("en-SG", { day: "numeric", month: "short" }) : "";
+const range = (a, b) => a && a === b ? fmt(a) : a || b ? (fmt(a) || "?") + " – " + (fmt(b) || "?") : "";
+function ago(iso) { if (!iso) return ""; const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60) return "just now"; if (s < 3600) return Math.floor(s / 60) + " min ago"; if (s < 86400) return Math.floor(s / 3600) + " h ago";
+  return new Date(iso).toLocaleDateString("en-SG", { day: "numeric", month: "short" }); }
+const use = p => p.stages.filter(s => !s.skip);
+const progress = p => { const n = use(p).length, d = use(p).filter(s => s.status === "done").length; return { d, n, pct: n ? Math.round(d / n * 100) : 0 }; };
+const phaseName = id => (PHASES.find(x => x[0] === id) || [, "Other"])[1];
+const nowPhase = p => { const act = use(p).filter(x => x.status === "doing" || x.status === "delayed");
+  const ids = act.length ? [...new Set(act.map(x => x.phase))] : [(use(p).find(x => x.status !== "done") || {}).phase].filter(Boolean);
+  return ids.length ? ids.map(phaseName).join(" + ") : "Completed"; };
+const nowStage = p => use(p).filter(s => s.status === "doing" || s.status === "delayed").map(s => s.name).join(" · ") || (use(p).find(s => s.status === "todo") || {}).name || "Completed";
+const handoverDate = p => { const h = use(p).find(s => s.id === "handover"); return h && (h.aEnd || h.tEnd); };
+const editable = () => current && me && canEdit(current, me);
+let toastT;
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2300); }
+
+function renderWho() {
+  $("#who").innerHTML = me ? `<span class="role">${me.role === "client" ? "Homeowner" : esc(me.role)}</span><span>${esc(me.name)}</span>${LIVE ? '<button class="link" id="logout" type="button">Log out</button>' : ""}` : "";
+}
+
+function renderLogin() {
+  app.innerHTML = `<div class="card login"><h1 style="margin:0;font-size:28px">Your renovation, live.</h1>
+    <p>Log in with the email M2D invited you on to see your project's progress.</p>
+    <button class="btn primary" type="button" id="loginBtn"><span class="dot"></span>Log in</button></div>`;
+}
+
+async function renderHome() {
+  const list = await API.list();
+  if (me.role === "client" && list.length === 1) { view = { name: "project", id: list[0].id }; return renderProject(); }
+  const staff = me.role !== "client";
+  app.innerHTML = `<h1>${staff ? "Your projects" : "Your renovation"}</h1>
+    <p class="sub">${staff ? "Update a stage here and your homeowner sees it straight away." : "Pick a project to see its progress."}</p>
+    <div style="height:18px"></div>
+    ${staff ? `<div class="toolbar"><h2>${list.length} project${list.length === 1 ? "" : "s"}</h2><button class="btn primary" type="button" id="newBtn"><span class="dot"></span>New project</button></div>` : ""}
+    ${staff && showNew ? `<form class="card form" id="newForm"><h3>New project</h3><div class="form-grid">
+      <label class="fld">Project name<input name="name" required placeholder="e.g. Punggol BTO · Blk 301"></label>
+      <label class="fld">Address<input name="address" placeholder="Unit and street"></label>
+      <label class="fld">Homeowner name<input name="clientName" required placeholder="e.g. Mr & Mrs Lee"></label>
+      <label class="fld">Homeowner email<input name="clientEmail" type="email" required placeholder="They'll get a login invite"></label>
+      ${me.role === "admin" ? `<label class="fld">Designer email<input name="designerEmail" type="email" placeholder="Leave blank for yourself"></label><label class="fld">Designer name<input name="designerName" placeholder="Shown to homeowner"></label>` : ""}
+      </div>
+      <div class="pick"><div class="fld" style="margin-bottom:6px">Stages that apply <span class="hint" style="text-transform:none;letter-spacing:0">· untick what this project doesn't need</span></div>
+      ${PHASES.map(([id, name, list]) => `<div class="pick-row"><span class="pick-ph">${esc(name)}</span><div class="parts">${list.map(([k, n]) => `<label class="part ok"><input type="checkbox" name="use" value="${k}" checked><span>${esc(n)}</span></label>`).join("")}</div></div>`).join("")}</div>
+      <div class="row-end"><span class="hint">${LIVE ? "The homeowner gets an email invite to set their password." : "Demo: no email is sent."}</span><span style="display:flex;gap:8px"><button class="btn" type="button" id="cancelNew">Cancel</button><button class="btn primary" type="submit">Create</button></span></div></form>` : ""}
+    <div class="plist">${list.length ? list.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).map(p => { const g = progress(p); return `<button class="card pcard" type="button" data-open-project="${esc(p.id)}">
+      <strong>${esc(p.name)}</strong><span class="meta">${esc(staff ? p.clientName : p.designerName ? "Designer: " + p.designerName : "")} · updated ${ago(p.updatedAt)}</span>
+      <div class="bar"><i style="width:${g.pct}%"></i></div><span class="now">${esc(nowPhase(p))} · ${esc(nowStage(p))}</span></button>`; }).join("")
+      : `<p class="empty">${staff ? "No projects yet. Create your first one." : "No project is linked to this email yet. Please check with your M2D designer."}</p>`}</div>`;
+}
+
+function stageHTML(s, i, edit) {
+  const isOpen = open.has(s.id);
+  const parts = s.parts.filter(x => !x.skip), pd = parts.filter(x => x.done).length;
+  if (s.skip) return `<li class="stage na${isOpen ? " open" : ""}" data-stage-row="${s.id}">
+    <button class="st-head" type="button" data-toggle="${s.id}" aria-expanded="${isOpen}"><span class="num">–</span>
+      <span class="st-name"><strong>${esc(s.name)}</strong><small id="sub_${s.id}">Hidden from homeowner</small></span><span class="chip">Not applicable</span></button>
+    ${isOpen ? `<div class="st-body"><label class="na-t"><input type="checkbox" data-skip="${s.id}" checked> Not applicable to this project</label><span class="hint">Untick to bring this stage back.</span></div>` : ""}</li>`;
+  const extra = [parts.length && s.status !== "done" ? pd + "/" + parts.length + " done" : "", s.notes ? "note" : "", s.photos.length ? s.photos.length + " photo" + (s.photos.length > 1 ? "s" : "") : ""].filter(Boolean).join(" · ");
+  const datesLine = s.status === "done" ? (s.aEnd ? "Completed " + fmt(s.aEnd) : "Completed") : range(s.tStart, s.tEnd) ? "Target " + range(s.tStart, s.tEnd) : "Dates to be confirmed";
+  const behind = edit && s.status !== "done" && s.tEnd && s.tEnd < today();
+  let body = "";
+  if (isOpen && edit) {
+    body = `<div class="st-body">
+${s.parts.length ? `<div class="parts">${s.parts.map(pt => pt.skip ? `<span class="part na">${esc(pt.name)}</span>` : `<label class="part${pt.done ? " ok" : ""}"><input type="checkbox" data-part="${esc(pt.id)}" data-stage="${s.id}" ${pt.done ? "checked" : ""}><span>${esc(pt.name)}</span></label>`).join("")}</div>
+      <div class="hint">Not needed here? ${s.parts.map(pt => `<button type="button" class="link sm" data-partskip="${esc(pt.id)}" data-stage="${s.id}" aria-pressed="${!!pt.skip}">${pt.skip ? "Bring back " : "Skip "}${esc(pt.name)}</button>`).join(" · ")}</div>` : ""}
+      <div class="seg" role="group" aria-label="Status">${Object.entries(STATUS).map(([k, l]) => `<button type="button" data-status="${s.id}" data-val="${k}" aria-pressed="${s.status === k}">${l}</button>`).join("")}</div>
+      ${behind ? `<div class="hint warn">Target end has passed. Mark as Delayed if it's running late, so the homeowner isn't surprised.</div>` : ""}
+      <div class="dates">
+        <label class="fld">Target start<input type="date" data-sf="tStart" data-stage="${s.id}" value="${esc(s.tStart)}"></label>
+        <label class="fld">Target end<input type="date" data-sf="tEnd" data-stage="${s.id}" value="${esc(s.tEnd)}"></label>
+        <label class="fld">Actual start<input type="date" data-sf="aStart" data-stage="${s.id}" value="${esc(s.aStart)}"></label>
+        <label class="fld">Actual end<input type="date" data-sf="aEnd" data-stage="${s.id}" value="${esc(s.aEnd)}"></label>
+      </div>
+      <label class="fld">Update for homeowner<textarea data-sf="notes" data-stage="${s.id}" placeholder="What happened, what's next, anything they need to do">${esc(s.notes)}</textarea></label>
+      <div class="photos" data-photos="${s.id}">${s.photos.map(ph => `<div class="ph" data-ph="${esc(ph.id)}"><img alt="Site photo" data-src="${esc(ph.id)}"><span class="x" role="button" tabindex="0" data-rmph="${esc(ph.id)}" data-stage="${s.id}" aria-label="Remove photo">×</span></div>`).join("")}
+        <label class="addph">+ Add site photos<input type="file" accept="image/*" multiple data-upload="${s.id}"></label></div>
+      <div class="row-end"><span class="hint">Saves automatically · ${s.updatedAt ? "last change " + ago(s.updatedAt) : "no changes yet"}</span><span style="display:flex;gap:14px;align-items:center"><label class="na-t sm"><input type="checkbox" data-skip="${s.id}"> Not applicable</label>${s.custom ? `<button class="rm" type="button" data-rmstage="${s.id}">Remove stage</button>` : ""}</span></div>
+    </div>`;
+  } else if (isOpen) {
+    body = `<div class="st-body">
+${parts.length ? `<div class="parts">${parts.map(pt => `<span class="part${pt.done ? " ok" : ""}"><i>${pt.done ? "✓" : ""}</i>${esc(pt.name)}</span>`).join("")}</div>` : ""}
+      <div class="view-dates"><div class="fact"><div class="l">Target</div><div class="v">${esc(range(s.tStart, s.tEnd) || "To be confirmed")}</div></div>
+      <div class="fact"><div class="l">Actual</div><div class="v">${esc(s.aStart ? range(s.aStart, s.aEnd).replace("?", "ongoing") : "Not started")}</div></div></div>
+      ${s.notes ? `<div class="notes"><span class="t">Update from your designer${s.updatedAt ? " · " + ago(s.updatedAt) : ""}</span>${esc(s.notes)}</div>` : `<p class="empty" style="margin:0">No updates for this stage yet.</p>`}
+      ${s.photos.length ? `<div class="photos">${s.photos.map(ph => `<button type="button" class="ph" data-ph="${esc(ph.id)}"><img alt="Site photo" data-src="${esc(ph.id)}"></button>`).join("")}</div>` : ""}
+    </div>`;
+  }
+  return `<li class="stage ${s.status}${isOpen ? " open" : ""}" data-stage-row="${s.id}">
+    <button class="st-head" type="button" data-toggle="${s.id}" aria-expanded="${isOpen}">
+      <span class="num">${s.status === "done" ? "✓" : i + 1}</span>
+      <span class="st-name"><strong>${esc(s.name)}</strong><small id="sub_${s.id}">${esc(datesLine)}${extra ? ` · <span class="has">${esc(extra)}</span>` : ""}</small></span>
+      <span class="chip">${STATUS[s.status]}</span></button>${body}</li>`;
+}
+
+function tabsHTML() {
+  return `<div class="seg viewtabs" role="tablist">${[["stages", "Stages"], ["timeline", "Timeline"]].map(([k, l]) => `<button type="button" role="tab" data-tab="${k}" aria-pressed="${tab === k}" aria-selected="${tab === k}">${l}</button>`).join("")}</div>`;
+}
+// Timeline: one row per stage, planned bar (target dates) above, actual bar (actual dates, running to today while in progress) below.
+const DAY = 864e5;
+const dnum = d => Math.round(new Date(d + "T00:00:00Z") / DAY);
+const dstr = n => new Date(n * DAY).toISOString().slice(0, 10);
+function slipOf(s, t) { // days late (+) or early (−) against the target end
+  if (!s.tEnd) return null;
+  if (s.status === "done" && s.aEnd) return dnum(s.aEnd) - dnum(s.tEnd);
+  if ((s.status === "doing" || s.status === "delayed") && t > dnum(s.tEnd)) return t - dnum(s.tEnd);
+  return null;
+}
+function timelineHTML(p, edit) {
+  const t = dnum(today());
+  const rows = use(p).filter(s => s.tStart || s.tEnd || s.aStart);
+  if (!rows.length) return `<div class="card tl-empty"><p class="empty" style="margin:0">${edit ? "Add target start and end dates to the stages and the timeline builds itself." : "Your designer hasn't set the schedule yet. It'll appear here once dates are added."}</p></div>`;
+  const pts = [];
+  rows.forEach(s => { [s.tStart, s.tEnd, s.aStart, s.aEnd].forEach(d => d && pts.push(dnum(d))); });
+  let lo = Math.min(...pts), hi = Math.max(...pts);
+  if (rows.some(s => s.aStart && !s.aEnd)) hi = Math.max(hi, t);
+  lo -= 2; hi += 3; const span = Math.max(hi - lo, 14);
+  const x = n => ((n - lo) / span * 100).toFixed(2) + "%";
+  const w = (a, b) => (Math.max(b - a + 1, 0.6) / span * 100).toFixed(2) + "%";
+  // month labels and week lines
+  const ticks = [], weeks = [];
+  for (let n = lo; n <= lo + span; n++) { const d = new Date(n * DAY); if (d.getUTCDate() === 1 || n === lo) ticks.push([n, d.toLocaleDateString("en-SG", { month: "short", timeZone: "UTC" })]); if (d.getUTCDay() === 1) weeks.push(n); }
+  if (ticks.length > 1 && ticks[1][0] - ticks[0][0] < 10) ticks.shift();
+  const showToday = t >= lo && t <= lo + span;
+  // headline numbers
+  const ho = use(p).find(s => s.id === "handover");
+  const active = use(p).filter(s => s.status === "doing" || s.status === "delayed");
+  const lastDone = use(p).filter(s => s.status === "done" && s.aEnd && s.tEnd).sort((a, b) => a.aEnd.localeCompare(b.aEnd)).pop();
+  const slips = active.map(s => slipOf(s, t)).filter(v => v !== null);
+  const cur = slips.length ? Math.max(...slips) : active.length ? 0 : lastDone ? slipOf(lastDone, t) : 0;
+  const plannedEnd = Math.max(...rows.map(s => s.tEnd ? dnum(s.tEnd) : -Infinity));
+  const status = cur > 0 ? `<span class="tl-late">${cur} day${cur === 1 ? "" : "s"} behind plan</span>` : cur < 0 ? `<span class="tl-ok">${-cur} day${cur === -1 ? "" : "s"} ahead of plan</span>` : `<span class="tl-ok">On track</span>`;
+  const longD = n => new Date(n * DAY).toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  let body = "";
+  for (const [id, name] of PHASES) {
+    const list = rows.filter(s => s.phase === id); if (!list.length) continue;
+    body += `<div class="tl-ph">${esc(name)}</div>`;
+    for (const s of list) {
+      const sl = slipOf(s, t);
+      const aEnd = s.aEnd ? dnum(s.aEnd) : (s.status === "doing" || s.status === "delayed") ? t : null;
+      const late = sl !== null && sl > 0;
+      const plan = s.tStart || s.tEnd ? `<i class="tl-plan" style="left:${x(dnum(s.tStart || s.tEnd))};width:${w(dnum(s.tStart || s.tEnd), dnum(s.tEnd || s.tStart))}" title="Planned ${esc(range(s.tStart, s.tEnd))}"></i>` : "";
+      const act = s.aStart && aEnd !== null ? `<i class="tl-act ${s.status}${late ? " late" : ""}${s.aEnd ? "" : " open"}" style="left:${x(dnum(s.aStart))};width:${w(dnum(s.aStart), aEnd)}" title="Actual ${esc(s.aStart ? range(s.aStart, s.aEnd).replace("?", "ongoing") : "")}"></i>` : "";
+      const tag = sl === null ? "" : sl > 0 ? `<em class="late">+${sl}d</em>` : sl < 0 ? `<em class="ok">${sl}d</em>` : `<em class="ok">on time</em>`;
+      body += `<div class="tl-row"><div class="tl-lab"><span>${esc(s.name)}</span>${tag}</div><div class="tl-track">${plan}${act}</div></div>`;
+    }
+  }
+  return `<section class="card tl">
+    <div class="tl-sum">
+      <div class="fact"><div class="l">Schedule</div><div class="v">${status}</div></div>
+      <div class="fact"><div class="l">Planned finish</div><div class="v">${isFinite(plannedEnd) ? longD(plannedEnd) : "To be confirmed"}</div></div>
+      ${ho && ho.aEnd ? `<div class="fact"><div class="l">Handed over</div><div class="v">${longD(dnum(ho.aEnd))}</div></div>` : cur > 0 && isFinite(plannedEnd) ? `<div class="fact"><div class="l">If the delay holds</div><div class="v">${longD(plannedEnd + cur)}</div></div>` : ""}
+    </div>
+    <div class="tl-legend"><span><i class="tl-plan"></i>Planned</span><span><i class="tl-act done"></i>Done</span><span><i class="tl-act doing"></i>In progress</span><span><i class="tl-act late"></i>Behind plan</span>${showToday ? `<span><i class="tl-today-key"></i>Today</span>` : ""}</div>
+    <div class="tl-grid">
+      <div class="tl-axis"><div class="tl-lab"></div><div class="tl-track">${ticks.map(([n, l]) => `<span style="left:${x(n)}">${l}</span>`).join("")}</div></div>
+      <div class="tl-body"><div class="tl-lines"><div class="tl-lab"></div><div class="tl-track">${weeks.map(n => `<b style="left:${x(n)}"></b>`).join("")}${ticks.map(([n]) => `<b class="m" style="left:${x(n)}"></b>`).join("")}${showToday ? `<b class="today" style="left:${x(t)}"><span>Today</span></b>` : ""}</div></div>${body}</div>
+    </div>
+    <p class="hint" style="margin:22px 0 0">${edit ? "Built from the target and actual dates on each stage. Not-applicable stages are left out." : "Light bars are the plan, solid bars are what has actually happened on site."}</p>
+  </section>`;
+}
+
+async function renderProject(fresh) {
+  if (!fresh) current = await API.get(view.id);
+  const p = current, edit = editable(), g = progress(p);
+  if (autoOpened !== p.id) { autoOpened = p.id; if (!edit && !open.size) p.stages.filter(s => s.status === "doing" || s.status === "delayed").forEach(s => open.add(s.id)); }
+  const hd = handoverDate(p);
+  const single = me.role === "client" && (await API.list()).length === 1;
+  app.innerHTML = `${single ? "" : `<div class="back"><button class="link" type="button" id="backBtn">← All projects</button></div>`}
+    <h1>${edit ? "Project progress" : "Your renovation"}</h1>
+    <p class="sub">${edit ? "Changes save and reach the homeowner automatically." : "Your designer updates this page as work happens on site."}</p>
+    <div style="height:16px"></div>
+    <section class="card sum"><div class="sum-top"><div><h2>${esc(p.name)}</h2><div class="addr">${esc(p.address)}</div></div><span class="live" id="liveTag">Updated ${ago(p.updatedAt)}</span></div>
+      <div class="phases">${PHASES.map(([id, name]) => { const l = use(p).filter(x => x.phase === id), d = l.filter(x => x.status === "done").length;
+        const cls = l.length && d === l.length ? "ok" : l.some(x => x.status !== "todo") ? "on" : "";
+        return `<div class="phs ${cls}"><div class="bar"><i style="width:${l.length ? Math.round(d / l.length * 100) : 0}%"></i></div><span>${esc(name)}</span></div>`; }).join("")}</div>
+      <div class="facts">
+        <div class="fact"><div class="l">Now · ${esc(nowPhase(p))}</div><div class="v">${esc(nowStage(p))}</div></div>
+        <div class="fact"><div class="l">Progress</div><div class="v">${g.d} of ${g.n} stages</div></div>
+        <div class="fact"><div class="l">Target handover</div><div class="v">${hd ? new Date(hd + "T00:00:00").toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric" }) : "To be confirmed"}</div></div>
+        <div class="fact"><div class="l">${edit ? "Homeowner" : "Your designer"}</div><div class="v">${esc(edit ? p.clientName : p.designerName || "M2D")}</div></div>
+      </div></section>
+    ${tabsHTML()}${tab === "timeline" ? timelineHTML(p, edit) : `${PHASES.map(([id, name], n) => { const all = p.stages.filter(x => x.phase === id), l = all.filter(x => !x.skip), shown = edit ? all : l; if (!shown.length) return "";
+      const d = l.filter(x => x.status === "done").length;
+      return `<section class="phase"><div class="ph-head"><span class="ph-n">${n + 1}</span><h3>${esc(name)}</h3><span class="ph-c">${!l.length ? "Not applicable" : d === l.length ? "Complete" : d + " of " + l.length + " done"}</span></div>
+        <ol class="stages">${shown.map(s => stageHTML(s, l.indexOf(s), edit)).join("")}</ol></section>`; }).join("")}
+    ${edit ? `<div style="height:8px"></div>${addingStage ? `<form class="card form" id="stageForm"><div class="form-grid"><label class="fld">New stage name<input name="name" required maxlength="120" placeholder="e.g. Curtains & blinds"></label><label class="fld">Portion<select name="phase">${PHASES.map(([id, name]) => `<option value="${id}"${id === "fittings" ? " selected" : ""}>${esc(name)}</option>`).join("")}</select></label></div><div class="row-end"><span class="hint">Added to the end of that portion.</span><span style="display:flex;gap:8px"><button class="btn" type="button" id="cancelStage">Cancel</button><button class="btn primary" type="submit">Add stage</button></span></div></form>` : `<button class="add" type="button" id="addStage">+ Add a stage</button>`}` : ""}`}`;
+  loadPhotos();
+}
+async function loadPhotos() {
+  for (const img of app.querySelectorAll("img[data-src]")) { try { img.src = await API.photoUrl(current.id, img.dataset.src); } catch (e) {} }
+}
+
+async function go() {
+  try {
+    me = await API.me(); renderWho();
+    if (!me) return renderLogin();
+    if (view.name === "project") await renderProject(); else await renderHome();
+  } catch (e) { app.innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
+}
+
+// ---------- saving ----------
+let saveT = {};
+async function saveStage(stageId, patch, rerender) {
+  try {
+    current = await API.stage(current.id, stageId, patch);
+    if (rerender) await renderProject(true); else updateHead(stageId);
+    toast("Saved · homeowner can see this now");
+  } catch (e) { toast(e.message); }
+}
+function updateHead(stageId) {
+  const s = current.stages.find(x => x.id === stageId), i = current.stages.filter(x => x.phase === s.phase && !x.skip).indexOf(s);
+  const tmp = document.createElement("div"); tmp.innerHTML = stageHTML(s, i, true);
+  const sub = document.getElementById("sub_" + stageId), nsub = tmp.querySelector("#sub_" + stageId);
+  if (sub && nsub) sub.innerHTML = nsub.innerHTML;
+  const lt = $("#liveTag"); if (lt) lt.textContent = "Updated " + ago(current.updatedAt);
+}
+function resize(file, max = LIVE ? 1600 : 900, q = LIVE ? 0.82 : 0.7) {
+  return new Promise((res, rej) => { const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", q)); };
+    img.onerror = () => rej(new Error("Couldn't read that image")); img.src = url; });
+}
+
+// ---------- events ----------
+document.addEventListener("click", async e => {
+  const t = e.target;
+  const rb = t.closest("[data-role]");
+  if (rb) { demoRole = rb.dataset.role; try { localStorage.setItem(DEMO_KEY + "-role", demoRole); } catch (er) {}
+    document.querySelectorAll("#demoRole button").forEach(b => b.setAttribute("aria-pressed", b.dataset.role === demoRole));
+    view = { name: "home", id: null }; open.clear(); showNew = false; return go(); }
+  if (t.closest("#loginBtn")) return ni().open("login");
+  if (t.closest("#logout")) return ni().logout();
+  if (t.closest("#newBtn")) { showNew = !showNew; await renderHome(); const f = app.querySelector("#newForm input"); if (f) f.focus(); return; }
+  if (t.closest("#cancelNew")) { showNew = false; return renderHome(); }
+  if (t.closest("#backBtn")) { view = { name: "home", id: null }; open.clear(); return go(); }
+  const op = t.closest("[data-open-project]");
+  if (op) { view = { name: "project", id: op.dataset.openProject }; open.clear(); tab = "stages"; window.scrollTo(0, 0); return go(); }
+  const rmph = t.closest("[data-rmph]");
+  if (rmph) { e.stopPropagation(); try { current = await API.removePhoto(current.id, rmph.dataset.stage, rmph.dataset.rmph); await renderProject(true); toast("Photo removed"); } catch (er) { toast(er.message); } return; }
+  const ph = t.closest(".ph");
+  if (ph) { const img = ph.querySelector("img"); if (img && img.src) { const lb = document.createElement("div"); lb.className = "lightbox"; lb.innerHTML = `<img alt="Site photo" src="${img.src}">`; lb.onclick = () => lb.remove(); document.body.appendChild(lb); } return; }
+  const tg = t.closest("[data-toggle]");
+  if (tg) { const id = tg.dataset.toggle; open.has(id) ? open.delete(id) : open.add(id); await renderProject(true);
+    const h = app.querySelector(`[data-toggle="${id}"]`); if (h) h.focus({ preventScroll: true }); return; }
+  const vt = t.closest("[data-tab]");
+  if (vt) { tab = vt.dataset.tab; await renderProject(true); return; }
+  const ps = t.closest("[data-partskip]");
+  if (ps) { const skip = ps.getAttribute("aria-pressed") !== "true"; await saveStage(ps.dataset.stage, { part: { id: ps.dataset.partskip, skip } }, true); return; }
+  const st = t.closest("[data-status]");
+  if (st) { const s = current.stages.find(x => x.id === st.dataset.status); const val = st.dataset.val; if (s.status === val) return;
+    await saveStage(s.id, { status: val }, true); const b = app.querySelector(`[data-status="${s.id}"][data-val="${val}"]`); if (b) b.focus({ preventScroll: true }); return; }
+  if (t.closest("#addStage")) { addingStage = true; await renderProject(true); const f = app.querySelector("#stageForm input"); if (f) f.focus(); return; }
+  if (t.closest("#cancelStage")) { addingStage = false; return renderProject(true); }
+  const rs = t.closest("[data-rmstage]");
+  if (rs) { current = await API.removeStage(current.id, rs.dataset.rmstage); open.delete(rs.dataset.rmstage); await renderProject(true); toast("Stage removed"); }
+});
+document.addEventListener("input", e => {
+  const t = e.target; if (!t.dataset.sf || t.type === "date") return;
+  const id = t.dataset.stage, f = t.dataset.sf;
+  clearTimeout(saveT[id + f]); saveT[id + f] = setTimeout(() => saveStage(id, { [f]: t.value }), 700);
+});
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if (t.dataset.skip) { await saveStage(t.dataset.skip, { skip: t.checked }, true); toast(t.checked ? "Marked not applicable · hidden from homeowner" : "Stage brought back"); return; }
+  if (t.dataset.part) return saveStage(t.dataset.stage, { part: { id: t.dataset.part, done: t.checked } }, true);
+  if (t.dataset.sf && t.type === "date") return saveStage(t.dataset.stage, { [t.dataset.sf]: t.value }, false);
+  if (t.dataset.upload) {
+    const files = [...t.files]; if (!files.length) return; toast("Uploading " + files.length + " photo" + (files.length > 1 ? "s" : "") + "…");
+    try { for (const f of files) current = await API.addPhoto(current.id, t.dataset.upload, await resize(f)); await renderProject(true); toast("Photos added · homeowner can see them"); }
+    catch (er) { toast(er.message); }
+  }
+});
+document.addEventListener("submit", async e => {
+  if (e.target.id === "stageForm") { e.preventDefault(); const fd = new FormData(e.target), name = fd.get("name").trim(); if (!name) return;
+    try { current = await API.addStage(current.id, name, fd.get("phase")); addingStage = false; await renderProject(true); toast("Stage added"); } catch (er) { toast(er.message); } return; }
+  if (e.target.id !== "newForm") return; e.preventDefault();
+  const fd = new FormData(e.target), f = Object.fromEntries(fd), on = fd.getAll("use");
+  f.skip = PHASES.flatMap(x => x[2].map(y => y[0])).filter(k => !on.includes(k)); delete f.use;
+  try { const p = await API.create(f); showNew = false; view = { name: "project", id: p.id }; open.clear(); open.add(p.stages[0].id); await go(); toast(LIVE ? "Created · invite sent to " + f.clientEmail : "Project created"); }
+  catch (er) { toast(er.message); }
+});
+
+// ---------- keep the homeowner's page fresh ----------
+async function refresh() {
+  if (!me || document.hidden) return;
+  const a = document.activeElement; if (a && a.matches("input, textarea") && app.contains(a)) return;
+  try {
+    if (view.name === "project" && !addingStage) { const p = await API.get(view.id); if (!current || p.updatedAt !== current.updatedAt) { current = p; await renderProject(true); } else { const lt = $("#liveTag"); if (lt) lt.textContent = "Updated " + ago(current.updatedAt); } }
+    else if (!showNew) await renderHome();
+  } catch (e) {}
+}
+let lastPoll = 0;
+setInterval(() => { if (LIVE && Date.now() - lastPoll < 20000) return; lastPoll = Date.now(); refresh(); }, 4000);
+document.addEventListener("visibilitychange", refresh);
+window.addEventListener("storage", e => { if (e.key === DEMO_KEY && !LIVE) refresh(); });
+
+// ---------- start: live on Netlify, demo anywhere else ----------
+async function start() {
+  const forceDemo = /[?&]demo\b/.test(location.search);
+  let live = false;
+  if (!forceDemo) { try { const r = await fetch("/.netlify/identity/settings", { cache: "no-store" }); live = r.ok && (r.headers.get("content-type") || "").includes("json"); } catch (e) {} }
+  if (live) {
+    LIVE = true; API = LiveAPI;
+    const s = document.createElement("script"); s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+    s.onload = () => { ni().on("init", go); ni().on("login", () => { ni().close(); go(); }); ni().on("logout", () => { me = null; view = { name: "home", id: null }; go(); }); ni().init(); };
+    document.head.appendChild(s);
+  } else {
+    $("#demoBar").hidden = false;
+    document.querySelectorAll("#demoRole button").forEach(b => b.setAttribute("aria-pressed", b.dataset.role === demoRole));
+    go();
+  }
+}
+start();
+})();
+</script>
+</body>
+</html>

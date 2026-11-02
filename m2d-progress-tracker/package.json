@@ -1,0 +1,7 @@
+{
+  "name": "m2d-progress-tracker",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^11.1.7"
+  }
+}

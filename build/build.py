@@ -20,7 +20,7 @@ SG_TODAY = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(ho
 # ============================ CONTENT MODEL ============================
 # Fixed-size lists: the page layout is built around exactly this many items.
 FIXED = {"stats": 3, "services": 4, "process": 4, "divisions": 4}
-LAYOUTS = ("reveal", "horizontal", "editorial")
+LAYOUTS = ("collage", "reveal", "horizontal", "editorial")
 
 def _img_alt(tag):
     m = re.search(r'src="([^"]+)"', tag); a = re.search(r'alt="([^"]*)"', tag)
@@ -489,7 +489,7 @@ def about():
                     f'<source src="{U("assets/video/hero-scrub-1280.mp4", r)}" type="video/mp4">')
         else:
             srcs = f'<source src="{P("about.hero_video", r)}" type="video/mp4">'
-        ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("home.hero_poster", r)}" aria-label="M2D interior design and renovation">{srcs}</video>'
+        ao_media = f'<video class="ao__video" muted playsinline preload="auto" poster="{P("about.hero_poster", r)}" aria-label="M2D interior design and renovation">{srcs}</video>'
     else:
         ao_media = f'<img src="{P("about.hero", r)}" alt="{T("about.hero_alt")}">'
     corner_br = "".join(f"<i>{x}</i>" for x in LINES("about.corner_br"))
@@ -634,6 +634,45 @@ def project(idx):
             out += f'<div class="pa__row {side}"><figure data-clip><img src="{src(photos[i])}" alt="{E(p["name"])}, {E(p["place"])}" loading="lazy"></figure><div class="pa__row-txt" data-reveal><p class="body">{E(texts[i])}</p></div></div>'
         return out, photos[n:]
     title = f'{p["name"]} · M2D Portfolio'
+
+    if layout == "collage":
+        # write-up beside a tight mosaic of photos; the photos fly in from the corners. Text and mosaic swap sides each block.
+        PATTERNS = {5: "e", 4: "a", 3: "b", 2: "d", 1: "s"}
+        def mosaic(photos):
+            cls = PATTERNS[len(photos)]
+            tiles = "".join(f'<figure class="mz__t"><img src="{src(n)}" alt="{E(p["name"])}, {E(p["place"])}" loading="lazy"></figure>' for n in photos)
+            return f'<div class="mz mz--{cls}" data-mz>{tiles}</div>'
+        photos = list(g); blocks = ""; i = 0
+        while photos:
+            left_paras = max(1, len(paras) - i)
+            n = max(2, min(5, round(len(photos) / left_paras)))   # share the photos out across the paragraphs
+            n = min(n, len(photos))
+            if len(photos) - n == 1: n = min(5, len(photos))     # never leave a single photo on its own
+            take, photos = photos[:n], photos[n:]
+            text = paras[i] if i < len(paras) else ""
+            if i == len(paras) - 1 and i < len(paras): text = text   # last paragraph
+            side = "cl__block--r" if i % 2 else ""
+            txt = f'<div class="cl__text" data-reveal><p class="body">{E(text)}</p></div>' if text else ""
+            blocks += f'<div class="cl__block {side}{" cl__block--solo" if not text else ""}">{txt}{mosaic(take)}</div>'
+            i += 1
+        # paragraphs left over (more text than mosaics): plain text blocks at the end
+        for t in paras[i:]:
+            blocks += f'<div class="cl__block cl__block--textonly"><div class="cl__text" data-reveal><p class="body">{E(t)}</p></div></div>'
+        body = f'''
+<section class="proj-hero proj-hero--collage">
+  <div class="container">
+    <div class="proj-hero__top">
+      <div><h1 class="display">{E(p["name"])}</h1><p class="lede proj-hero__tag">{E(p["tagline"])}</p></div>
+      <div class="meta">{E(p["place"])} · {E(p["year"])}<br>({E(p["type"])})</div>
+    </div>
+  </div>
+  <div class="container proj-hero__coverwrap"><div class="proj-cover" data-clip><img src="{U(p["cover"], r)}" alt="{E(p["name"])}"></div></div>
+</section>
+<div class="cl-wrap"><section id="story" class="container cl">{blocks}</section></div>
+{nav}
+{cta(r, "cta.project")}
+'''
+        return shell(title, body, r, desc=p["tagline"], body_class="is-collage")
 
     if layout == "reveal":
         main_n = g[0]; corners_n = (g[1:5] + g[1:5])[:4]; rest = g[5:] if len(g) > 5 else g[1:]
@@ -837,7 +876,7 @@ def write_sitemap():
     urls += [(f"/blog/{p['slug']}.html", str(p.get("date") or today)[:10], "0.6") for p in POSTS]
     xml = "".join(f"<url><loc>{base}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     open(os.path.join(ROOT, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{xml}</urlset>\n')
-    open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: {base}/sitemap.xml\n")
+    open(os.path.join(ROOT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /id/\nDisallow: /my/\n\nSitemap: {base}/sitemap.xml\n")
     print(f"wrote sitemap.xml ({len(urls)} pages) + robots.txt")
 
 def write_seed():

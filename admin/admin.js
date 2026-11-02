@@ -500,7 +500,7 @@ const PAGES = [
     { t: "Closing banner", f: [F.photo("cta.blog", "Photo")] },
     { t: "Google", f: seoFields("blog") },
   ] },
-  { id: "services", name: "Services", url: "services.html", img: "assets/img/hozon/04.jpg", blurb: "Hero photo and words. The four panels themselves are under Home > Services.", sections: [
+  { id: "services", name: "Services", url: "services.html", img: "assets/img/cantonment/01.jpg", blurb: "Hero photo and words. The four panels themselves are under Home > Services.", sections: [
     { t: "Hero", f: [F.photo("services.hero", "Photo"), F.text("services.eyebrow", "Small heading"), F.lines("services.title", "Title"), F.area("services.lede", "Text")] },
     { t: "Google", f: seoFields("services") },
   ] },
@@ -681,6 +681,8 @@ document.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.ke
 
 /* ---------- portfolio ---------- */
 const LAYOUT_INFO = {
+  collage: { name: "Collage", text: "The write-up sits beside a tight mosaic of photos that fly in from the corners as you scroll; text and photos swap sides each block.", min: 4,
+    svg: `<svg viewBox="0 0 120 70"><rect x="6" y="14" width="30" height="3" fill="#bbb"/><rect x="6" y="20" width="26" height="2" fill="#ccc"/><rect x="6" y="25" width="28" height="2" fill="#ccc"/><rect x="44" y="8" width="24" height="54" fill="#E37F32" opacity=".85"/><rect x="70" y="8" width="20" height="26" fill="#c9bfb3"/><rect x="92" y="8" width="22" height="26" fill="#d8d0c6"/><rect x="70" y="36" width="44" height="26" fill="#c9bfb3"/></svg>` },
   reveal: { name: "Photo reveal", text: "Title on the side, one big photo in the middle; as you scroll four more open out to the corners, then the rest run down the page.", min: 6,
     svg: `<svg viewBox="0 0 120 70"><rect x="6" y="14" width="22" height="3" fill="#bbb"/><rect x="6" y="20" width="16" height="2" fill="#ccc"/><rect x="42" y="18" width="40" height="30" fill="#E37F32" opacity=".85"/><rect x="88" y="6" width="18" height="12" fill="#c9bfb3"/><rect x="88" y="52" width="18" height="12" fill="#c9bfb3"/><rect x="34" y="54" width="14" height="10" fill="#c9bfb3"/><rect x="34" y="4" width="14" height="10" fill="#c9bfb3"/></svg>` },
   horizontal: { name: "Side scroll", text: "The page scrolls sideways like a magazine spread, with text panels between the photos.", min: 8,

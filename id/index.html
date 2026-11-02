@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Staff · Renovation Progress · M2D</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#e37f32">
+<link rel="icon" href="../assets/img/logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/portal/portal.css">
+<script>window.M2D_PORTAL_MODE = "staff";</script>
+<script src="../admin/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="demo" id="demoBar" hidden><div class="col">
+  <span>Demo mode · view as</span>
+  <div class="seg" id="demoRole">
+    <button type="button" data-role="admin" aria-pressed="false">Admin</button>
+    <button type="button" data-role="designer" aria-pressed="true">Designer</button>
+    <button type="button" data-role="supervisor" aria-pressed="false">Supervisor</button>
+  </div>
+  <small>Nothing is saved to a server yet. Open <a href="../my/" style="color:inherit">/my</a> in another tab to see the homeowner's view.</small>
+</div></div>
+<header class="col">
+  <div class="hrow">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo.png" alt="M2D"> Interior Design &amp; Consultancy</a>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+<main class="col" id="app"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../assets/portal/portal.js"></script>
+</body>
+</html>

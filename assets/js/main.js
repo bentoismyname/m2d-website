@@ -11,10 +11,7 @@
     const y=scrollY;
     if(header){
       header.classList.toggle('is-solid',y>60);
-      // the header stays put through the About opener (video expanding, then the text panel)
-      const keep=document.querySelector('.about-open'), inKeep=keep&&y<keep.offsetTop+keep.offsetHeight-innerHeight*.5;
-      if(inKeep) header.classList.remove('is-hidden');
-      else if(y>400 && y>lastY+6) header.classList.add('is-hidden'); else if(y<lastY-6||y<400) header.classList.remove('is-hidden');
+      header.classList.remove('is-hidden');   // the header stays visible on every page, however far you scroll
     }
     lastY=y;
   }
@@ -43,7 +40,7 @@
   // Video plays ONCE, stops on its last frame, then the overlay darkens and the words come in.
   function playOnce(){
     if(!video){ heroWords(); return; }
-    video.loop=false; video.pause(); video.playbackRate=1; // speed is baked into hero.mp4 (4s)
+    video.loop=false; video.pause(); video.playbackRate=1; // plays at its own speed (hero-3s.mp4, 3 s)
     try{ video.currentTime=0; }catch(e){}
     const p=video.play(); if(p&&p.catch) p.catch(()=>setTimeout(heroWords,800));
     video.addEventListener('ended',()=>heroWords(),{once:true});
@@ -282,6 +279,21 @@
       requestAnimationFrame(loop);
     })(last);
   });
+
+  /* ---------- Collage project pages: each mosaic's photos fly in from the corners when it scrolls into view ---------- */
+  const mosaics=$$('[data-mz]');
+  if(mosaics.length && window.gsap && window.ScrollTrigger && !reduce && !isStatic){
+    gsap.registerPlugin(ScrollTrigger);
+    mosaics.forEach(mz=>{
+      const tiles=$$('.mz__t',mz), box=mz.getBoundingClientRect(), cx=box.left+box.width/2, cy=box.top+box.height/2;
+      const far=Math.max(innerWidth,innerHeight)*.55;
+      tiles.forEach(t=>{
+        const r=t.getBoundingClientRect(), dx=(r.left+r.width/2)-cx, dy=(r.top+r.height/2)-cy, len=Math.hypot(dx,dy)||1;
+        gsap.set(t,{x:dx/len*far,y:dy/len*far,opacity:0,scale:.85});   // start out past its own corner
+      });
+      gsap.to(tiles,{x:0,y:0,opacity:1,scale:1,duration:1.25,ease:'expo.out',stagger:{each:.07,from:'random'},scrollTrigger:{trigger:mz,start:'top 82%',once:true}});
+    });
+  }
 
   /* ---------- About: scroll-open sequence ---------- */
   const ao=$('.about-open');

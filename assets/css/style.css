@@ -100,7 +100,6 @@ h1,h2,h3,h4{font-weight:300;line-height:1.02;letter-spacing:-.01em;text-transfor
 .header--transparent .header__logo img{filter:none}
 .header.is-solid{background:rgba(255,255,255,.96);color:var(--ink);box-shadow:0 1px 0 var(--line);height:68px;backdrop-filter:saturate(1.2) blur(8px)}
 .header.is-solid .header__logo img{filter:none;height:26px}
-.header.is-hidden{transform:translateY(-100%)}
 .header.is-prelude{opacity:0;transform:translateY(-16px)}
 .header.is-prelude-done{opacity:1;transform:none;transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .burger{display:none;width:44px;height:44px;align-items:center;justify-content:center;flex-direction:column;gap:6px;margin-right:-10px}
@@ -150,7 +149,7 @@ body.menu-open .header__logo img{filter:brightness(0) invert(1)}
 .hero__shade.is-on{opacity:1;transition:opacity 1.2s var(--ease)}
 .hero.no-pre .hero__shade{opacity:1}
 .hero__content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:clamp(28px,4vh,44px);padding-top:var(--header-h);padding-bottom:clamp(56px,8vh,96px)}
-.hero__title{font-size:clamp(44px,8.6vw,138px);min-width:0;font-weight:300;line-height:.92;letter-spacing:-.02em;text-transform:uppercase;display:inline-flex;flex-direction:column;align-items:flex-end}
+.hero__title{font-size:clamp(38px,6vw,96px);min-width:0;font-weight:300;line-height:.92;letter-spacing:-.02em;text-transform:uppercase;display:inline-flex;flex-direction:column;align-items:flex-end}
 .hero__title .line{display:block;overflow:hidden}
 .hero__title .line span{display:block;transform:translateY(110%);opacity:0}
 .hero__aside{max-width:440px;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:28px;text-align:left}
@@ -1289,3 +1288,39 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
   .proj-hero__top .meta{color:rgba(255,255,255,.75)}
 }
 .wk__item img{object-position:center 35%}
+
+/* ===== Collage project pages: write-up beside a tight photo mosaic; photos fly in from the corners ===== */
+@media (min-width:901px){.proj-hero--collage .proj-hero__coverwrap{display:none}}
+.cl-wrap{overflow-x:clip}   /* photos fly in from the screen edges without widening the page */
+.cl{display:flex;flex-direction:column;gap:clamp(64px,9vw,150px);padding-top:clamp(20px,3vw,40px);padding-bottom:clamp(40px,6vw,90px)}
+.cl__block{display:grid;grid-template-columns:.8fr 1.5fr;gap:clamp(28px,5vw,90px);align-items:center}
+.cl__block--r{grid-template-columns:1.5fr .8fr}
+.cl__block--r .cl__text{order:2}
+.cl__block--solo{grid-template-columns:1fr}
+.cl__block--textonly{grid-template-columns:1fr;justify-items:center}
+.cl__text .body{text-align:left;max-width:440px;font-size:clamp(15px,1.15vw,18px);line-height:1.8;color:var(--ink-2)}
+.cl__block--textonly .cl__text .body{max-width:640px}
+.mz{display:grid;gap:6px;width:100%}
+.mz__t{margin:0;overflow:hidden;background:var(--stone);position:relative;will-change:transform,opacity}
+.mz__t img{width:100%;height:100%;object-fit:cover;display:block}
+/* 4 photos: tall left, two small top right, wide bottom right */
+.mz--a{grid-template-columns:1.1fr 1fr 1fr;grid-template-rows:1fr 1fr;aspect-ratio:3/2}
+.mz--a .mz__t:nth-child(1){grid-column:1;grid-row:1/3}
+.mz--a .mz__t:nth-child(4){grid-column:2/4;grid-row:2}
+/* 3 photos: tall left, two stacked right */
+.mz--b{grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr;aspect-ratio:3/2}
+.mz--b .mz__t:nth-child(1){grid-row:1/3}
+/* 5 photos: two small top left, tall right, wide bottom left */
+.mz--e{grid-template-columns:1fr 1fr 1.1fr;grid-template-rows:1fr 1fr;aspect-ratio:3/2}
+.mz--e .mz__t:nth-child(3){grid-column:3;grid-row:1/3}
+/* 2 photos side by side; 1 photo alone */
+.mz--d{grid-template-columns:1fr 1fr;aspect-ratio:2/1}
+.mz--s{grid-template-columns:1fr;aspect-ratio:3/2}
+.mz__t{height:100%}
+@media (max-width:900px){
+  .cl{gap:48px}
+  .cl__block,.cl__block--r{grid-template-columns:1fr;gap:18px}
+  .cl__block--r .cl__text{order:0}
+  .cl__text .body{max-width:none}
+}
+.static .mz__t{opacity:1!important;transform:none!important}

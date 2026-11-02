@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /id/
+Disallow: /my/
 
 Sitemap: https://www.m2decor.com/sitemap.xml

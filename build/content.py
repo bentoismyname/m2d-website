@@ -308,13 +308,13 @@ IG_ITEMS = ["assets/img/serenity/01.jpg","assets/img/chaseki/02.jpg","assets/img
 
 # Home "Our Services" columns: one per division. img = resting photo, hover = photo shown under the colour overlay.
 SERVICE_COLS = [
-    dict(key="design", colour="#E37F32", line1="Interior Design", line2="& Consultancy", img="assets/img/hozon/01.jpg", hover="assets/img/japandi/07.jpg", sub="Interior Design<br>and Consultancy",
+    dict(key="design", colour="#E37F32", line1="Interior Design", line2="& Consultancy", img="assets/img/strathmore/01.jpg", hover="assets/img/japandi/07.jpg", sub="Interior Design<br>and Consultancy",
          text="Space planning, concept boards, 3D visualisation and material selection, designed around how you actually live: the morning routine, the hosting, the quiet evenings."),
     dict(key="reno", colour="#6B4A14", line1="Renovation", line2="& Carpentry", img="assets/img/home/05.jpg", hover="assets/img/home/09.jpg", sub="Renovation<br>and Carpentry",
          text="Turnkey renovation with our own crew: M&E, ceiling, masonry, tiling, painting and carpentry fabricated in our workshop and installed by the people who built it."),
-    dict(key="handyman", colour="#1F4A3C", line1="Handyman", line2="& Home Repair", img="assets/img/urban/06.jpg", hover="assets/img/hozon/05.jpg", sub="Handyman<br>and Home Repair",
+    dict(key="handyman", colour="#1F4A3C", line1="Handyman", line2="& Home Repair", img="assets/img/svc/handyman-ladder.jpg", hover="assets/img/svc/handyman-ceiling.jpg", sub="Handyman<br>and Home Repair",
          text="After the handover, we stay. Touch-ups, repairs, re-fits and small works for homes we built and homes we did not."),
-    dict(key="workshop", colour="#B3422D", line1="Interior Design", line2="Workshop", img="assets/img/serenity/02.jpg", hover="assets/img/chaseki/06.jpg", sub="Interior Design<br>Workshop",
+    dict(key="workshop", colour="#B3422D", line1="Interior Design", line2="Workshop", img="assets/img/svc/workshop-ben2.jpg", hover="assets/img/svc/workshop-teach.jpg", sub="Interior Design<br>Workshop",
          text="Bespoke built-ins, feature walls and furniture made to drawing. Where a design needs a piece that does not exist yet, the workshop makes it."),
 ]
 
@@ -322,10 +322,9 @@ SERVICE_COLS = [
 # "reveal"     : title card (the place) opens, photos spread out from behind it, then scroll for the story + photo write-ups
 # "horizontal" : side-scrolling story panels with photos and numbered paragraphs
 # "editorial"  : vertical magazine grid with text blocks between photos
-PROJECT_LAYOUT = {   # top-to-bottom pages: "reveal" (big photo + small ones around) or "editorial" (magazine); "horizontal" (side scroll) stays available in the CMS
-    "hotel-at-home": "reveal", "japandi-spirit": "reveal", "embrace-serenity": "reveal",
-    "urban-fusion": "reveal", "fu": "reveal", "sonata": "reveal",
-    "chaseki": "editorial", "hozon": "editorial", "nimbus": "editorial", "oak-and-ember": "editorial", "rattan": "editorial",
+PROJECT_LAYOUT = {   # "collage": write-up beside photo mosaics that fly in from the corners (all homes). "reveal", "editorial" and "horizontal" stay available in the CMS
+    "hotel-at-home": "collage", "japandi-spirit": "collage", "embrace-serenity": "collage", "urban-fusion": "collage", "fu": "collage", "sonata": "collage",
+    "chaseki": "collage", "hozon": "collage", "nimbus": "collage", "oak-and-ember": "collage", "rattan": "collage",
 }
 # background tone for the reveal card page (one per project; falls back to warm sand)
 PROJECT_TONE = {}  # all project pages stay white
@@ -419,9 +418,9 @@ COPY = {
 }
 
 PHOTOS = {
-    "home.hero_video": "assets/video/hero.mp4",
-    "home.hero_poster": "assets/video/hero-poster.jpg",
-    "home.hero_end": "assets/video/hero-end.jpg",   # the video's last frame, shown at once when a visitor comes back to Home
+    "home.hero_video": "assets/video/hero-3s.mp4",   # the continuous dining-room shot, reversed and sped up to 3 s
+    "home.hero_poster": "assets/video/hero-2-poster.jpg",
+    "home.hero_end": "assets/video/hero-2-end.jpg",   # the video's last frame, shown at once when a visitor comes back to Home
     "home.rh_main": "assets/img/punggol/01.jpg",
     "home.rh_sat1": "assets/img/thumb/serenity-01.jpg", "home.rh_sat2": "assets/img/thumb/hotel-04.jpg", "home.rh_sat3": "assets/img/thumb/japandi-01.jpg",
     "home.rh_sat4": "assets/img/thumb/chaseki-06.jpg", "home.rh_sat5": "assets/img/thumb/urban-06.jpg", "home.rh_sat6": "assets/img/thumb/hozon-05.jpg",
@@ -429,10 +428,11 @@ PHOTOS = {
     # four small photos around the opener video on desktop; they move away as the video expands
     "about.op1": "assets/img/about/op-slatwall.jpg", "about.op2": "",
     "about.op3": "assets/img/about/op-lorry.jpg", "about.op4": "assets/img/about/op-kitchen.jpg",
+    "about.hero_poster": "assets/video/hero-poster.jpg",   # first frame of the About opener video
     "about.hero_video": "assets/video/hero-scrub.mp4",   # runs with the scroll as the opener expands (every frame a keyframe, so it scrubs smoothly); empty = use the photo above
     "about.team": "assets/img/home/01.jpg",
     "contact.hero": "assets/img/punggol/01.jpg",
-    "services.hero": "assets/img/hozon/04.jpg",
+    "services.hero": "assets/img/cantonment/01.jpg",
     "cta.home": "assets/img/japandi/02.jpg",
     "cta.about": "assets/img/urban/04.jpg",
     "cta.blog": "assets/img/chaseki/09.jpg",
