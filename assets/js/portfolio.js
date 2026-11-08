@@ -19,20 +19,22 @@
   function rnd(seed){ let t=seed+0x6D2B79F5; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }
 
   /* ---------- layouts (all in world coords, screen = world + pan) ---------- */
-  // two even rows: every photo the same height, same gaps, captions underneath; each photo joins the shorter row.
-  // Scrolling moves the top row left and the bottom row right; both loop forever (copies fill a row that is too short).
+  // one even row: every photo the same height, same gaps, captions underneath. It loops forever (copies fill a row that is too short).
+  // ROWS=2 deals the photos into two rows instead, the bottom one running the other way.
+  const ROWS=1;
   let rowOf=[], rowLen=[0,0], clones=[], maxW=0, sgap=0;
   function layoutStrip(){
     vw=innerWidth; vh=innerHeight;
     const hh=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||80;
     const top=hh+(vw<700?56:70), bottom=vw<700?96:140, cap=44, rowGap=Math.max(18,vh*.035), side=Math.max(20,vw*.05);
     sgap=Math.max(16,vw*.025);
-    const room=vh-top-bottom-cap*2-rowGap, h=Math.max(110,Math.min(room/2, vw*(vw<700?.48:.24)));
-    const y0=top+Math.max(0,(room-h*2)/2), ys=[y0, y0+h+cap+rowGap];
+    const room=vh-top-bottom-cap*ROWS-rowGap*(ROWS-1);
+    const h=ROWS===1 ? Math.max(110,Math.min(room*.82, vw*(vw<700?.56:.3))) : Math.max(110,Math.min(room/2, vw*(vw<700?.48:.24)));
+    const y0=top+Math.max(0,(room-h*ROWS)/2), ys=[y0, y0+h+cap+rowGap];
     clones.forEach(c=>c.el.remove()); clones=[];
     const ends=[0,0]; strip=[]; rowOf=[];
     items.forEach(el=>{
-      const w=h*(+el.dataset.r), row=ends[0]<=ends[1]?0:1;
+      const w=h*(+el.dataset.r), row=ROWS===1||ends[0]<=ends[1]?0:1;
       strip.push({x:side+ends[row], y:ys[row], w, h, rot:0}); rowOf.push(row); ends[row]+=w+sgap;
     });
     maxW=Math.max(...strip.map(p=>p.w));
