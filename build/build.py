@@ -367,7 +367,7 @@ def home():
       <span class="pl__ghost pl__ghost--ink" data-n="4"></span><span class="pl__ghost pl__ghost--green" data-n="3"></span><span class="pl__ghost pl__ghost--red" data-n="2"></span><span class="pl__ghost pl__ghost--brown" data-n="1"></span>
       <div class="pl__logo"><span class="pl__piece"><img src="assets/img/logo-m.png" alt=""></span><span class="pl__piece"><img src="assets/img/logo-2.png" alt=""></span><span class="pl__piece"><img src="assets/img/logo-d.png" alt="M2D"></span></div>
     </div>
-    <div class="pl__tag">{T("home.preloader_tag")}</div>
+    <div class="pl__tag"><img src="assets/img/m2d-tagline-idc.svg" alt="{T("home.preloader_tag")}"></div>
   </div>
 </div>
 <section class="hero">

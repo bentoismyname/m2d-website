@@ -1441,9 +1441,14 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 .footer{padding-top:clamp(36px,4vw,60px)}
 
 /* logo lockups from the brand guide: tagline beside the header logo (logo itself unchanged), stacked lockup in the footer */
-/* the two lines of words stand exactly as tall as the M2D letters (95.3% of the logo image) and sit centred beside them */
-.header__logo{display:inline-flex;align-items:center;gap:11px}
-.header__logo img.header__tag{height:28.6px;margin-top:-.5px}
-.header.is-solid .header__logo img.header__tag{height:24.8px}
-body.is-portfolio .header.is-solid .header__logo img.header__tag{height:28.6px}
+/* the two lines of words sit centred beside the M2D letters, a little shorter than them */
+.header__logo{display:inline-flex;align-items:center;gap:12px}
+.header__logo img.header__tag{height:21px;margin-top:-.5px}
+.header.is-solid .header__logo img.header__tag{height:18px}
+body.is-portfolio .header.is-solid .header__logo img.header__tag{height:21px}
 .footer .footer__logo img{height:56px;aspect-ratio:auto}
+
+/* preloader: the brand-guide lettering for INTERIOR DESIGN / AND CONSULTANCY, set under the 2D like the official lockup */
+.preloader .pl__tag{width:clamp(170px,20vw,300px);padding:0;font-size:0;letter-spacing:0;display:flex;justify-content:flex-end;margin-top:-6px}
+.preloader .pl__tag img{width:65%;margin-right:2.4%;height:auto;filter:brightness(0) invert(1)}
+@media (max-width:700px){.preloader .pl__tag{width:min(50vw,230px)}}
