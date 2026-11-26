@@ -1446,4 +1446,4 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 .header__logo img.header__tag{height:28.6px;margin-top:-.5px}
 .header.is-solid .header__logo img.header__tag{height:24.8px}
 body.is-portfolio .header.is-solid .header__logo img.header__tag{height:28.6px}
-.footer .footer__logo img{height:76px;aspect-ratio:auto}
+.footer .footer__logo img{height:56px;aspect-ratio:auto}
