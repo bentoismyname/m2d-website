@@ -239,7 +239,7 @@ def footer(root):
       <div><h4>{T("footer.h_enquire")}</h4><ul>
         <li><a href="tel:+{SITE['phone_raw']}">{E(SITE['phone'])}</a></li>
         <li><a href="mailto:{SITE['email']}">{E(SITE['email'])}</a></li>
-        <li>{E(SITE['address']).replace(', Singapore', ',<br>Singapore', 1)}</li>
+        <li>{E(SITE['address']).replace(', #', ',<br>#', 1)}</li>
         <li style="margin-top:14px"><div class="socials">
           <a href="{SITE['instagram']}" target="_blank" rel="noopener" aria-label="Instagram">{ICON_IG}</a>
           <a href="{SITE['facebook']}" target="_blank" rel="noopener" aria-label="Facebook">{ICON_FB}</a>
@@ -841,7 +841,7 @@ def contact():
   <div class="contact__info" data-reveal>
     <div class="contact__block"><h4>{T("contact.h_wa")}</h4><a href="https://wa.me/{SITE['phone_raw']}" target="_blank" rel="noopener">{E(SITE['phone'])}</a></div>
     <div class="contact__block"><h4>{T("contact.h_email")}</h4><a href="mailto:{SITE['email']}">{E(SITE['email'])}</a></div>
-    <div class="contact__block"><h4>{T("contact.h_studio")}</h4><p>{E(SITE['address'])}</p></div>
+    <div class="contact__block"><h4>{T("contact.h_studio")}</h4><p>{E(SITE['address']).replace(', #', ',<br>#', 1)}</p></div>
     <div class="contact__block"><h4>{T("contact.h_hours")}</h4><p>{TX(SITE.get('hours', ''))}</p></div>
     <div class="contact__block"><h4>{T("contact.h_follow")}</h4><div class="socials">
       <a href="{SITE['instagram']}" target="_blank" rel="noopener" aria-label="Instagram">{ICON_IG}</a>
