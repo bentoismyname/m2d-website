@@ -1442,7 +1442,7 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 
 /* logo lockups from the brand guide: tagline beside the header logo (logo itself unchanged), stacked lockup in the footer */
 /* the two lines of words sit centred beside the M2D letters, a little shorter than them */
-.header__logo{display:inline-flex;align-items:center;gap:12px}
+.header__logo{display:inline-flex;align-items:center;gap:6px}
 .header__logo img.header__tag{height:21px;margin-top:-.5px}
 .header.is-solid .header__logo img.header__tag{height:18px}
 body.is-portfolio .header.is-solid .header__logo img.header__tag{height:21px}
