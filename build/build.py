@@ -202,7 +202,7 @@ def shell(title, body, root="", transparent=False, desc="", extra_head="", extra
 <body class="{body_class}">
 <header class="{hcls}">
   <div class="container">
-    <a class="header__logo" href="{root}index.html" aria-label="M2D home"><img src="{root}assets/img/logo.png" alt="M2D"></a>
+    <a class="header__logo" href="{root}index.html" aria-label="M2D Interior Design and Consultancy, home"><img src="{root}assets/img/logo.png" alt="M2D"><img class="header__tag" src="{root}assets/img/m2d-tagline-idc.svg" alt="Interior Design and Consultancy"></a>
     <nav class="header__nav">{nav}</nav>
     <a class="header__cta" href="{root}contact.html">{T("nav.enquire")} {ICON_ARROW}</a>
     <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -231,7 +231,7 @@ def footer(root):
   <div class="container">
     <div class="footer__top">
       <div class="footer__brand">
-        <a class="footer__logo" href="{root}index.html"><img src="{root}assets/img/logo.png" alt="M2D"></a>
+        <a class="footer__logo" href="{root}index.html"><img src="{root}assets/img/m2d-lockup-idc.svg" alt="M2D Interior Design and Consultancy"></a>
         <p>{T("footer.text")}</p>
         <div class="footer__divs">{divs}</div>
       </div>
