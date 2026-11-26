@@ -33,7 +33,7 @@ PARTNERS = [
     dict(name="Facebook", sub="Recommended"),
 ]
 
-STATS = [("35","Years of craftsmanship","+"),("300","Spaces renovated","+"),("200","Happy customers","+")]
+STATS = [("35","Years of craftsmanship","+"),("300","Spaces renovated","+"),("4.8","Average rating · 200 reviews","/5")]
 
 SERVICES = [
     dict(n="01", title="Interior Design", img="assets/img/hozon/01.jpg",
@@ -384,7 +384,8 @@ COPY = {
     "home.proc_eyebrow": "The process", "home.proc_title": "From conception\nto execution.", "home.proc_link": "About our studio",
     "home.blog_eyebrow": "Journal", "home.blog_title": "Latest articles.", "home.blog_button": "See all articles",
     "home.faq_eyebrow": "FAQ", "home.faq_title": "Frequently asked\nquestions.",
-    "home.faq_text": "Not answered here? Drop us a message on WhatsApp and we will reply within the day.",
+    "home.faq_text": "Not answered here? Send us your question and we will reply within the day.",
+    "home.faq_button": "Contact us",
     # about
     "about.hero_alt": "Fú, 27 West Coast",
     "about.corner_tl": "About\nus", "about.corner_br": "Changing lives,\nchanging homes.", "about.label": "About us",

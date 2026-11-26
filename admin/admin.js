@@ -472,7 +472,7 @@ const PAGES = [
       F.list("reviews", "Reviews", { title: i => i.name || "New review", add: { name: "", role: "Homeowner", text: "" }, item: [F.text("name", "Name"), F.text("role", "Under the name", "For example Homeowners"), F.area("text", "Review")] })] },
     { t: "The process", d: "The four stages also show on the About page.", f: [F.text("home.proc_eyebrow", "Small heading"), F.lines("home.proc_title", "Title"), F.text("home.proc_link", "Link text"), PROCESS_LIST] },
     { t: "Latest articles", d: "The three newest blog posts appear here by themselves.", f: [F.text("home.blog_eyebrow", "Small heading"), F.lines("home.blog_title", "Title"), F.text("home.blog_button", "Button")] },
-    { t: "FAQ", f: [F.text("home.faq_eyebrow", "Small heading"), F.lines("home.faq_title", "Title"), F.area("home.faq_text", "Text"),
+    { t: "FAQ", f: [F.text("home.faq_eyebrow", "Small heading"), F.lines("home.faq_title", "Title"), F.area("home.faq_text", "Text"), F.text("home.faq_button", "Button"),
       F.list("faq_home", "Questions", { title: i => i.q || "New question", add: { q: "", a: "" }, item: [F.text("q", "Question"), F.area("a", "Answer")] })] },
     { t: "Closing banner", d: "The \"Next step\" banner at the bottom of most pages. The words are the same everywhere; each page can have its own photo.", f: [F.lines("cta.title", "Title"), F.area("cta.text", "Text"), F.text("cta.button", "Button"), F.photo("cta.home", "Photo on the home page and on blog articles")] },
     { t: "Google", f: seoFields("home") },

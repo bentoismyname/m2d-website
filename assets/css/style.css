@@ -1430,3 +1430,11 @@ html.static .posts .post[data-reveal]{opacity:1;transform:none}
 @media (max-width:900px){.rh__cta-title{font-size:clamp(40px,12vw,64px)}}
 .rh__cta-title{display:block;overflow:hidden;padding-bottom:.08em}
 .rh__cta-line{display:inline-block;will-change:transform}
+
+/* footer: brand on the left, the two link columns sit together on the right; divisions one per line */
+.footer__top{grid-template-columns:minmax(0,1fr) auto auto;column-gap:clamp(48px,7vw,120px)}
+.footer__top>div:nth-child(3){max-width:340px}
+.footer__divs{flex-direction:column;flex-wrap:nowrap;gap:12px}
+@media (max-width:900px){.footer__top{grid-template-columns:1fr 1fr;column-gap:32px}.footer__brand{grid-column:1/-1}.footer__top>div:nth-child(3){max-width:none}}
+@media (max-width:560px){.footer__top{grid-template-columns:1fr}}
+.stat__n sup{letter-spacing:0}

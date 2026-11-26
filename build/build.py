@@ -239,7 +239,7 @@ def footer(root):
       <div><h4>{T("footer.h_enquire")}</h4><ul>
         <li><a href="tel:+{SITE['phone_raw']}">{E(SITE['phone'])}</a></li>
         <li><a href="mailto:{SITE['email']}">{E(SITE['email'])}</a></li>
-        <li>{E(SITE['address'])}</li>
+        <li>{E(SITE['address']).replace(', Singapore', ',<br>Singapore', 1)}</li>
         <li style="margin-top:14px"><div class="socials">
           <a href="{SITE['instagram']}" target="_blank" rel="noopener" aria-label="Instagram">{ICON_IG}</a>
           <a href="{SITE['facebook']}" target="_blank" rel="noopener" aria-label="Facebook">{ICON_FB}</a>
@@ -462,7 +462,7 @@ def home():
 
 <section class="section section--stone">
   <div class="container grid grid-2" style="align-items:start">
-    <div data-reveal><span class="eyebrow">{T("home.faq_eyebrow")}</span><h2 class="h-lg" style="margin-top:14px">{T("home.faq_title")}</h2><p class="body" style="max-width:380px;margin-top:22px;text-align:left">{T("home.faq_text")}</p></div>
+    <div data-reveal><span class="eyebrow">{T("home.faq_eyebrow")}</span><h2 class="h-lg" style="margin-top:14px">{T("home.faq_title")}</h2><p class="body" style="max-width:380px;margin-top:22px;text-align:left">{T("home.faq_text")}</p><a class="btn" href="contact.html" style="margin-top:28px">{T("home.faq_button")} {ICON_ARROW}</a></div>
     <div data-reveal>{faq(D["faq_home"])}</div>
   </div>
 </section>

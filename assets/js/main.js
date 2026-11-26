@@ -141,7 +141,7 @@
   const cio=new IntersectionObserver(es=>es.forEach(e=>{
     if(!e.isIntersecting) return; cio.unobserve(e.target);
     const el=e.target, end=parseFloat(el.dataset.count), dur=2200, idx=[...document.querySelectorAll('[data-count]')].indexOf(el), t0=performance.now()+idx*180;
-    const step=t=>{const k=Math.max(0,Math.min(1,(t-t0)/dur)), v=Math.round(end*(1-Math.pow(1-k,3))); el.textContent=v; if(k<1) requestAnimationFrame(step);};
+    const step=t=>{const k=Math.max(0,Math.min(1,(t-t0)/dur)), dp=(el.dataset.count.split('.')[1]||'').length, v=end*(1-Math.pow(1-k,3)); el.textContent=v.toFixed(dp); if(k<1) requestAnimationFrame(step);};
     requestAnimationFrame(step);
   }),{threshold:.5});
   $$('[data-count]').forEach(el=>{ if(isStatic) el.textContent=el.dataset.count; else cio.observe(el); });
